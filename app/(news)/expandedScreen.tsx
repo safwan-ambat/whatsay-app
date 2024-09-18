@@ -1,18 +1,12 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { View, Text, Image, Modal, FlatList, Dimensions, SafeAreaView, ImageStyle, ViewStyle, TouchableOpacity,Animated } from 'react-native';
+import { View, Text, Image, FlatList, Dimensions, SafeAreaView, ImageStyle, ViewStyle, TouchableOpacity,Animated } from 'react-native';
 import { styled } from 'nativewind';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNewsItemAnimations } from '@/hooks/useAnimations';
 import { NewsItem, ExpandedNewsItemProps } from '@/types';
 import NewsItemCommentSection from './newsCommentSection';
-import { GestureDetector, Gesture ,gestureHandlerRootHOC} from 'react-native-gesture-handler';
+import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import Reanimated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  runOnJS,
-  interpolate,
-  Extrapolate,
 } from 'react-native-reanimated';
 
 const StyledView = styled(View);
@@ -22,7 +16,7 @@ const StyledLinearGradient = styled(LinearGradient);
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-const SWIPE_THRESHOLD = 100;
+
 
 const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex, isVisible, onClose }) => {
   const flatListRef = useRef<FlatList<NewsItem>>(null);
@@ -31,39 +25,8 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
   
   const { animatedValues, closeModal } = useNewsItemAnimations(isCommentSectionOpen, onClose);
 
-  const translateY = useSharedValue(0);
 
-  const gesture = Gesture.Pan()
-    .onStart(() => {
-      translateY.value = 0;
-    })
-    .onUpdate((event) => {
-      if (isCommentSectionOpen) return;
-      translateY.value = Math.max(0, event.translationY);
-    })
-    .onEnd(() => {
-      if (isCommentSectionOpen) return;
-      if (translateY.value > SWIPE_THRESHOLD) {
-        runOnJS(closeModal)();
-      } else {
-        translateY.value = withSpring(0);
-      }
-    });
 
-  const animatedStyle = useAnimatedStyle(() => {
-    const scale = interpolate(
-      translateY.value,
-      [0, SWIPE_THRESHOLD],
-      [1, 1],
-      Extrapolate.CLAMP
-    );
-    return {
-      transform: [
-        { translateY: translateY.value },
-        { scale },
-      ],
-    };
-  });
 
 
   const renderItem = useCallback(({ item }: { item: NewsItem }) => {
@@ -156,6 +119,8 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
     );
   }, [isCommentSectionOpen, animatedValues]);
 
+
+
   const getItemLayout = useCallback((_: any, index: number) => ({
     length: screenWidth,
     offset: screenWidth * index,
@@ -167,21 +132,20 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
     setCurrentIndex(slideIndex);
   }, []);
 
+
+
   return (
-    // <Modal animationType="none" transparent={true} visible={isVisible} onRequestClose={closeModal}>
-      <GestureDetector gesture={gesture}>
         <Reanimated.View style={[
           {
             flex: 1,
-            backgroundColor: 'white',
+            backgroundColor: 'transparent ',
+            marginTop:40
+            
           },
-          animatedStyle
+          // animatedStyle
         ]}>
-          <SafeAreaView style={{ flex: 1 }}>
-            <StyledView style={{ flex: 1 }}>
-              <TouchableOpacity onPress={() => !isCommentSectionOpen && closeModal()}>
-                {/* <StyledView style={{ width: 64, height: 4, backgroundColor: '#E0E0E0', borderRadius: 2, alignSelf: 'center', marginTop: 8, marginBottom: 16 }} /> */}
-              </TouchableOpacity>
+          
+            <StyledView style={{ flex: 1, }}>             
               <FlatList
                 ref={flatListRef}
                 data={items}
@@ -199,10 +163,8 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
                 snapToAlignment="center"
               />
             </StyledView>
-          </SafeAreaView>
+         
         </Reanimated.View>
-      </GestureDetector>
-    // </Modal>
   );
 };
 

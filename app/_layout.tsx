@@ -31,6 +31,7 @@ export default function RootLayout() {
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="discoverScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="(news)/[id]" options={{ headerShown: false }} />
          
          
         </Stack>

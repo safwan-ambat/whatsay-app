@@ -35,12 +35,12 @@ export default function DiscoverScreen() {
   const [newsData, setNewsData] = useState<NewsCategory[]>(News_data);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
 
-  const handleItemPress = (category: NewsCategory, itemIndex: number) => {
+  const handleItemPress = useCallback((category: NewsCategory, itemId: number) => {
     router.push({
-      pathname: '/expandedNewsScreen',
-      params: { category: JSON.stringify(category), initialIndex: itemIndex }
+      pathname: '/(news)/[id]',
+      params: { id: itemId.toString() }
     });
-  };
+  }, [router]);
 
   const handleSwipe = useCallback((categoryIndex: number, itemIndex: number, direction: 'left' | 'right') => {
     setNewsData(prevData => {
@@ -64,7 +64,6 @@ export default function DiscoverScreen() {
           <Image source={searchIcon} className="w-9 h-9" resizeMode="contain" />
         </TouchableOpacity>
       </StyledView>
-     
     </StyledView>
   );
 
@@ -83,7 +82,7 @@ export default function DiscoverScreen() {
             <StyledText className="text-xl font-domine">{category.category}</StyledText>
         </StyledView>
         <View style={[styles.cardContainer, { width: SCREEN_WIDTH }]}>
-          <StyledView  className="flex justify-center w-[300px] " >
+          <StyledView className="flex justify-center w-[300px]">
               {category.data.slice(0, 3).map((item, itemIndex) => (
                 <Card
                   key={item.id}
@@ -101,11 +100,10 @@ export default function DiscoverScreen() {
                     translateX.value = 0;
                     activeIndex.value = 0;
                   }}
-                  onPress={() => handleItemPress(category, itemIndex)}
+                  onPress={() => handleItemPress(category, item.id)}
                 />
               )).reverse()}
           </StyledView>
-         
         </View>
       </StyledView>
     );
@@ -115,11 +113,11 @@ export default function DiscoverScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
       <GestureHandlerRootView style={styles.container}>
-      {renderNavbar()}
+        {renderNavbar()}
         <StyledScrollView contentContainerStyle={styles.scrollViewContent}>
            <StyledLinearGradient
               colors={['rgba(5,225,215,0.3)', 'rgba(5,235,215,0)']}
-              className="h-[100px] w-full fixed  z-10"
+              className="h-[100px] w-full absolute top-0 z-10"
             />
           {newsData.map(renderCategory)}
         </StyledScrollView>
@@ -132,19 +130,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    
   },
   scrollViewContent: {
-    flexGrow: 0.5,
+    flexGrow: 1,
     backgroundColor: 'white',
-    
-
   },
   cardContainer: {
-    height: 180, // Reduced height
+    height: 180,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
-     // Allow cards to overflow their container
+    overflow: 'visible',
   },
 });
