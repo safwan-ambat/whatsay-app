@@ -22,7 +22,7 @@ type CardData = {
 };
 
 const SAMPLE_CARDS: CardData[] = [
-  { id: 1, name: 'Alice', age: 28, image: img },
+  { id: 1, name: 'Alice', age: 228, image: img },
   { id: 2, name: 'Bob', age: 32, image: img2 },
   { id: 3, name: 'Charlie', age: 25, image: img },
   { id: 4, name: 'David', age: 30, image: img2 },

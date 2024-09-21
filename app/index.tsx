@@ -49,7 +49,7 @@ const App = () => {
                                 title="Get Started"
                             />
                             <CustomButton
-                                onPress={() => router.push("/(test)")}
+                                onPress={() => router.push("/index2")}
                                 title="Test file"
                             />
                         </Animated.View>

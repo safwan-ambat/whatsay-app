@@ -4,8 +4,9 @@ import { styled } from 'nativewind';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNewsItemAnimations } from '@/hooks/useAnimations';
 import { NewsItem, ExpandedNewsItemProps } from '@/types';
-import NewsItemCommentSection from './newsCommentSection';
+import CommentSectionModal from '@/components/comment/commentSectionModal';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import Reanimated, {
 } from 'react-native-reanimated';
 
@@ -21,9 +22,9 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex, isVisible, onClose }) => {
   const flatListRef = useRef<FlatList<NewsItem>>(null);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const [isCommentSectionOpen, setIsCommentSectionOpen] = useState(false);
+  const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
   
-  const { animatedValues, closeModal } = useNewsItemAnimations(isCommentSectionOpen, onClose);
+  const { animatedValues, closeModal } = useNewsItemAnimations(isCommentModalVisible, onClose);
 
 
 
@@ -31,18 +32,19 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
 
   const renderItem = useCallback(({ item }: { item: NewsItem }) => {
     const imageWrapperStyle: ViewStyle = {
-      height: 346,
+      height: screenHeight * 0.37,
       marginTop: 10,
       borderTopRightRadius: 20,
       borderTopLeftRadius: 20,
-      borderBottomRightRadius: isCommentSectionOpen ? 20 : 0,
-      borderBottomLeftRadius: isCommentSectionOpen ? 20 : 0,
+      borderBottomRightRadius: isCommentModalVisible ? 20 : 0,
+      borderBottomLeftRadius: isCommentModalVisible ? 20 : 0,
       alignSelf: 'center',
       overflow: 'hidden',
       shadowColor: "green",
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.4,
       shadowRadius: 5.84,
+      zIndex:50,
     };
 
     const imageStyle: ImageStyle = {
@@ -86,7 +88,7 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
             right: 20,
             transform: [{ translateY: animatedValues.titlePosition }],
           }}>
-            {isCommentSectionOpen && (
+            {isCommentModalVisible && (
               <StyledText className="text-3xl font-domine text-white">{item.title}</StyledText>
             )}
           </Animated.View>
@@ -110,14 +112,24 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
             </StyledView>
           </StyledView>
         </Animated.View>
-        <NewsItemCommentSection
-          currentItem={item}
-          isCommentSectionOpen={isCommentSectionOpen}
-          setIsCommentSectionOpen={setIsCommentSectionOpen}
+
+
+{/* commentSection */}
+        <CommentSectionModal
+          postId={item.id.toString()}
+          isVisible={isCommentModalVisible}
+          onClose={() => setIsCommentModalVisible(false)}
         />
+
+          <TouchableOpacity onPress={() => setIsCommentModalVisible(true)}
+              className="absolute bottom-4 self-center bg-[#F7F7F7] rounded-full px-[20px] py-[8px]">
+                <AntDesign name="up" size={12} color="#9DA2A9" />
+          </TouchableOpacity>
       </Animated.View>
+      
     );
-  }, [isCommentSectionOpen, animatedValues]);
+  }, [isCommentModalVisible, animatedValues]);
+    
 
 
 
@@ -145,7 +157,7 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
           // animatedStyle
         ]}>
           
-            <StyledView style={{ flex: 1, }}>             
+            <StyledView style={{ flex: 1,backgroundColor: 'white' }}>             
               <FlatList
                 ref={flatListRef}
                 data={items}

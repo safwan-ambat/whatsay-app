@@ -12,11 +12,12 @@
     data: NewsItem[];
   }
 
-  export interface ExpandedNewsItemProps {
+   export interface ExpandedNewsItemProps {
     items: NewsItem[];
     initialIndex: number;
     isVisible: boolean;
     onClose: () => void;
+    setIsCommentModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   }
 
   export interface NewsItem {
@@ -32,3 +33,25 @@
     category: string;
     data: NewsItem[];
   }
+
+//comment section
+
+export interface User {
+  id: string;
+  name: string;
+  avatar: string;
+}
+
+export interface CommentProp {
+  id: string;
+  author: User;
+  content: string;
+  timestamp: string;
+  likesCount: number;
+  repliesCount: number;
+  liked: boolean;
+}
+
+export interface Reply extends Omit<CommentProp, 'repliesCount'> {
+  commentId: string;
+}

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Platform, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import News_data from '@/constants/news-data';
@@ -13,12 +13,12 @@ import Animated, {
   runOnJS,
   useAnimatedGestureHandler,
 } from 'react-native-reanimated';
-import { blue } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
 
 export default function NewsDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const newsId = parseInt(id, 10);
+  const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
 
   // Find the category and index of the news item
   let targetCategory: NewsCategory | undefined;
@@ -42,8 +42,10 @@ export default function NewsDetail() {
   }
 
   const handleCloseModal = useCallback(() => {
-    router.back();
-  }, [router]);
+    if (!isCommentModalVisible) {
+      router.back();
+    }
+  }, [router, isCommentModalVisible]);
 
   const ContentWrapper = Platform.OS === 'android' ? GestureHandlerRootView : View;
 
@@ -87,6 +89,7 @@ export default function NewsDetail() {
             initialIndex={initialIndex}
             isVisible={true}
             onClose={handleCloseModal}
+            setIsCommentModalVisible={setIsCommentModalVisible}
           />
         </Animated.View>
       </PanGestureHandler>
@@ -97,13 +100,9 @@ export default function NewsDetail() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    
-    
   },
   contentContainer: {
     flex: 1,
-    
-    
   },
   errorContainer: {
     flex: 1,
