@@ -210,11 +210,12 @@ const styles = StyleSheet.create({
   
   },
   commentContainer: {
-    height: SCREEN_HEIGHT * 0.57,
+    height: SCREEN_HEIGHT * 0.536,
     width: '100%',
     position: 'absolute',
     bottom: 0,
     backgroundColor: '#F3F4F6',
+    
   
   },
   dragIndicator: {
