@@ -79,9 +79,10 @@ export default function NewsDetail() {
   return (
     <ContentWrapper style={styles.container}>
       <PanGestureHandler
-        onGestureEvent={gestureHandler}
-        activeOffsetY={[-5, 5]} // Activate after 5 points of vertical movement
-        failOffsetX={[-5, 5]} // Fail if there's more than 5 points of horizontal movement
+         onGestureEvent={gestureHandler}
+         activeOffsetY={[-50, 50]} // Increase this value
+         failOffsetX={[-20, 20]} // Increase this value
+
       >
         <Animated.View style={[styles.contentContainer, animatedStyle]}>
           <ExpandedNewsItem
