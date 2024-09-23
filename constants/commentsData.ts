@@ -24,7 +24,52 @@ export const mockComments: CommentProp[] = [
     likesCount: 3,
     repliesCount: 1,
     liked: true
-  }
+  },
+  {
+    id: '10',
+    author: user2,
+    content: 'I totally agree with you.',
+    timestamp: '2023-06-01T13:00:00Z',
+    likesCount: 3,
+    repliesCount: 1,
+    liked: true
+  },
+  {
+    id: '3',
+    author: user2,
+    content: 'I totally agree with you.',
+    timestamp: '2023-06-01T13:00:00Z',
+    likesCount: 3,
+    repliesCount: 1,
+    liked: true
+  },
+  {
+    id: '4',
+    author: user2,
+    content: 'I totally agree with you.',
+    timestamp: '2023-06-01T13:00:00Z',
+    likesCount: 3,
+    repliesCount: 1,
+    liked: true
+  },
+  {
+    id: '5',
+    author: user2,
+    content: 'I totally agree with you.',
+    timestamp: '2023-06-01T13:00:00Z',
+    likesCount: 3,
+    repliesCount: 1,
+    liked: true
+  },
+  {
+    id: '9',
+    author: user2,
+    content: 'I totally agree with you.',
+    timestamp: '2023-06-01T13:00:00Z',
+    likesCount: 3,
+    repliesCount: 1,
+    liked: true
+  },
 ];
 
 export const mockReplies: { [key: string]: Reply[] } = {
@@ -46,7 +91,43 @@ export const mockReplies: { [key: string]: Reply[] } = {
       timestamp: '2023-06-01T15:00:00Z',
       likesCount: 1,
       liked: true
-    }
+    },
+    {
+      id: 'reply9',
+      commentId: '1',
+      author: user4,
+      content: 'I appreciate your feedback.',
+      timestamp: '2023-06-01T15:00:00Z',
+      likesCount: 1,
+      liked: true
+    },
+    {
+      id: 'reply3',
+      commentId: '1',
+      author: user4,
+      content: 'I appreciate your feedback.',
+      timestamp: '2023-06-01T15:00:00Z',
+      likesCount: 1,
+      liked: true
+    },
+    {
+      id: 'reply4',
+      commentId: '1',
+      author: user4,
+      content: 'I appreciate your feedback.',
+      timestamp: '2023-06-01T15:00:00Z',
+      likesCount: 1,
+      liked: true
+    },
+    {
+      id: 'reply5',
+      commentId: '1',
+      author: user4,
+      content: 'I appreciate your feedback.',
+      timestamp: '2023-06-01T15:00:00Z',
+      likesCount: 1,
+      liked: true
+    },
   ],
   '2': [
     {

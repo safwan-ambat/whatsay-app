@@ -61,8 +61,9 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
     };
 
     return (
+      
       <Animated.View style={[
-        { width: screenWidth, transform: [{ scale: animatedValues.scale }] }
+        { width: screenWidth,backgroundColor:'white', transform: [{ scale: animatedValues.scale }] }
       ]}>
         <Animated.View style={[
           imageWrapperStyle,
@@ -121,10 +122,10 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
           onClose={() => setIsCommentModalVisible(false)}
         />
 
-          <TouchableOpacity onPress={() => setIsCommentModalVisible(true)}
+          {!isCommentModalVisible && <TouchableOpacity onPress={() => setIsCommentModalVisible(true)}
               className="absolute bottom-4 self-center bg-[#F7F7F7] rounded-full px-[20px] py-[8px]">
                 <AntDesign name="up" size={12} color="#9DA2A9" />
-          </TouchableOpacity>
+          </TouchableOpacity>}
       </Animated.View>
       
     );
@@ -150,7 +151,6 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
         <Reanimated.View style={[
           {
             flex: 1,
-            backgroundColor: 'transparent ',
             marginTop:40
             
           },

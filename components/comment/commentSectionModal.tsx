@@ -149,6 +149,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
             </View>
 
             <FlatList
+            scrollEnabled={true}
               data={comments}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
@@ -198,7 +199,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: '#F3F4F6',
   },
   modalContainer: {
     height: MODAL_HEIGHT,
