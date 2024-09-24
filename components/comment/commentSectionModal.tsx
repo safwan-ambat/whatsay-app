@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, FlatList, TextInput, Dimensions, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, TextInput, Dimensions, StyleSheet, Image,Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { NativeViewGestureHandler, PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F4F6',
   },
   commentContainer: {
-    height: SCREEN_HEIGHT * 0.536,
+    height: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.52 : SCREEN_HEIGHT * 0.53,
     width: '100%',
     position: 'absolute',
     bottom: 0,

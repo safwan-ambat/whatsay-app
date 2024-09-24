@@ -8,6 +8,7 @@ interface AnimatedValues {
   gradientOpacity: Animated.Value;
   scale: Animated.Value;
   titlePosition: Animated.Value;
+  dragIndicator: Animated.Value;
   contentOpacity: Animated.Value;
   modalY: Animated.Value;
 }
@@ -20,6 +21,7 @@ export const useNewsItemAnimations = (isCommentSectionOpen: boolean, onClose: ()
     gradientOpacity: new Animated.Value(0),
     scale: new Animated.Value(1),
     titlePosition: new Animated.Value(1),
+    dragIndicator: new Animated.Value(1),
     contentOpacity: new Animated.Value(1),
     modalY: new Animated.Value(0),
   }), []);
@@ -96,9 +98,22 @@ export const useNewsItemAnimations = (isCommentSectionOpen: boolean, onClose: ()
       }),
     ];
 
-    Animated.parallel(animations).start();
-  }, [isCommentSectionOpen, animatedValues]);
+   // Bouncy animation for dragIndicator
+   const dragIndicatorAnimation = Animated.sequence([
+    Animated.timing(animatedValues.dragIndicator, {
+      toValue: isCommentSectionOpen ? -12 : 20,  // Jump up or down
+      useNativeDriver: true,
+      duration: 500,  // Duration in milliseconds for the first animation
+    }),
+    Animated.timing(animatedValues.dragIndicator, {
+      toValue: isCommentSectionOpen ? 0 : 20,  // Settle back
+      useNativeDriver: true,
+      duration: 100,  // Duration in milliseconds for the second animation
+    })
+  ]);
 
+  Animated.parallel([...animations, dragIndicatorAnimation]).start();
+}, [isCommentSectionOpen, animatedValues]);
   return {
     animatedValues,
     // panResponder,

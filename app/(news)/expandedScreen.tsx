@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { View, Text, Image, FlatList, Dimensions, SafeAreaView, ImageStyle, ViewStyle, TouchableOpacity,Animated } from 'react-native';
+import { View, Text, Image, FlatList, Dimensions, SafeAreaView, ImageStyle, ViewStyle, TouchableOpacity,Animated,Platform } from 'react-native';
 import { styled } from 'nativewind';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNewsItemAnimations } from '@/hooks/useAnimations';
@@ -32,7 +32,7 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
 
   const renderItem = useCallback(({ item }: { item: NewsItem }) => {
     const imageWrapperStyle: ViewStyle = {
-      height: screenHeight * 0.37,
+      height: Platform.OS === 'ios' ? screenHeight * 0.42 : screenHeight * 0.46,
       marginTop: 10,
       borderTopRightRadius: 20,
       borderTopLeftRadius: 20,
@@ -84,15 +84,27 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
 
           <Animated.View style={{
             position: 'absolute',
-            bottom: 20,
+            bottom: 32,
             left: 20,
             right: 20,
             transform: [{ translateY: animatedValues.titlePosition }],
           }}>
             {isCommentModalVisible && (
-              <StyledText className="text-3xl font-domine text-white">{item.title}</StyledText>
+              <StyledText className="text-[22px] font- font-domine text-white">{item.title}</StyledText>
             )}
           </Animated.View>
+          {/* dragIndicator */}
+          <Animated.View style={{
+  position: 'absolute',
+  bottom: 12,
+  alignSelf: 'center',
+  transform: [{ 
+    translateY: animatedValues.dragIndicator
+  }],
+}}>
+  <View className='h-[4px] w-[24px] rounded-full bg-[#FFFFFF]/20' />
+</Animated.View>
+
         </Animated.View>
         <Animated.View style={{
           opacity: animatedValues.contentOpacity,
