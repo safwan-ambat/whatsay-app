@@ -13,8 +13,12 @@ import Animated, {
 import UserComment from './userComment';
 import { CommentProp, User, Reply } from '../../app/types';
 import { mockComments, mockReplies } from '../../constants/commentsData';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const MODAL_HEIGHT = SCREEN_HEIGHT * 1;
 
 interface CommentSectionModalProps {
@@ -132,53 +136,65 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
     <View style={StyleSheet.absoluteFill}>
       <PanGestureHandler onGestureEvent={gestureHandler}>
         <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
+
+
           <View style={styles.commentContainer}>
-            <View style={styles.dragIndicator} />
-            <View style={styles.header}>
-              <Text style={styles.headerText}>Comments</Text>
-            </View>
-
-            <NativeViewGestureHandler disallowInterruption={true}>
-              <FlatList
-                ref={flatListRef}
-                data={comments}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <UserComment 
-                    comment={item} 
-                    navigation={navigation} 
-                    onReply={() => handleReply(item)}
-                    replies={replies[item.id] || []}
-                  />
-                )}
-                style={styles.commentList}
-              />
-            </NativeViewGestureHandler>
-
-            <View style={styles.inputContainer}>
-              {replyingTo && (
-                <View style={styles.replyingToContainer}>
-                  <Text style={styles.replyingToText}>
-                    Replying to {replyingTo.author.name}
-                  </Text>
-                  <TouchableOpacity onPress={() => setReplyingTo(null)}>
-                    <AntDesign name="close" size={16} color="black" />
-                  </TouchableOpacity>
-                </View>
-              )}
-              <View style={styles.inputWrapper}>
-                <TextInput
-                  value={newComment}
-                  onChangeText={setNewComment}
-                  placeholder={replyingTo ? "Write a reply..." : "Add a comment..."}
-                  style={styles.input}
-                />
-                <TouchableOpacity onPress={handlePostComment}>
-                  <Image source={require('@/assets/commentIcon.webp')} style={styles.commentIcon} />
-                </TouchableOpacity>
+              <View style={styles.header}>
+                <Text style={styles.headerText}>Comments</Text>
               </View>
-            </View>
+
+
+              <NativeViewGestureHandler disallowInterruption={true}>
+                <FlatList
+                  ref={flatListRef}
+                  data={comments}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <UserComment 
+                      comment={item} 
+                      navigation={navigation} 
+                      onReply={() => handleReply(item)}
+                      replies={replies[item.id] || []}
+                    />
+                  )}
+                  style={styles.commentList}
+                />
+              </NativeViewGestureHandler>
+
+              <BlurView intensity={10} tint="light" style={styles.inputContainer}>
+              <LinearGradient
+  colors={['rgba(243, 244, 246, 0)', '#F3F4F6']}
+  start={{x: 0, y: 0}}
+  end={{x: 0, y: 1}}
+    style={StyleSheet.absoluteFill}
+  />
+                <View style={styles.inputField}>
+                      {replyingTo && (
+                        <View style={styles.replyingToContainer}>
+                          <Text style={styles.replyingToText}>
+                            Replying to {replyingTo.author.name}
+                          </Text>
+                          <TouchableOpacity onPress={() => setReplyingTo(null)}>
+                            <AntDesign name="close" size={16} color="black" />
+                          </TouchableOpacity>
+                        </View>
+                      )}
+                        <View style={styles.inputWrapper}>
+                          <TextInput
+                            value={newComment}
+                            onChangeText={setNewComment}
+                            placeholder={replyingTo ? "Write a reply..." : "Add a comment..."}
+                            style={styles.input}
+                          />
+                          <TouchableOpacity onPress={handlePostComment}>
+                            <Image source={require('@/assets/commentIcon.webp')} style={styles.commentIcon} />
+                          </TouchableOpacity>
+                      </View>
+
+                </View>
+              </BlurView>
           </View>
+         
         </Animated.View>
       </PanGestureHandler>
     </View>
@@ -200,16 +216,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: '#F3F4F6',
   },
-  dragIndicator: {
-    zIndex: 100,
-    position: "absolute",
-    top: -20,
-    width: 40,
-    height: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    alignSelf: 'center',
-    borderRadius: 2,
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -226,8 +232,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   inputContainer: {
-    padding: 16,
+    width:SCREEN_WIDTH,
+    paddingHorizontal: 16,
+    position:"absolute",
+    height:94,
+    bottom:0,
+    
+   
   },
+  inputField: {
+    width:SCREEN_WIDTH,
+    paddingHorizontal: 16,
+  },
+  
   replyingToContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -241,7 +258,7 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 32,
+    
   },
   input: {
     flex: 1,
