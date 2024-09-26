@@ -56,13 +56,16 @@ export default function NewsDetail() {
       context.startY = translateY.value;
     },
     onActive: (event, context) => {
-      // Only allow downward swipes
-      if (event.translationY > 0) {
+      const angle = Math.atan2(event.translationY, event.translationX) * (180 / Math.PI);
+      const adjustedAngle = (angle + 360) % 360; // Normalize angle to 0-360 range
+
+      // Check if the angle is between 60 and 120 degrees
+      if (adjustedAngle >= 0 && adjustedAngle <= 180) {
         translateY.value = context.startY + event.translationY;
       }
     },
     onEnd: (event) => {
-      if (event.translationY > 100 && event.velocityY > 0) {
+      if (event.translationY > 50 && event.velocityY > 50) {
         runOnJS(handleCloseModal)();
       } else {
         translateY.value = withSpring(0);
@@ -79,10 +82,7 @@ export default function NewsDetail() {
   return (
     <ContentWrapper style={styles.container}>
       <PanGestureHandler
-         onGestureEvent={gestureHandler}
-         activeOffsetY={[-50, 50]} // Increase this value
-         failOffsetX={[-20, 20]} // Increase this value
-
+        onGestureEvent={gestureHandler}
       >
         <Animated.View style={[styles.contentContainer, animatedStyle]}>
           <ExpandedNewsItem
