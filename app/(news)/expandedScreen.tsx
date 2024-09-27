@@ -33,7 +33,6 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
   const renderItem = useCallback(({ item }: { item: NewsItem }) => {
     const imageWrapperStyle: ViewStyle = {
       height: Platform.OS === 'ios' ? screenHeight * 0.42 : screenHeight * 0.46,
-      marginTop: 10,
       borderTopRightRadius: 20,
       borderTopLeftRadius: 20,
       borderBottomRightRadius: isCommentModalVisible ? 20 : 0,
@@ -96,15 +95,16 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
           </Animated.View>
           {/* dragIndicator */}
           <Animated.View style={{
-  position: 'absolute',
-  bottom: 12,
-  alignSelf: 'center',
-  transform: [{ 
-    translateY: animatedValues.dragIndicator
-  }],
-}}>
-  <View className='h-[4px] w-[24px] rounded-full bg-[#FFFFFF]/20' />
-</Animated.View>
+            position: 'absolute',
+            bottom: 12,
+            alignSelf: 'center',
+            transform: [{ 
+              translateY: animatedValues.dragIndicator
+            }],
+          }}>
+            {isCommentModalVisible &&
+            <View className='h-[4px] w-[24px] rounded-full bg-[#FFFFFF]/20' />}
+          </Animated.View>
 
         </Animated.View>
         <Animated.View style={{
@@ -164,7 +164,7 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
         <Reanimated.View style={[
           {
             flex: 1,
-            marginTop:40
+            marginTop:50
             
           },
           // animatedStyle

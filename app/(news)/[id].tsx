@@ -100,9 +100,11 @@ export default function NewsDetail() {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor:"white",
     flex: 1,
   },
   contentContainer: {
+    backgroundColor:"white",
     flex: 1,
   },
   errorContainer: {

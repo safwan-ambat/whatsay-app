@@ -203,7 +203,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
 
 const styles = StyleSheet.create({
   modalContainer: {
-    height: MODAL_HEIGHT,
+    height: MODAL_HEIGHT ,
     width: '100%',
     position: 'absolute',
     bottom: 0,
