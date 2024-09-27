@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, useWindowDimensions, Platform } from 'react-native';
 import { styled } from 'nativewind';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -82,7 +82,7 @@ export default function DiscoverScreen() {
             <StyledText className="text-xl font-domine">{category.category}</StyledText>
         </StyledView>
         <View style={[styles.cardContainer, { width: SCREEN_WIDTH }]}>
-          <StyledView className="flex justify-center w-[300px]">
+     
               {category.data.slice(0, 3).map((item, itemIndex) => (
                 <Card
                   key={item.id}
@@ -103,7 +103,7 @@ export default function DiscoverScreen() {
                   onPress={() => handleItemPress(category, item.id)}
                 />
               )).reverse()}
-          </StyledView>
+       
         </View>
       </StyledView>
     );
@@ -131,15 +131,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+
   scrollViewContent: {
     flexGrow: 1,
     backgroundColor: 'white',
+    paddingTop:88,
   },
+
   cardContainer: {
-    height: 180,
+    height: Platform.OS === 'ios' ? 180 : 260,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
     overflow: 'visible',
+    paddingBottom:Platform.OS === 'ios' ? 20 : 60,
+    
   },
 });

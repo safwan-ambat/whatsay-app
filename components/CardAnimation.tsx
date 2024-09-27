@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
-import { StyleSheet, Text, View, Image, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, useWindowDimensions, TouchableOpacity, ViewStyle, ImageStyle, TextStyle } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
-import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   useSharedValue,
@@ -37,6 +36,8 @@ export const Card: React.FC<CardProps> = ({
   onPress,
 }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const CARD_WIDTH = SCREEN_WIDTH * 0.75;
+  const CARD_HEIGHT = CARD_WIDTH * (320 / 273); // 4:3 aspect ratio
   const isFirst = index === 0;
 
   const removeCard = useCallback((direction: 'left' | 'right') => {
@@ -54,11 +55,11 @@ export const Card: React.FC<CardProps> = ({
     .onEnd((event) => {
       if (isFirst) {
         if (Math.abs(event.velocityX) > 400 || Math.abs(translateX.value) > SCREEN_WIDTH * 0.4) {
-          translateX.value = withSpring(Math.sign(translateX.value) * SCREEN_WIDTH);
+          translateX.value = withTiming(Math.sign(translateX.value) * SCREEN_WIDTH);
           const direction = translateX.value > 0 ? 'right' : 'left';
           removeCard(direction);
         } else {
-          translateX.value = withSpring(0);
+          translateX.value = withTiming(0);
         }
       }
     });
@@ -88,8 +89,8 @@ export const Card: React.FC<CardProps> = ({
           { scale },
           { translateY },
           { rotate: `${rotate}deg` },
-          { translateY: withSpring(index * 1) },
-          { translateX: withSpring(index * 20) },
+          { translateY: withTiming(index * 1, { duration: 300 }) },
+          { translateX: withTiming(index * 20, { duration:300 }) },
         ],
         opacity: interpolate(
           index,
@@ -110,34 +111,32 @@ export const Card: React.FC<CardProps> = ({
   return (
     <GestureDetector gesture={panGesture}>
       <TouchableOpacity activeOpacity={0.95} onPress={onPress}>
-        <Animated.View style={[styles.card, animatedCardStyle]}>
+        <Animated.View style={[styles.card, { width: CARD_WIDTH, height: CARD_HEIGHT }, animatedCardStyle]}>
           <Image source={card.image} style={styles.cardImage} />
-
           <LinearGradient
-              colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.6)' , 'rgba(0,0,0,0.8)']}
-              style={styles.gradient}
-            >
-              <View  style={StyleSheet.absoluteFill} />
-            </LinearGradient>
-            <Text style={styles.cardTitle}>{card.title}</Text>
-
+            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.6)', 'rgba(0,0,0,0.8)']}
+            style={styles.gradient}
+          >
+            <View style={StyleSheet.absoluteFill} />
+          </LinearGradient>
+          <Text style={styles.cardTitle}>{card.title}</Text>
         </Animated.View>
       </TouchableOpacity>
     </GestureDetector>
   );
 };
 
-{/* <BlurView intensity={20} style={styles.textOverlay}>
-              <Text className="font-domine" style={styles.title}>{title}</Text>
-            </BlurView> */}
+type Style = {
+  card: ViewStyle;
+  cardImage: ImageStyle;
+  cardTitle: TextStyle;
+  gradient: ViewStyle;
+};
 
-
-
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<Style>({
   card: {
-    width: 273,
-    height: 320,
-    borderRadius: 16,
+    borderCurve:"continuous",
+    borderRadius: 20,
     backgroundColor: 'white',
     position: 'absolute',
     shadowColor: '#000',
@@ -145,45 +144,29 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
-    overflow:"hidden"
-    
+    overflow: "hidden",
+    alignSelf:'center'
   },
   cardImage: {
     width: '100%',
     height: '100%',
   },
-
   cardTitle: {
-    fontFamily:'Domine',
+    fontFamily: 'Domine',
     fontSize: 18,
     color: 'white',
     textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 5,
-    position:"absolute",
-    bottom:24,
-    paddingHorizontal:16
-    
+    position: "absolute",
+    bottom: 24,
+    paddingHorizontal: 16
   },
-
-
-  cardInfo: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    backgroundColor: 'white',
-    padding: 8,
-  },
-  
   gradient: {
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
     height: 200,
-   } // Adjust this value to control the height of the gradient
+  }
 });
-
