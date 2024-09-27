@@ -56,11 +56,8 @@ export default function NewsDetail() {
       context.startY = translateY.value;
     },
     onActive: (event, context) => {
-      const angle = Math.atan2(event.translationY, event.translationX) * (180 / Math.PI);
-      const adjustedAngle = (angle + 360) % 360; // Normalize angle to 0-360 range
-
-      // Check if the angle is between 60 and 120 degrees
-      if (adjustedAngle >= 0 && adjustedAngle <= 180) {
+      // Only respond to vertical gestures
+      if (Math.abs(event.translationY) > Math.abs(event.translationX)) {
         translateY.value = context.startY + event.translationY;
       }
     },
@@ -83,6 +80,8 @@ export default function NewsDetail() {
     <ContentWrapper style={styles.container}>
       <PanGestureHandler
         onGestureEvent={gestureHandler}
+        activeOffsetY={[-10, 10]} // Activate the gesture handler only after 10 units of vertical movement
+        failOffsetX={[-20, 20]} // Fail the gesture handler if there's significant horizontal movement
       >
         <Animated.View style={[styles.contentContainer, animatedStyle]}>
           <ExpandedNewsItem
@@ -97,6 +96,7 @@ export default function NewsDetail() {
     </ContentWrapper>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

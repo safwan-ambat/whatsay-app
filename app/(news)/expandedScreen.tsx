@@ -45,6 +45,7 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
       shadowOpacity: 0.4,
       shadowRadius: 5.84,
       zIndex:50,
+      pointerEvents:"none",
     };
 
     const imageStyle: ImageStyle = {
