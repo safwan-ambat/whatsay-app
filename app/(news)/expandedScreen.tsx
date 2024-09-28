@@ -116,12 +116,12 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
             })
           }],
         }}>
-          <StyledView className="p-4">
-            <StyledText className="text-3xl font-domine mb-2">{item.title}</StyledText>
-            <StyledText className="text-base mb-4">{item.text}</StyledText>
+          <StyledView className="p-[16px]">
+            <StyledText className="text-[20px] font-domine mb-[12px]">{item.title}</StyledText>
+            <Text className="font-geist font-light mb-4 text-[16px]">{item.text}</Text>
             <StyledView className="mb-4 bg-green-100 text-green-800 rounded-full mr-auto border border-green-300">
               <StyledText className="text-sm px-4 py-1 rounded-full inline-block">
-                {/* {item.category} */}
+                sports
               </StyledText>
             </StyledView>
           </StyledView>
@@ -136,7 +136,7 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
         />
 
           {!isCommentModalVisible && <TouchableOpacity onPress={() => setIsCommentModalVisible(true)}
-              className="absolute bottom-4 self-center bg-[#F7F7F7] rounded-full px-[20px] py-[8px]">
+              className="absolute bottom-[40px] self-center bg-[#F7F7F7] rounded-full px-[20px] py-[8px] ">
                 <AntDesign name="up" size={12} color="#9DA2A9" />
           </TouchableOpacity>}
       </Animated.View>

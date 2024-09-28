@@ -13,7 +13,13 @@ export default function RootLayout() {
     'Domine-Medium': require('../assets/fonts/Domine/static/Domine-Medium.ttf'),
     'Domine-SemiBold': require('../assets/fonts/Domine/static/Domine-SemiBold.ttf'),
     'Domine-Bold': require('../assets/fonts/Domine/static/Domine-Bold.ttf'),
+
     "Roboto-Mono": require("../assets/fonts/RobotoMono-Regular.ttf"),
+
+    'Geist': require('@/assets/fonts/Geist/Geist-Regular.ttf'),
+    'Geist-Medium': require('@/assets/fonts/Geist/Geist-Medium.ttf'),
+    'Geist-Bold': require('@/assets/fonts/Geist/Geist-Bold.ttf'),
+    'Geist-Light': require('@/assets/fonts/Geist/Geist-Light.ttf')
   });
 
   useEffect(() => {
