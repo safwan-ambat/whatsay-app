@@ -163,15 +163,15 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
 
               <BlurView intensity={10} tint="light" style={styles.inputContainer}>
               <LinearGradient
-  colors={['rgba(243, 244, 246, 0)', '#F3F4F6']}
-  start={{x: 0, y: 0}}
-  end={{x: 0, y: 1}}
-    style={StyleSheet.absoluteFill}
-  />
+                  colors={['rgba(243, 244, 246, 0)', '#F3F4F6']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 0, y: 1}}
+                    style={StyleSheet.absoluteFill}
+                  />
                 <View style={styles.inputField}>
                       {replyingTo && (
                         <View style={styles.replyingToContainer}>
-                          <Text style={styles.replyingToText}>
+                          <Text className='text-[14px] font-geist '>
                             Replying to {replyingTo.author.name}
                           </Text>
                           <TouchableOpacity onPress={() => setReplyingTo(null)}>
@@ -203,6 +203,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
 
 const styles = StyleSheet.create({
   modalContainer: {
+    
     height: MODAL_HEIGHT ,
     width: '100%',
     position: 'absolute',
@@ -210,6 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F4F6',
   },
   commentContainer: {
+    
     height: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.52 : SCREEN_HEIGHT * 0.53,
     width: '100%',
     position: 'absolute',
@@ -231,47 +233,49 @@ const styles = StyleSheet.create({
   commentList: {
     flex: 1,
   },
+
+
+// inputField
+
   inputContainer: {
     width:SCREEN_WIDTH,
-    paddingHorizontal: 16,
+    
     position:"absolute",
     height:94,
     bottom:0,
     
-   
   },
+
   inputField: {
     width:SCREEN_WIDTH,
-    paddingHorizontal: 16,
+    paddingHorizontal:16,
   },
   
   replyingToContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
+    paddingHorizontal:16,
   },
-  replyingToText: {
-    fontSize: 14,
-    color: 'gray',
-  },
+
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    
   },
+  
   input: {
     flex: 1,
     backgroundColor: "white",
     height: 48,
     borderRadius: 100,
     paddingHorizontal: 16,
-    marginRight: 8,
+    marginRight: -12,
   },
   commentIcon: {
     width: 68,
     height: 68,
-    transform: [{ translateY: 5 }],
+    transform: [
+      { translateY: 5 },
+      { translateX: 10 }],
   },
 });
 

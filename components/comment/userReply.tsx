@@ -23,8 +23,8 @@ const UserReply: React.FC<UserReplyProps> = ({ reply, navigation }) => {
         <View className="flex-row">
           <Image source={{ uri: reply.author.avatar }} className="w-8 h-8 rounded-full mr-2" />
           <View className="flex-1">
-            <Text className="font-bold text-[12px]">{reply.author.name}</Text>
-            <Text className="mt-1">{reply.content}</Text>
+            <Text className="font-geist text-[#000000]/60 text-[12px]">{reply.author.name}</Text>
+            <Text className="mt-1 font-geist text-[#000000] text-[16px]">{reply.content}</Text>
             <View className="flex-row mt-2 items-center">
               <TouchableOpacity onPress={handleLike} className="flex-row items-center">
                 <AntDesign name={liked ? "heart" : "hearto"} size={14} color={liked ? "red" : "black"} />
