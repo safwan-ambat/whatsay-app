@@ -1,14 +1,13 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { View, Text, Image, FlatList, Dimensions, SafeAreaView, ImageStyle, ViewStyle, TouchableOpacity,Animated,Platform } from 'react-native';
+import { View, Text, Image, FlatList, Dimensions, SafeAreaView, ImageStyle, ViewStyle, TouchableOpacity, Animated, Platform } from 'react-native';
 import { styled } from 'nativewind';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNewsItemAnimations } from '@/hooks/useAnimations';
 import { NewsItem, ExpandedNewsItemProps } from '@/types';
 import CommentSectionModal from '@/components/comment/commentSectionModal';
-import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import Reanimated, {
-} from 'react-native-reanimated';
+import Reanimated from 'react-native-reanimated';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -17,18 +16,12 @@ const StyledLinearGradient = styled(LinearGradient);
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-
-
 const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex, isVisible, onClose }) => {
   const flatListRef = useRef<FlatList<NewsItem>>(null);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
   
   const { animatedValues, closeModal } = useNewsItemAnimations(isCommentModalVisible, onClose);
-
-
-
-
 
   const renderItem = useCallback(({ item }: { item: NewsItem }) => {
     const imageWrapperStyle: ViewStyle = {
@@ -43,8 +36,8 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.4,
       shadowRadius: 5.84,
-      zIndex:50,
-      pointerEvents:"none",
+      zIndex: 50,
+      pointerEvents: "none",
     };
 
     const imageStyle: ImageStyle = {
@@ -61,9 +54,8 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
     };
 
     return (
-      
       <Animated.View style={[
-        { width: screenWidth,backgroundColor:'white', transform: [{ scale: animatedValues.scale }] }
+        { width: screenWidth, backgroundColor: isCommentModalVisible ? '#F3F4F6' : 'white', transform: [{ scale: animatedValues.scale }] }
       ]}>
         <Animated.View style={[
           imageWrapperStyle,
@@ -90,10 +82,9 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
             transform: [{ translateY: animatedValues.titlePosition }],
           }}>
             {isCommentModalVisible && (
-              <StyledText className="text-[22px] font- font-domine text-white">{item.title}</StyledText>
+              <StyledText className="text-[22px] font-domine text-white">{item.title}</StyledText>
             )}
           </Animated.View>
-          {/* dragIndicator */}
           <Animated.View style={{
             position: 'absolute',
             bottom: 12,
@@ -105,8 +96,8 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
             {isCommentModalVisible &&
             <View className='h-[4px] w-[24px] rounded-full bg-[#FFFFFF]/20' />}
           </Animated.View>
-
         </Animated.View>
+        
         <Animated.View style={{
           opacity: animatedValues.contentOpacity,
           transform: [{ 
@@ -127,25 +118,17 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
           </StyledView>
         </Animated.View>
 
-
-{/* commentSection */}
-        <CommentSectionModal
-          postId={item.id.toString()}
-          isVisible={isCommentModalVisible}
-          onClose={() => setIsCommentModalVisible(false)}
-        />
-
-          {!isCommentModalVisible && <TouchableOpacity onPress={() => setIsCommentModalVisible(true)}
-              className="absolute bottom-[40px] self-center bg-[#F7F7F7] rounded-full px-[20px] py-[8px] ">
-                <AntDesign name="up" size={12} color="#9DA2A9" />
-          </TouchableOpacity>}
+        {!isCommentModalVisible && (
+          <TouchableOpacity 
+            onPress={() => setIsCommentModalVisible(true)}
+            className="absolute bottom-[40px] self-center bg-[#F7F7F7] rounded-full px-[20px] py-[8px]"
+          >
+            <AntDesign name="up" size={12} color="#9DA2A9" />
+          </TouchableOpacity>
+        )}
       </Animated.View>
-      
     );
   }, [isCommentModalVisible, animatedValues]);
-    
-
-
 
   const getItemLayout = useCallback((_: any, index: number) => ({
     length: screenWidth,
@@ -158,38 +141,34 @@ const ExpandedNewsItem: React.FC<ExpandedNewsItemProps> = ({ items, initialIndex
     setCurrentIndex(slideIndex);
   }, []);
 
-
-
   return (
-        <Reanimated.View style={[
-          {
-            flex: 1,
-            marginTop:50
-            
-          },
-          // animatedStyle
-        ]}>
-          
-            <StyledView style={{ flex: 1,backgroundColor: 'white' }}>             
-              <FlatList
-                ref={flatListRef}
-                data={items}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                getItemLayout={getItemLayout}
-                onMomentumScrollEnd={handleScroll}
-                initialScrollIndex={initialIndex}
-                scrollEventThrottle={16}
-                decelerationRate="fast"
-                snapToInterval={screenWidth}
-                snapToAlignment="center"
-              />
-            </StyledView>
-         
-        </Reanimated.View>
+    <Reanimated.View style={[{ flex: 1, marginTop: 50 }]}>
+      <StyledView style={{ flex: 1, backgroundColor: 'white' }}>             
+        <FlatList
+          ref={flatListRef}
+          data={items}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          getItemLayout={getItemLayout}
+          onMomentumScrollEnd={handleScroll}
+          initialScrollIndex={initialIndex}
+          scrollEventThrottle={16}
+          decelerationRate="fast"
+          snapToInterval={screenWidth}
+          snapToAlignment="center"
+        />
+      </StyledView>
+      
+      {/* CommentSectionModal */}
+      <CommentSectionModal
+        postId={items[currentIndex].id.toString()}
+        isVisible={isCommentModalVisible}
+        onClose={() => setIsCommentModalVisible(false)}
+      />
+    </Reanimated.View>
   );
 };
 
