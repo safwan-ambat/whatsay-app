@@ -48,10 +48,6 @@ const App = () => {
                                 onPress={() => router.push("/discoverScreen")}
                                 title="Get Started"
                             />
-                            <CustomButton
-                                onPress={() => router.push("/index2")}
-                                title="Test file"
-                            />
                         </Animated.View>
 
                         <StatusBar style="light" />
