@@ -84,13 +84,13 @@ export const Card: React.FC<CardProps> = ({
     );
 
     if (!isFirst) {
-      return { 
+      return {
         transform: [
           { scale },
           { translateY },
           { rotate: `${rotate}deg` },
           { translateY: withTiming(index * 1, { duration: 300 }) },
-          { translateX: withTiming(index * 20, { duration:300 }) },
+          { translateX: withTiming(index * 20, { duration: 300 }) },
         ],
         opacity: interpolate(
           index,
@@ -112,7 +112,7 @@ export const Card: React.FC<CardProps> = ({
     <GestureDetector gesture={panGesture}>
       <TouchableOpacity activeOpacity={0.95} onPress={onPress}>
         <Animated.View style={[styles.card, { width: CARD_WIDTH, height: CARD_HEIGHT }, animatedCardStyle]}>
-          <Image source={card.image} style={styles.cardImage} />
+          <Image source={{ uri: card.image }} style={styles.cardImage} />
           <LinearGradient
             colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.6)', 'rgba(0,0,0,0.8)']}
             style={styles.gradient}
@@ -135,7 +135,7 @@ type Style = {
 
 const styles = StyleSheet.create<Style>({
   card: {
-    borderCurve:"continuous",
+    borderCurve: "continuous",
     borderRadius: 20,
     backgroundColor: 'white',
     position: 'absolute',
@@ -145,7 +145,7 @@ const styles = StyleSheet.create<Style>({
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
     overflow: "hidden",
-    alignSelf:'center'
+    alignSelf: 'center'
   },
   cardImage: {
     width: '100%',

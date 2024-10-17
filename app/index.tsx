@@ -45,7 +45,7 @@ const App = () => {
                                 .springify(20)}
                         >
                             <CustomButton
-                                onPress={() => router.push("/discoverScreen")}
+                                onPress={() => router.push("/discoverScreens")}
                                 title="Get Started"
                             />
                         </Animated.View>
