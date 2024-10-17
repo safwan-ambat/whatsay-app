@@ -36,7 +36,7 @@ export default function RootLayout() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="discoverScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="discoverScreens" options={{ headerShown: false }} />
           <Stack.Screen name="(news)/[id]" options={{ headerShown: false }} />
          
          
