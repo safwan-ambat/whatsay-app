@@ -28,10 +28,12 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
     const translateX = useSharedValue(0);
     const router = useRouter();
 
-    const handleSwipe = useCallback((swipedArticle:any, direction: 'left' | 'right') => {
+    const handleSwipe = useCallback((swipedArticle: any, direction: 'left' | 'right') => {
+        console.log("swipiing");
+        
         try {
-            setArticles((prevData):any => {
-                const newData =prevData.filter((article:any)=> article.id !== swipedArticle.id);
+            setArticles((prevData): any => {
+                const newData = prevData.filter((article: any) => article.id !== swipedArticle.id);
                 newData.push(swipedArticle);
                 return newData;
             });
@@ -40,10 +42,13 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
         }
     }, []);
 
-    const handleItemPress = useCallback((category: any, itemId: number) => {
+    const handleItemPress = useCallback((categoryId: any, itemId: number) => {
         router.push({
-            pathname: '/(news)/[id]',
-            params: { id: itemId.toString() }
+            pathname: '/(news)/[slug]',
+            params: {
+                slug: itemId.toString(),  // This represents `newsId`
+                categoryId: categoryId.toString(),
+            }
         });
     }, [router]);
 
@@ -87,7 +92,7 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
                                 translateX.value = 0;
                                 activeIndex.value = 0;
                             }}
-                            onPress={() => handleItemPress(category, item.id)}
+                            onPress={() => handleItemPress(category.id, item.id)}
                         />
                     )
                 }).reverse()}
@@ -106,6 +111,5 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         overflow: 'visible',
         paddingBottom: Platform.OS === 'ios' ? 20 : 60,
-
     },
 });

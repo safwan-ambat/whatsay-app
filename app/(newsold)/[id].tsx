@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { View, Platform, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import News_data from '@/constants/news-data';
-import ExpandedNewsItem from '@/(news)/expandedScreen';
+import ExpandedNewsItem from '@/(newsold)/expandedScreen';
 import { NewsCategory } from '@/types';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
