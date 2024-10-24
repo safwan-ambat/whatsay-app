@@ -118,7 +118,7 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                 }}>
                     <StyledView className="p-[16px]">
                         <Text className="text-[20px] font-domine mb-[12px]">{item.title}</Text>
-                        <Text className="font-geist font-light mb-4 text-[16px]">{item.text}</Text>
+                        <Text className="font-geist font-light mb-4 text-[16px]">{item.summary}</Text>
                         <StyledView className="mb-4 bg-green-100 text-green-800 rounded-full mr-auto border border-green-300">
                             <Text className="text-sm px-4 py-1 rounded-full inline-block">
                                 sports
