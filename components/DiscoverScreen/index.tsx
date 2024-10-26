@@ -24,7 +24,7 @@ const DiscoverScreen = () => {
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
             <LinearGradient
                 colors={['rgba(5,225,215,0.3)', 'rgba(5,235,215,0)']}
-                className="h-[100px] w-full absolute top-10 z-10">
+                className="h-[100px] w-full absolute top-0 z-10 bg-fixed">
             </LinearGradient>
             {categories.map((category: CategoryType) => (
                 <CategoryArticles category={category} key={category.id} />

@@ -1,4 +1,4 @@
-import { View, Text, Image, ImageBackground } from "react-native";
+import { View, Text, Image, ImageBackground, Platform } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -39,6 +39,7 @@ const App = () => {
                         </Animated.View>
 
                         <Animated.View
+                        style={{ marginBottom: Platform.OS === 'ios' ? 0 : 20 }}
                             entering={FadeInDown.delay(300)
                                 .mass(0.5)
                                 .stiffness(80)

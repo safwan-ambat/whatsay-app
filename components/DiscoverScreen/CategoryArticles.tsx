@@ -29,7 +29,7 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
     const router = useRouter();
 
     const handleSwipe = useCallback((swipedArticle: any, direction: 'left' | 'right') => {
-        console.log("swipiing");
+        console.log("swiping");
         
         try {
             setArticles((prevData): any => {
