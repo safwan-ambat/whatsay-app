@@ -4,25 +4,38 @@
     "slug": "whatsay",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/appIcon.png",
+    "icon": "./assets/images/appIcon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splashScreen.png",
+      "image": "./assets/images/splashScreen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.safwanambat.whatsay"
+      "bundleIdentifier": "com.safwanambat.whatsay",
+      "buildNumber": "1",
+      "infoPlist": {
+        "CFBundleIconName": "AppIcon",
+        "UIBackgroundModes": [],
+        "NSCameraUsageDescription": "This app needs access to the camera to take photos.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to photos."
+      },
+      "icon": "./assets/images/appIcon.png",
+      "requireFullScreen": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/splashScreen.png",
-        "backgroundColor": "#ffffff",
-        "permissions": ["VIBRATE"]
+        "foregroundImage": "./assets/images/splashScreen.png",
+        "backgroundColor": "#ffffff"
       },
-      "package": "com.safwanambat.whatsay"
+      "permissions": ["VIBRATE"],
+      "package": "com.safwanambat.whatsay",
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
