@@ -4,7 +4,7 @@
     "slug": "whatsay",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/iconApp.png",
+    "icon": "./assets/appIcon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
