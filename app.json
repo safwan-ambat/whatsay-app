@@ -4,7 +4,7 @@
     "slug": "whatsay",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/appIcon.png",
+    "icon": "./assets/images/appstore.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -22,7 +22,7 @@
         "NSCameraUsageDescription": "This app needs access to the camera to take photos.",
         "NSPhotoLibraryUsageDescription": "This app needs access to photos."
       },
-      "icon": "./assets/images/appIcon.png",
+      "icon": "./assets/images/appstore.png",
       "requireFullScreen": true,
       "config": {
         "usesNonExemptEncryption": false
