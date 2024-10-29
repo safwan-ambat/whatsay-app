@@ -11,11 +11,6 @@
       "distribution": "internal"
     },
     "production": {},
-    "simulator": {
-      "ios": {
-        "simulator": true
-      }
-    },
     "androidapk": {
       "android": {
         "buildType": "apk"
@@ -23,6 +18,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "safwanambat@gmail.com",
+        "ascAppId": "6737504537",
+        "appleTeamId": "HDLYD4QM4F"
+      }
+    }
   }
 }
