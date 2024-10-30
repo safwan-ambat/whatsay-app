@@ -4,7 +4,7 @@
     "slug": "whatsay",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/appstore.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -22,10 +22,22 @@
         "NSCameraUsageDescription": "This app needs access to the camera to take photos.",
         "NSPhotoLibraryUsageDescription": "This app needs access to photos."
       },
-      "icon": "./assets/images/appstore.png",
+      "icon": "./assets/images/icon.png",
       "requireFullScreen": true,
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "icons": {
+        "app": {
+          "ios": {
+            "120": "./assets/ios-icons/icon-120x120.png",
+            "180": "./assets/ios-icons/icon-180x180.png",
+            "76": "./assets/ios-icons/icon-76x76.png",
+            "152": "./assets/ios-icons/icon-152x152.png",
+            "167": "./assets/ios-icons/icon-167x167.png",
+            "1024": "./assets/ios-icons/icon-1024x1024.png"
+          }
+        }
       }
     },
     "android": {
