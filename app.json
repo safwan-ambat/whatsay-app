@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.safwanambat.whatsay",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "infoPlist": {
         "CFBundleIconName": "AppIcon",
         "UIBackgroundModes": [],
