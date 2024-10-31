@@ -13,8 +13,8 @@
     "production": {
       "ios": {
         "buildConfiguration": "Release",
-        "autoIncrement": true,
-        "image": "latest"
+        "image": "latest",
+        "resourceClass": "m-medium"
       }
     },
     "androidapk": {
