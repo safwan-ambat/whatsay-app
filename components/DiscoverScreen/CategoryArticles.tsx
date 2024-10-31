@@ -86,6 +86,7 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
                             totalCards={Math.min(articles.length, 3)}
                             activeIndex={activeIndex}
                             translateX={translateX}
+                            categoryIndex={category.index}
                             onSwipe={(direction) => {
                                 handleSwipe(item, direction);
                                 translateX.value = 0;

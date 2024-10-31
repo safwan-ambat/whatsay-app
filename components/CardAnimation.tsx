@@ -24,6 +24,7 @@ interface CardProps {
   translateX: SharedValue<number>;
   onSwipe: (direction: 'left' | 'right') => void;
   onPress: () => void;
+  categoryIndex: number;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -34,11 +35,33 @@ export const Card: React.FC<CardProps> = ({
   translateX,
   onSwipe,
   onPress,
+  categoryIndex
 }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const CARD_WIDTH = SCREEN_WIDTH * 0.75;
-  const CARD_HEIGHT = CARD_WIDTH * (320 / 273); // 4:3 aspect ratio
+  const CARD_HEIGHT = CARD_WIDTH * (320 / 273);
   const isFirst = index === 0;
+
+  const getRotationValues = (categoryIdx: number) => {
+    switch (categoryIdx) {
+      case 0:
+        return { first: [-10, 0, 10], rest: [5, 0, 0] };
+      case 1:
+        return { first: [-10, 0, 10], rest: [-5, 0, 0] };
+      case 2:
+        return { first: [-10, 0, 10], rest: [0, 0, 0] };
+      case 3:
+        return { first: [-10, 0, 10], rest: [5, 0, 0] };
+      case 4:
+        return { first: [-10, 0, 10], rest: [-5, 0, 0] };
+      case 5:
+        return { first: [-10, 0, 10], rest: [0, 0, 0] };
+      default:
+        return { first: [-10, 0, 10], rest: [5, 0, -5] };
+    }
+  };
+
+  const rotationValues = getRotationValues(categoryIndex);
 
   const removeCard = useCallback((direction: 'left' | 'right') => {
     'worklet';
@@ -80,7 +103,7 @@ export const Card: React.FC<CardProps> = ({
     const rotate = interpolate(
       isFirst ? translateX.value : activeIndex.value,
       isFirst ? [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2] : [index - 1, index, index + 1],
-      isFirst ? [-10, 0, 10] : [5, 0, -5]
+      isFirst ? rotationValues.first : rotationValues.rest
     );
 
     if (!isFirst) {

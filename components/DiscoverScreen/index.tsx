@@ -11,12 +11,20 @@ import { getAllCategories } from '@/api/apiCategories';
 
 const DiscoverScreen = () => {
     const [categories, setCategories] = useState<CategoryType[]>([]);
-
-
+    
     useEffect(() => {
         (async () => {
-            const response = await getAllCategories()
-            setCategories(response)
+            try {
+                const response = await getAllCategories();
+                // Ensure index is number type
+                const categoriesWithIndex = response.map((category: Omit<CategoryType, 'index'>, idx: number) => ({
+                    ...category,
+                    index: Number(idx) // Explicitly convert to number
+                }));
+                setCategories(categoriesWithIndex);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
         })();
     }, []);
 
@@ -27,7 +35,10 @@ const DiscoverScreen = () => {
                 className="h-[100px] w-full absolute top-0 z-10 bg-fixed">
             </LinearGradient>
             {categories.map((category: CategoryType) => (
-                <CategoryArticles category={category} key={category.id} />
+                <CategoryArticles 
+                    category={category} 
+                    key={category.id}
+                />
             ))}
         </ScrollView>
     )
@@ -41,4 +52,4 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         paddingTop: 88
     }
-})
+});

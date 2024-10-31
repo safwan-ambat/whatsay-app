@@ -4,4 +4,6 @@ export type CategoryType = {
     description: string;
     created_at: Date | string;
     updated_at: Date | string;
+    index: number;
+    
 }
