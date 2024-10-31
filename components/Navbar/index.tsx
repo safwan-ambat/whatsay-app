@@ -13,7 +13,7 @@ const NavBar = () => {
                 <Image source={menuIcon} className='w-9 h-9' resizeMode='contain' />
                 <Text className='font-domine text-2xl text-black'>Discover</Text>
                 <TouchableOpacity>
-                    <Image source={searchIcon} className='w-9 h-9' resizeMode='contain' />
+                    <Image source={searchIcon} className='w-9 h-9 hidden' resizeMode='contain' />
                 </TouchableOpacity>
             </View>
         </View>

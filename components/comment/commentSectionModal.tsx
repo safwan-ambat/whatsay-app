@@ -133,6 +133,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
 
   const handlePostComment = () => {
     if (newComment.trim() === '') return;
+    Keyboard.dismiss();
 
     const currentUser: User = {
       id: 'currentUser',
