@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 11.0.3"
+    "version": ">= 11.0.3",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -14,7 +15,9 @@
       "ios": {
         "buildConfiguration": "Release",
         "image": "latest",
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "autoIncrement": true,
+        "simulator": false
       }
     },
     "androidapk": {
