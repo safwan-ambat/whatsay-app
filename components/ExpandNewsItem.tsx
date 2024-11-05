@@ -2,7 +2,7 @@ import { useNewsItemAnimations } from '@/hooks/useAnimations';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styled } from 'nativewind';
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions } from 'react-native';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native';
@@ -14,6 +14,8 @@ import { FlatList } from 'react-native';
 import { View } from 'react-native';
 import Reanimated from 'react-native-reanimated';
 import CommentSectionModal from './comment/commentSectionModal';
+import { getAllCategories } from '@/api/apiCategories';
+import { CategoryType } from '@/types/CategoryTypes';
 
 const StyledView = styled(View);
 const StyledImage = styled(Image);
@@ -21,6 +23,8 @@ const StyledImage = styled(Image);
 const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) => {
 
     const findArticleIndex = items.findIndex((item: any) => item.id == initialArticleId);
+
+    const [categories, setCategories] = useState<CategoryType[]>([]);
 
     const flatListRef = useRef<any>(null);
 
@@ -31,7 +35,26 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
 
     const [activeArticle, setActiveArticle] = useState(initialArticleId);
 
-    const renderItem = useCallback(({ item }: { item: any }) => {
+    useEffect(() => {
+        (async () => {
+            try {
+                const apiRes = await getAllCategories();
+                if (apiRes) {
+                    setCategories(apiRes);
+                }
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        })();
+    }, []);
+
+
+    const renderScreen = ({ item }: any) => {
+        const category: any = categories.find((category: CategoryType) => {
+            if (category.id === item.category_id) {
+                return category
+            }
+        });
 
         const imageWrapperStyle: ViewStyle = {
             height: Platform.OS === 'ios' ? screenHeight * 0.42 : screenHeight * 0.46,
@@ -120,9 +143,11 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                         <Text className="text-[20px] font-domine mb-[12px]">{item.title}</Text>
                         <Text className="font-geist font-light mb-4 text-[16px]">{item.summary}</Text>
                         <StyledView className="mb-4 bg-green-100 text-green-800 rounded-full mr-auto border border-green-300">
-                            <Text className="text-sm px-4 py-1 rounded-full inline-block">
-                                sports
-                            </Text>
+                            {category &&
+                                <Text className="text-sm px-4 py-1 rounded-full inline-block">
+                                    {category?.name}
+                                </Text>
+                            }
                         </StyledView>
                     </StyledView>
                 </Animated.View>
@@ -137,7 +162,7 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                 )}
             </Animated.View>
         );
-    }, [isCommentModalVisible, animatedValues]);
+    }
 
     const getItemLayout = useCallback((_: any, index: number) => ({
         length: screenWidth,
@@ -156,7 +181,7 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                 <FlatList
                     ref={flatListRef}
                     data={items}
-                    renderItem={renderItem}
+                    renderItem={renderScreen}
                     keyExtractor={(item) => item.id.toString()}
                     horizontal
                     pagingEnabled

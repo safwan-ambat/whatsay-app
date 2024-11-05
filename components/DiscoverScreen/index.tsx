@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import CategoryArticles from './CategoryArticles';
-import { getAllCategories } from '@/api/apiCategories';
+import { getCategories } from '@/api/apiCategories';
 
 const DiscoverScreen = () => {
     const [categories, setCategories] = useState<CategoryType[]>([]);
@@ -15,7 +15,7 @@ const DiscoverScreen = () => {
     useEffect(() => {
         (async () => {
             try {
-                const response = await getAllCategories();
+                const response = await getCategories();
                 // Ensure index is number type
                 const categoriesWithIndex = response.map((category: Omit<CategoryType, 'index'>, idx: number) => ({
                     ...category,
