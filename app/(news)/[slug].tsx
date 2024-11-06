@@ -2,21 +2,25 @@ import { getAllArticlesByCategories } from '@/api/apiArticles';
 import ExpandNewsItem from '@/components/ExpandNewsItem';
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Dimensions } from 'react-native';
 import { Text } from 'react-native';
 import { View } from 'react-native';
 import { GestureHandlerRootView, PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
-import Animated, { runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { 
+  runOnJS, 
+  useAnimatedGestureHandler, 
+  useAnimatedStyle, 
+  useSharedValue, 
+  withSpring 
+} from 'react-native-reanimated';
 
 const ContentWrapper = Platform.OS === 'android' ? GestureHandlerRootView : View;
 
 const NewsDetails = () => {
-
   const { categoryId, slug } = useLocalSearchParams<{ categoryId: string, slug: string }>();
-
   const [newsArticles, setNewsArticles] = useState<any>();
   const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
-
+  
   const translateY = useSharedValue(0);
   const router = useRouter();
 
@@ -31,25 +35,25 @@ const NewsDetails = () => {
       context.startY = translateY.value;
     },
     onActive: (event, context) => {
-      // Only respond to vertical gestures
-      if (Math.abs(event.translationY) > Math.abs(event.translationX)) {
-        translateY.value = context.startY + event.translationY;
+      // Only allow downward movement
+      if (event.translationY >= 0) {
+        translateY.value = event.translationY;
       }
     },
     onEnd: (event) => {
+      // If swiped down with enough force, close the modal
       if (event.translationY > 50 && event.velocityY > 50) {
         runOnJS(handleCloseModal)();
       } else {
+        // Otherwise, spring back to original position
         translateY.value = withSpring(0);
       }
     },
   });
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: translateY.value }],
-    };
-  });
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
 
   useEffect(() => {
     (async () => {
@@ -70,7 +74,7 @@ const NewsDetails = () => {
     <ContentWrapper style={styles.container}>
       <PanGestureHandler
         onGestureEvent={gestureHandler}
-        activeOffsetY={[-10, 10]}
+        activeOffsetY={[0, 10]}
         failOffsetX={[-20, 20]}>
         <Animated.View style={[styles.contentContainer, animatedStyle]}>
           <ExpandNewsItem
