@@ -1,17 +1,10 @@
 import { useNewsItemAnimations } from '@/hooks/useAnimations';
+import { useSwipeGesture } from '@/hooks/useSwipeUp';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styled } from 'nativewind';
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions } from 'react-native';
-import { Text } from 'react-native';
-import { TouchableOpacity } from 'react-native';
-import { Image } from 'react-native';
-import { Animated } from 'react-native';
-import { ImageStyle } from 'react-native';
-import { Platform, ViewStyle } from 'react-native';
-import { FlatList } from 'react-native';
-import { View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Dimensions, PanResponder, Text, TouchableOpacity, Image, Animated, ImageStyle, Platform, ViewStyle, FlatList, View } from 'react-native';
 import Reanimated from 'react-native-reanimated';
 import CommentSectionModal from './comment/commentSectionModal';
 import { getAllCategories } from '@/api/apiCategories';
@@ -25,14 +18,10 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
     const findArticleIndex = items.findIndex((item: any) => item.id == initialArticleId);
 
     const [categories, setCategories] = useState<CategoryType[]>([]);
-
     const flatListRef = useRef<any>(null);
-
     const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-
     const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
     const { animatedValues, closeModal } = useNewsItemAnimations(isCommentModalVisible, onClose);
-
     const [activeArticle, setActiveArticle] = useState(initialArticleId);
 
     useEffect(() => {
@@ -48,14 +37,14 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
         })();
     }, []);
 
+    const panResponder = useSwipeGesture({
+        onSwipeUp: () => setIsCommentModalVisible(true),
+        isCommentModalVisible  // Pass the modal state
+      });
 
     const renderScreen = ({ item }: any) => {
-        const category: any = categories.find((category: CategoryType) => {
-            if (category.id === item.category_id) {
-                return category
-            }
-        });
-
+        const category = categories.find((cat: CategoryType) => cat.id === item.category_id);
+        
         const imageWrapperStyle: ViewStyle = {
             height: Platform.OS === 'ios' ? screenHeight * 0.42 : screenHeight * 0.46,
             borderTopRightRadius: 20,
@@ -86,9 +75,10 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
         };
 
         return (
-            <Animated.View style={[
-                { width: screenWidth, backgroundColor: isCommentModalVisible ? '#F3F4F6' : 'white', transform: [{ scale: animatedValues.scale }] }
-            ]}>
+            <Animated.View 
+                style={[{ width: screenWidth, backgroundColor: isCommentModalVisible ? '#F3F4F6' : 'white', transform: [{ scale: animatedValues.scale }] }]}
+                {...panResponder.panHandlers}
+            >
                 <Animated.View style={[
                     imageWrapperStyle,
                     {
@@ -100,10 +90,7 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                 ]}>
                     <StyledImage source={{ uri: item.image_url }} style={imageStyle} resizeMode="cover" />
                     <Animated.View style={[gradientStyle, { opacity: animatedValues.gradientOpacity }]}>
-                        <LinearGradient
-                            colors={['transparent', 'rgba(0,0,0,0.8)']}
-                            style={{ flex: 1 }}
-                        />
+                        <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={{ flex: 1 }} />
                     </Animated.View>
 
                     <Animated.View style={{
@@ -140,6 +127,7 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                     }],
                 }}>
                     <StyledView className="p-[16px]">
+                        
                         <Text className="text-[20px] font-domine mb-[12px]">{item.title}</Text>
                         <Text className="font-geist font-light mb-4 text-[16px]">{item.summary}</Text>
                         <StyledView className="mb-4 bg-green-100 text-green-800 rounded-full mr-auto border border-green-300">
@@ -152,14 +140,23 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                     </StyledView>
                 </Animated.View>
 
-                {!isCommentModalVisible && (
+                {/* {!isCommentModalVisible && (
                     <TouchableOpacity
                         onPress={() => setIsCommentModalVisible(true)}
                         className="absolute bottom-[40px] self-center bg-[#F7F7F7] rounded-full px-[20px] py-[8px]"
                     >
                         <AntDesign name="up" size={12} color="#9DA2A9" />
                     </TouchableOpacity>
+                )} */}
+                {!isCommentModalVisible && (
+                    <View
+                       
+                        className="absolute bottom-[40px] self-center bg-[#F7F7F7] rounded-full px-[20px] py-[8px]"
+                    >
+                        <AntDesign name="up" size={12} color="#9DA2A9" />
+                    </View>
                 )}
+
             </Animated.View>
         );
     }
@@ -196,7 +193,6 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                 />
             </StyledView>
 
-            {/* CommentSectionModal */}
             <CommentSectionModal
                 postId={activeArticle}
                 isVisible={isCommentModalVisible}
@@ -206,4 +202,4 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
     )
 }
 
-export default ExpandNewsItem
+export default ExpandNewsItem;
