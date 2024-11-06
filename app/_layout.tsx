@@ -30,6 +30,10 @@ export default function RootLayout() {
     const hideSplash = async () => {
       try {
         if (error) throw error;
+        
+        // Add minimum delay for splash screen (3 seconds)
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
         if (fontsLoaded) {
           await SplashScreen.hideAsync();
         }
@@ -56,23 +60,23 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <Stack 
-          screenOptions={{ 
+        <Stack
+          screenOptions={{
             headerShown: false,
             animation: 'none',
-            gestureEnabled: false 
+            gestureEnabled: false
           }}
         >
           <Stack.Screen name="index" />
-          <Stack.Screen 
-            name="discoverScreens" 
+          <Stack.Screen
+            name="discoverScreens"
             options={{
               gestureEnabled: true,
               animation: 'fade'
             }}
           />
-          <Stack.Screen 
-            name="(news)/[slug]" 
+          <Stack.Screen
+            name="(news)/[slug]"
             options={{
               gestureEnabled: true,
               animation: 'slide_from_right'
