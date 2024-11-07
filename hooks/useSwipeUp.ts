@@ -14,7 +14,7 @@ export const useSwipeGesture = ({
 }: UseSwipeGestureProps) => {
   const swipeDetected = useRef(false);
   const { height: screenHeight } = Dimensions.get('window');
-  const bottomThreshold = Platform.OS === 'ios' ? screenHeight * 0.7 : screenHeight * 0.75;
+  const bottomThreshold = Platform.OS === 'ios' ? screenHeight * 0.6 : screenHeight * 0.7;
 
   const panResponder = useRef(
     PanResponder.create({
