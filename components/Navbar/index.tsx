@@ -12,9 +12,9 @@ const NavBar = () => {
             <View className='flex-row justify-between items-center pt-4 px-[18px] pb-5 rounded-b-[60px] bg-white'>
                 <Image source={menuIcon} className='w-9 h-9' resizeMode='contain' />
                 <Text className='font-domine text-2xl text-black'>Discover</Text>
-                <TouchableOpacity>
-                    <Image source={searchIcon} className='w-9 h-9 hidden' resizeMode='contain' />
-                </TouchableOpacity>
+                <View className='w-9 h-9'>
+                    {/* <Image source={searchIcon} className='w-9 h-9 hidden' resizeMode='contain' /> */}
+                </View>
             </View>
         </View>
     )

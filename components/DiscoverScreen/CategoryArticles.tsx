@@ -14,7 +14,19 @@ type CategoryIconKey = 'Curated for you' | 'International News' | string;
 
 const categoryIcons: Record<CategoryIconKey, any> = {
     'Curated for you': curatedIcon,
-    'Latest News': internationalIcon,
+    'International News': internationalIcon,
+    'Breaking news': internationalIcon,
+    'Business': internationalIcon,
+    'Entertainment': internationalIcon,
+    'Health': internationalIcon,
+    'Lifestyle': internationalIcon,
+    'Opinions': internationalIcon,
+    'Politics': internationalIcon,
+    'Science': internationalIcon,
+    'Sports': internationalIcon,
+    'Technology': internationalIcon,
+    'Travel': internationalIcon,
+    'World': internationalIcon,
     // Add more mappings as needed
 };
 
@@ -68,9 +80,9 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
             <View className='flex-row items-center pl-[16px]'>
                 <Image
                     source={categoryIcons[category.name as CategoryIconKey]}
-                    className='w-[24px] h-[24px] mr-2'
+                    className='w-[24px] h-[24px] mr-[8px]'
                     resizeMode='contain' />
-                <Text className='text-xl font-domine'>{category.name}</Text>
+                <Text className='text-[20px] font-domine'>{category.name}</Text>
             </View>
             <View style={[styles.cardContainer, , { width: SCREEN_WIDTH }]}>
                 {articles.slice(0, 3).map((item, itemIndex) => {
