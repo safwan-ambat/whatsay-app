@@ -84,7 +84,7 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
             <View className='flex-row items-center pl-[16px]'>
                 <Image
                     source={categoryIcons[category.name as CategoryIconKey]}
-                    className='w-[24px] h-[24px] mr-[8px]'
+                    className='w-[28px] h-[28px] mr-[8px]'
                     resizeMode='contain' />
                 <Text className='text-[20px] font-domine'>{category.name}</Text>
             </View>
