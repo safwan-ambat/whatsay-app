@@ -1,33 +1,37 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Image, Platform, StyleSheet, useWindowDimensions, View } from 'react-native'
-import curatedIcon from '@/assets/categoryIcons/curatedIcon.webp';
-import internationalIcon from '@/assets/categoryIcons/InternationalIcon.webp';
 import { CategoryType } from '@/types/CategoryTypes';
 import { Text } from 'react-native';
-import images from "@/constants/news-images";
 import { Card } from '../CardAnimation';
 import { useSharedValue } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { getAllArticlesByCategories } from '@/api/apiArticles';
+import {
+    automobile,breakingNews,business,curatedForYou,entertainment,health,
+    internationalNews,lifestyle,opinions,politics,science,sports,startup,technology,
+    travel,
+    world
+} from '@/assets';
 
-type CategoryIconKey = 'Curated for you' | 'International News' | string;
+type CategoryIconKey = 'categoryKey' | string;
 
 const categoryIcons: Record<CategoryIconKey, any> = {
-    'Curated for you': curatedIcon,
-    'International News': internationalIcon,
-    'Breaking news': internationalIcon,
-    'Business': internationalIcon,
-    'Entertainment': internationalIcon,
-    'Health': internationalIcon,
-    'Lifestyle': internationalIcon,
-    'Opinions': internationalIcon,
-    'Politics': internationalIcon,
-    'Science': internationalIcon,
-    'Sports': internationalIcon,
-    'Technology': internationalIcon,
-    'Travel': internationalIcon,
-    'World': internationalIcon,
-    // Add more mappings as needed
+    'Automobile': automobile,
+    'Breaking news': breakingNews,
+    'Business': business,
+    'Curated for you': curatedForYou,
+    'Entertainment': entertainment,
+    'Health': health,
+    'International News': internationalNews,
+    'Lifestyle': lifestyle,
+    'Opinions': opinions,
+    'Politics': politics,
+    'Science': science,
+    'Sports': sports,
+    'Technology': technology,
+    'World': world,
+    'Travel': travel,
+    'Startup': startup,
 };
 
 const CategoryArticles = ({ category }: { category: CategoryType }) => {
