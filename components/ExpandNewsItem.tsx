@@ -10,6 +10,61 @@ import CommentSectionModal from './comment/commentSectionModal';
 import { getAllCategories } from '@/api/apiCategories';
 import { CategoryType } from '@/types/CategoryTypes';
 
+type ColorScheme = {
+    background: string;
+    text: string;
+    border: string;
+  };
+
+  const getCategoryColors = (categoryName: string): ColorScheme => {
+    const colorMap: { [key: string]: ColorScheme } = {
+      Technology: {
+        background: 'bg-blue-100',
+        text: 'text-blue-800',
+        border: 'border-blue-300'
+      },
+      Health: {
+        background: 'bg-green-100',
+        text: 'text-green-800',
+        border: 'border-green-300'
+      },
+      Politics: {
+        background: 'bg-red-100',
+        text: 'text-red-800',
+        border: 'border-red-300'
+      },
+      Business: {
+        background: 'bg-purple-100',
+        text: 'text-purple-800',
+        border: 'border-purple-300'
+      },
+      Entertainment: {
+        background: 'bg-pink-100',
+        text: 'text-pink-800',
+        border: 'border-pink-300'
+      },
+      Sports: {
+        background: 'bg-orange-100',
+        text: 'text-orange-800',
+        border: 'border-orange-300'
+      },
+      Science: {
+        background: 'bg-indigo-100',
+        text: 'text-indigo-800',
+        border: 'border-indigo-300'
+      }
+    };
+  
+    // Default color scheme if category is not found
+    const defaultColors: ColorScheme = {
+      background: 'bg-gray-100',
+      text: 'text-gray-800',
+      border: 'border-gray-300'
+    };
+  
+    return colorMap[categoryName] || defaultColors;
+  };
+
 const StyledView = styled(View);
 const StyledImage = styled(Image);
 
@@ -130,14 +185,16 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                         
                         <Text className="text-[20px] font-domine mb-[12px]">{item.title}</Text>
                         <Text className="font-geist font-light mb-4 text-[16px]">{item.summary}</Text>
-                        <StyledView className="mb-4 bg-green-100 text-green-800 rounded-full mr-auto border border-green-300">
-                            {category &&
-                                <Text className="text-sm px-4 py-1 rounded-full inline-block">
-                                    {category?.name}
+                        
+                        {category && (
+                            <StyledView className={`mb-4 mr-auto border rounded-full ${getCategoryColors(category.name).background} ${getCategoryColors(category.name).border}`}>
+                                <Text className={`text-sm px-4 py-1 rounded-full inline-block ${getCategoryColors(category.name).text}`}>
+                                {category.name}
                                 </Text>
-                            }
+                            </StyledView>
+                            )}
                         </StyledView>
-                    </StyledView>
+                    
                 </Animated.View>
 
                 {/* {!isCommentModalVisible && (
