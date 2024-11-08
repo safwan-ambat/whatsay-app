@@ -1,5 +1,5 @@
 import { useRef, useMemo, useCallback, useEffect } from 'react';
-import { Animated, Easing, PanResponder, PanResponderGestureState, Dimensions } from 'react-native';
+import { Animated, Easing, PanResponder, PanResponderGestureState, Dimensions, Platform } from 'react-native';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -14,9 +14,13 @@ interface AnimatedValues {
 }
 
 const SWIPE_THRESHOLD = 100;
+const ANIMATION_CONFIG = {
+  duration: Platform.select({ ios: 250, android: 300 }),
+  easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+};
 
 export const useNewsItemAnimations = (isCommentSectionOpen: boolean, onClose: () => void) => {
-  const animatedValues = useMemo<AnimatedValues>(() => ({
+  const animatedValuesRef = useRef<AnimatedValues>({
     imageSize: new Animated.Value(100),
     gradientOpacity: new Animated.Value(0),
     scale: new Animated.Value(1),
@@ -24,36 +28,46 @@ export const useNewsItemAnimations = (isCommentSectionOpen: boolean, onClose: ()
     dragIndicator: new Animated.Value(1),
     contentOpacity: new Animated.Value(1),
     modalY: new Animated.Value(0),
-  }), []);
+  });
+
+  const animatedValues = useMemo(() => animatedValuesRef.current, []);
 
   const closeModal = useCallback(() => {
     Animated.timing(animatedValues.modalY, {
       toValue: screenHeight,
-      duration: 300,
+      duration: ANIMATION_CONFIG.duration,
       useNativeDriver: true,
-      easing: Easing.out(Easing.ease),
+      easing: ANIMATION_CONFIG.easing,
     }).start(() => {
       onClose();
-      animatedValues.modalY.setValue(0);
+      requestAnimationFrame(() => {
+        animatedValues.modalY.setValue(0);
+      });
     });
   }, [animatedValues.modalY, onClose]);
 
+  const panResponder = useMemo(() => {
+    let lastGestureTime = 0;
+    const GESTURE_DELAY = 1000 / 60;
 
-  const panResponder = useMemo(() => PanResponder.create({
-    onMoveShouldSetPanResponder: (_, { dy, dx }) => {
-      return Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 5 && !isCommentSectionOpen;
-    },
-    onPanResponderMove: (_, { dy }) => {
-      if (dy > 0 && !isCommentSectionOpen) {
-        animatedValues.modalY.setValue(dy);
-      }
-    },
-    onPanResponderRelease: (_, gestureState) => {
-      if (!isCommentSectionOpen) {
-        handlePanResponderRelease(gestureState);
-      }
-    },
-  }), [isCommentSectionOpen, animatedValues.modalY]);
+    return PanResponder.create({
+      onMoveShouldSetPanResponder: (_, { dy, dx }) => {
+        const now = Date.now();
+        if (now - lastGestureTime < GESTURE_DELAY) return false;
+        lastGestureTime = now;
+        return Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 5 && !isCommentSectionOpen;
+      },
+      onPanResponderMove: Animated.event(
+        [null, { dy: animatedValues.modalY }],
+        { useNativeDriver: true }
+      ),
+      onPanResponderRelease: (_, gestureState) => {
+        if (!isCommentSectionOpen) {
+          handlePanResponderRelease(gestureState);
+        }
+      },
+    });
+  }, [isCommentSectionOpen, animatedValues.modalY]);
 
   const handlePanResponderRelease = useCallback((gestureState: PanResponderGestureState) => {
     if (!isCommentSectionOpen) {
@@ -63,60 +77,63 @@ export const useNewsItemAnimations = (isCommentSectionOpen: boolean, onClose: ()
         Animated.spring(animatedValues.modalY, {
           toValue: 0,
           useNativeDriver: true,
-          tension: 60,
-          friction: 7,
+          tension: 65,
+          friction: 10,
         }).start();
       }
     }
   }, [isCommentSectionOpen, animatedValues.modalY, closeModal]);
 
- 
-
   useEffect(() => {
-    const animations = [
-      Animated.timing(animatedValues.imageSize, {
-        toValue: isCommentSectionOpen ? 94 : 100,
-        duration: 300,
-        useNativeDriver: false,
-        easing: Easing.inOut(Easing.ease),
-      }),
-      Animated.timing(animatedValues.gradientOpacity, {
-        toValue: isCommentSectionOpen ? 1 : 0,
-        duration: 300,
-        useNativeDriver: false,
-      }),
-      Animated.timing(animatedValues.titlePosition, {
-        toValue: isCommentSectionOpen ? 0 : 200,
-        duration: 300,
-        useNativeDriver: true,
-        easing: Easing.inOut(Easing.ease),
-      }),
-      Animated.timing(animatedValues.contentOpacity, {
-        toValue: isCommentSectionOpen ? 0 : 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
+    const createTiming = (value: Animated.Value, toValue: number, useNative: boolean = true) =>
+      Animated.timing(value, {
+        toValue,
+        duration: ANIMATION_CONFIG.duration,
+        easing: ANIMATION_CONFIG.easing,
+        useNativeDriver: useNative,
+      });
+
+    const nativeAnimations = [
+      createTiming(animatedValues.titlePosition, isCommentSectionOpen ? 0 : 200),
+      createTiming(animatedValues.contentOpacity, isCommentSectionOpen ? 0 : 1),
+      createTiming(animatedValues.scale, isCommentSectionOpen ? 1 : 1),
     ];
 
-   // Bouncy animation for dragIndicator
-   const dragIndicatorAnimation = Animated.sequence([
-    Animated.timing(animatedValues.dragIndicator, {
-      toValue: isCommentSectionOpen ? -12 : 20,  // Jump up or down
-      useNativeDriver: true,
-      duration: 500,  // Duration in milliseconds for the first animation
-    }),
-    Animated.timing(animatedValues.dragIndicator, {
-      toValue: isCommentSectionOpen ? 0 : 20,  // Settle back
-      useNativeDriver: true,
-      duration: 100,  // Duration in milliseconds for the second animation
-    })
-  ]);
+    const nonNativeAnimations = [
+      createTiming(animatedValues.imageSize, isCommentSectionOpen ? 94 : 100, false),
+      createTiming(animatedValues.gradientOpacity, isCommentSectionOpen ? 1 : 0, false),
+    ];
 
-  Animated.parallel([...animations, dragIndicatorAnimation]).start();
-}, [isCommentSectionOpen, animatedValues]);
+    const dragIndicatorAnimation = Animated.sequence([
+      Animated.spring(animatedValues.dragIndicator, {
+        toValue: isCommentSectionOpen ? -12 : 20,
+        useNativeDriver: true,
+        tension: 100,
+        friction: 10,
+      }),
+      Animated.spring(animatedValues.dragIndicator, {
+        toValue: isCommentSectionOpen ? 0 : 20,
+        useNativeDriver: true,
+        tension: 100,
+        friction: 10,
+      }),
+    ]);
+
+    Animated.parallel([
+      Animated.parallel(nativeAnimations),
+      Animated.parallel(nonNativeAnimations),
+      dragIndicatorAnimation,
+    ]).start();
+
+    return () => {
+      nativeAnimations.forEach(anim => anim.stop());
+      nonNativeAnimations.forEach(anim => anim.stop());
+      dragIndicatorAnimation.stop();
+    };
+  }, [isCommentSectionOpen, animatedValues]);
+
   return {
     animatedValues,
-    // panResponder,
     closeModal,
   };
 };
