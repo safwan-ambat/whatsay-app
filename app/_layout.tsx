@@ -69,6 +69,13 @@ export default function RootLayout() {
         >
           <Stack.Screen name="index" />
           <Stack.Screen
+            name="loginScreen"
+            options={{
+              gestureEnabled: true,
+              animation: 'fade'
+            }}
+          />
+          <Stack.Screen
             name="discoverScreens"
             options={{
               gestureEnabled: true,
