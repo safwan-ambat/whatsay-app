@@ -2,7 +2,7 @@
   "expo": {
     "name": "whatsay",
     "slug": "whatsay",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.safwanambat.whatsay",
-      "buildNumber": "6",
+      "buildNumber": "7",
       "infoPlist": {
         "CFBundleIconName": "AppIcon",
         "UIBackgroundModes": [],

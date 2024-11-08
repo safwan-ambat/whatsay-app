@@ -18,41 +18,86 @@ type ColorScheme = {
 
   const getCategoryColors = (categoryName: string): ColorScheme => {
     const colorMap: { [key: string]: ColorScheme } = {
-      Technology: {
-        background: 'bg-blue-100',
-        text: 'text-blue-800',
-        border: 'border-blue-300'
-      },
-      Health: {
-        background: 'bg-green-100',
-        text: 'text-green-800',
-        border: 'border-green-300'
-      },
-      Politics: {
-        background: 'bg-red-100',
-        text: 'text-red-800',
-        border: 'border-red-300'
-      },
-      Business: {
-        background: 'bg-purple-100',
-        text: 'text-purple-800',
-        border: 'border-purple-300'
-      },
-      Entertainment: {
-        background: 'bg-pink-100',
-        text: 'text-pink-800',
-        border: 'border-pink-300'
-      },
-      Sports: {
-        background: 'bg-orange-100',
-        text: 'text-orange-800',
-        border: 'border-orange-300'
-      },
-      Science: {
-        background: 'bg-indigo-100',
-        text: 'text-indigo-800',
-        border: 'border-indigo-300'
-      }
+        'Automobile': {
+            background: 'bg-[#EEF3FA]',
+            text: 'text-[#5584CB]',
+            border: 'border-[#CFDDF1]'
+          },
+          'Breaking news': {
+            background: 'bg-[#FAEEF0]',
+            text: 'text-[#CB556D]',
+            border: 'border-[#F1CFD6]'
+          },
+          'Business': {
+            background: 'bg-[#F3EEFA]',
+            text: 'text-[#8655CB]',
+            border: 'border-[#DDCFF1]'
+          },
+          'Curated for you': {
+            background: 'bg-[#FAEEF9]',
+            text: 'text-[#CB55BF]',
+            border: 'border-[#F1CFED]'
+          },
+          'Entertainment': {
+            background: 'bg-[#FAF4EE]',
+            text: 'text-[#CB9455]',
+            border: 'border-[#F1E1CF]'
+          },
+          'Health': {
+            background: 'bg-[#EEFAF6]',
+            text: 'text-[#55CBA4]',
+            border: 'border-[#CFF1E6]'
+          },
+          'International News': {
+            background: 'bg-[#EFEEFA]',
+            text: 'text-[#6155CB]',
+            border: 'border-[#D2CFF1]'
+          },
+          'Lifestyle': {
+            background: 'bg-[#FAF1EE]',
+            text: 'text-[#CB7155]',
+            border: 'border-[#F1D7CF]'
+          },
+          'Opinions': {
+            background: 'bg-[#F4EEFA]',
+            text: 'text-[#8E55CB]',
+            border: 'border-[#DFCFF1]'
+          },
+          'Politics': {
+            background: 'bg-[#EEF1FA]',
+            text: 'text-[#5573CB]',
+            border: 'border-[#CFD7F1]'
+          },
+          'Science': {
+            background: 'bg-[#EEF3FA]',
+            text: 'text-[#5584CB]',
+            border: 'border-[#CFDDF1]'
+          },
+          'Sports': {
+            background: 'bg-[#EEFAF3]',
+            text: 'text-[#55CB84]',
+            border: 'border-[#CFF1DD]'
+          },
+          'Technology': {
+            background: 'bg-[#F4EEFA]',
+            text: 'text-[#8C55CB]',
+            border: 'border-[#DFCFF1]'
+          },
+          'World': {
+            background: 'bg-[#FAEEF5]',
+            text: 'text-[#CB559C]',
+            border: 'border-[#F1CFE3]'
+          },
+          'Travel': {
+            background: 'bg-[#EEF7FA]',
+            text: 'text-[#55ACCB]',
+            border: 'border-[#CFE8F1]'
+          },
+          'Startup': {
+            background: 'bg-[#EEEEFA]',
+            text: 'text-[#5557CB]',
+            border: 'border-[#CFD0F1]'
+          }
     };
   
     // Default color scheme if category is not found
