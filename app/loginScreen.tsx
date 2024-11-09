@@ -1,5 +1,5 @@
 // app/loginScreen.tsx
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,9 +9,28 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import GoogleAccountsModal from "@/components/loginModal";
 
 const LoginScreen = () => {
   const router = useRouter();
+  const [showGoogleModal, setShowGoogleModal] = useState(false);
+
+  const googleAccounts = [
+    {
+      name: "Siddharth ",
+      email: "siddharth@gmail.com",
+      avatar: require("@/assets/profielSample.jpg"),
+    },
+    {
+      name: "P Design",
+      email: "arif@gmail.com",
+      avatar: require("@/assets/iconMenu.webp"),
+    },
+  ];
+
+  const handleAccountSelect = (account: any) => {
+    console.log(`Selected account: ${account.email}`);
+  };
 
   return (
     <ImageBackground
@@ -20,8 +39,7 @@ const LoginScreen = () => {
       resizeMode="cover"
     >
       <SafeAreaView className="flex-1 px-[16px]">
-        {/* Rest of the component stays the same */}
-        <TouchableOpacity onPress={() => router.back()} className="mt-4 ">
+        <TouchableOpacity onPress={() => router.back()} className="mt-4">
           <Text className="text-2xl text-black">←</Text>
         </TouchableOpacity>
 
@@ -37,9 +55,7 @@ const LoginScreen = () => {
 
           <TouchableOpacity
             className="w-full bg-black rounded-[12px] py-4 px-6 flex-row items-center justify-center mb-4"
-            onPress={() => {
-              console.log("Google sign in pressed");
-            }}
+            onPress={() => setShowGoogleModal(true)}
           >
             <Image
               source={require("@/assets/googleIcon.webp")}
@@ -52,7 +68,7 @@ const LoginScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="w-full bg-white  rounded-[12px] py-4 px-6 flex-row items-center justify-center"
+            className="w-full bg-white rounded-[12px] py-4 px-6 flex-row items-center justify-center"
             onPress={() => {
               console.log("Phone sign in pressed");
             }}
@@ -67,6 +83,13 @@ const LoginScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
+
+        <GoogleAccountsModal
+          visible={showGoogleModal}
+          onClose={() => setShowGoogleModal(false)}
+          onSelectAccount={handleAccountSelect}
+          accounts={googleAccounts}
+        />
       </SafeAreaView>
     </ImageBackground>
   );
