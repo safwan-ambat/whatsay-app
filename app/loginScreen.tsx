@@ -10,26 +10,38 @@ import {
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GoogleAccountsModal from "@/components/loginModal";
+import { useAuth } from '@/config/authContext';
 
 const LoginScreen = () => {
   const router = useRouter();
+  const { login } = useAuth();
   const [showGoogleModal, setShowGoogleModal] = useState(false);
 
   const googleAccounts = [
     {
-      name: "Siddharth ",
-      email: "siddharth@gmail.com",
+      name: "Siddharth JP",
+      email: "siddharthjp@gmail.com",
       avatar: require("@/assets/profielSample.jpg"),
     },
     {
       name: "P Design",
-      email: "arif@gmail.com",
-      avatar: require("@/assets/iconMenu.webp"),
+      email: "pdesign@olacabs.com",
+      avatar: require("@/assets/profileSample2.webp"),
     },
   ];
 
   const handleAccountSelect = (account: any) => {
-    console.log(`Selected account: ${account.email}`);
+    // Login the user
+    login({
+      name: account.name,
+      email: account.email,
+      avatar: account.avatar,
+    });
+
+    // Navigate to discover screen
+    router.replace({
+      pathname: "/discoverScreens"
+    });
   };
 
   return (
