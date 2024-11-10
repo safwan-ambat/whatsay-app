@@ -25,7 +25,7 @@ const LoginScreen = () => {
     },
     {
       name: "P Design",
-      email: "pdesign@olacabs.com",
+      email: "test@test.com",
       avatar: require("@/assets/profileSample2.webp"),
     },
   ];
