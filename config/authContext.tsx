@@ -8,8 +8,8 @@ interface User {
 }
 
 interface AuthContextType {
-  user: User | null;
-  login: (user: User) => void;
+  user: any | null;
+  login: (user: any) => void;
   logout: () => void;
 }
 
@@ -26,9 +26,9 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any | null>(null);
 
-  const login = (userData: User) => {
+  const login = (userData: any) => {
     setUser(userData);
   };
 
