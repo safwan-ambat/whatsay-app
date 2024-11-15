@@ -229,7 +229,7 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                     <StyledView className="p-[16px]">
                         
                         <Text className="text-[20px] font-domine mb-[12px]">{item.title}</Text>
-                        <Text className="font-geist font-light mb-4 text-[16px]">{item.summary}</Text>
+                        <Text className="font-geist font-light mb-4 text-[16px] leading-6">{item.summary}</Text>
                         
                         {category && (
                             <StyledView className={`mb-4 mr-auto border rounded-full ${getCategoryColors(category.name).background} ${getCategoryColors(category.name).border}`}>
