@@ -3,15 +3,15 @@ import React from 'react';
 import { Image, View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import menuIcon from '@/assets/iconMenu.webp';
-import searchIcon from '@/assets/iconSearch.webp';
-import { useAuth } from '@/config/authContext';
+import { useSelector } from "react-redux";
+import { loggedInUserDataSelector } from '@/redux/slice/userSlice';
 
 const NavBar = () => {
   const router = useRouter();
-  const { user } = useAuth();
+  const loggedInUserData = useSelector(loggedInUserDataSelector);
 
   const handleProfilePress = () => {
-    if (user) {
+    if (loggedInUserData) {
       router.push('/profileScreen');
     } else {
       router.push('/loginScreen');
@@ -22,9 +22,9 @@ const NavBar = () => {
     <View className="absolute top-0 left-0 right-0 z-10">
       <View className="flex-row justify-between items-center pt-4 px-[18px] pb-5 rounded-b-[60px] bg-white">
         <TouchableOpacity onPress={handleProfilePress}>
-          {user ? (
+          {loggedInUserData ? (
             <Image
-              source={user.avatar}
+              source={{ uri: loggedInUserData.user?.photo }}
               className="w-[40px] h-[40px] rounded-full"
               resizeMode="cover"
             />

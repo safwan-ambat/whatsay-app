@@ -6,6 +6,12 @@ import { useFonts } from 'expo-font';
 import { useEffect } from "react";
 import { View } from 'react-native';
 import { AuthProvider } from '@/config/authContext';
+import { Provider } from 'react-redux';
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
+import { store } from "@/redux/store";
+
+let persistor = persistStore(store);
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync().catch(() => {
@@ -60,47 +66,51 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <SafeAreaProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              animation: 'none',
-              gestureEnabled: false
-            }}
-          >
-            <Stack.Screen name="index" />
-            <Stack.Screen
-              name="loginScreen"
-              options={{
-                gestureEnabled: true,
-                animation: 'fade'
-              }}
-            />
-            <Stack.Screen
-              name="profileScreen"
-              options={{
-                gestureEnabled: true,
-                animation: 'fade'
-              }}
-            />
-            <Stack.Screen
-              name="discoverScreens"
-              options={{
-                gestureEnabled: true,
-                animation: 'fade'
-              }}
-            />
-            <Stack.Screen
-              name="(news)/[slug]"
-              options={{
-                gestureEnabled: true,
-                animation: 'slide_from_right'
-              }}
-            />
-          </Stack>
-        </GestureHandlerRootView>
-      </SafeAreaProvider>
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+          <SafeAreaProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  animation: 'none',
+                  gestureEnabled: false
+                }}
+              >
+                <Stack.Screen name="index" />
+                <Stack.Screen
+                  name="loginScreen"
+                  options={{
+                    gestureEnabled: true,
+                    animation: 'fade'
+                  }}
+                />
+                <Stack.Screen
+                  name="profileScreen"
+                  options={{
+                    gestureEnabled: true,
+                    animation: 'fade'
+                  }}
+                />
+                <Stack.Screen
+                  name="discoverScreens"
+                  options={{
+                    gestureEnabled: true,
+                    animation: 'fade'
+                  }}
+                />
+                <Stack.Screen
+                  name="(news)/[slug]"
+                  options={{
+                    gestureEnabled: true,
+                    animation: 'slide_from_right'
+                  }}
+                />
+              </Stack>
+            </GestureHandlerRootView>
+          </SafeAreaProvider>
+        </PersistGate>
+      </Provider>
     </AuthProvider>
   );
 }

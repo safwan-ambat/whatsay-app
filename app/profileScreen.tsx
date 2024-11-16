@@ -2,15 +2,23 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '@/config/authContext';
 import GlossyButton from '@/components/glossyButton';
+import { useDispatch, useSelector } from "react-redux";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { clearUser, loggedInUserDataSelector, setUser } from '@/redux/slice/userSlice';
 
 const ProfileScreen = () => {
   const router = useRouter();
-  const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
+  const loggedInUserData = useSelector(loggedInUserDataSelector);
+
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    await GoogleSignin.signOut();
+    await AsyncStorage.removeItem("user");
+    dispatch(clearUser());
     router.replace('/loginScreen');
   };
 
@@ -19,21 +27,21 @@ const ProfileScreen = () => {
     console.log('Delete account pressed');
   };
 
-  if (!user) {
+  if (!loggedInUserData) {
     router.replace('/loginScreen');
     return null;
   }
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
-        <Image
+      <Image
         source={require('@/assets/profileBg.webp')}
         className="absolute w-screen h-[406px]"
         resizeMode="cover"
-        />
+      />
       <View className="flex-row items-center mt-4 relative">
-        <TouchableOpacity 
-          onPress={() => router.back()} 
+        <TouchableOpacity
+          onPress={() => router.back()}
           className="absolute left-0 z-10"
         >
           <Text className="text-2xl">←</Text>
@@ -46,12 +54,12 @@ const ProfileScreen = () => {
       <View className="items-center mt-[44px] flex-row justify-center">
         <View className="flex-1 items-center">
           <Image
-            source={user.avatar}
+            source={{ uri: loggedInUserData.user?.photo }}
             className="w-[120px] h-[120px] rounded-full border-white border-[3px]"
             resizeMode="cover"
           />
           <View className="bg-[#868686] px-[1px] py-[1px] rounded-full absolute -bottom-2">
-          <GlossyButton />
+            <GlossyButton />
           </View>
         </View>
       </View>
@@ -59,12 +67,12 @@ const ProfileScreen = () => {
       <View className="mt-16">
         <View className="mb-8">
           <Text className="text-lg font-domine mb-1">Name</Text>
-          <Text className="text-gray-600">{user.name}</Text>
+          <Text className="text-gray-600">{loggedInUserData.user?.name}</Text>
         </View>
 
         <View>
           <Text className="text-lg font-domine mb-1">Email Address</Text>
-          <Text className="text-gray-600">{user.email}</Text>
+          <Text className="text-gray-600">{loggedInUserData.user?.email}</Text>
         </View>
       </View>
 
