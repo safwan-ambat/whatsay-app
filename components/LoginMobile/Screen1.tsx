@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Title from '../Typography/Title';
 import { View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -8,18 +8,57 @@ import { Text } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { Image } from 'react-native';
 import { countryCodes, FlagMap } from '@/constants/Flags';
+import { formatPhoneNumber, getMaxLength, validatePhoneNumber } from '@/utils/PhoneNumberHelper';
 
 interface Screen1Props {
     selectedValue: string;
     setSelectedValue: (selectedValue: string) => void;
     isBtnDisabaled: boolean;
-    setMobileNumber: (number: string) => void
+    setIsButtonDisabled: (isBtnDisabaled: boolean) => void;
+    setMobileNumber: (number: string) => void;
+    buttonAction: () => void;
 }
 
-const Screen1 = ({ selectedValue, setSelectedValue, isBtnDisabaled, setMobileNumber }: Screen1Props) => {
+const Screen1 = ({ selectedValue, setSelectedValue, isBtnDisabaled, setMobileNumber, setIsButtonDisabled, buttonAction }: Screen1Props) => {
+
+    const [formattedNumber, setFormattedNumber] = useState('');
+    const [error, setError] = useState('');
+    const [example, setExample] = useState('');
+
+    const handlePhoneNumberChange = (text: string) => {
+        // Remove any non-numeric characters from input
+        const numericOnly = text.replace(/\D/g, '');
+
+        // Check if input contains only numbers
+        if (text !== '' && !/^\d*$/.test(numericOnly)) {
+            setError('Please enter numbers only');
+            return;
+        }
+
+        // Format the phone number
+        const formatted = formatPhoneNumber(numericOnly, selectedValue);
+        setFormattedNumber(formatted);
+
+        // Validate the phone number
+        if (numericOnly.length > 0) {
+            if (validatePhoneNumber(numericOnly, selectedValue)) {
+                setError('');
+                setMobileNumber(numericOnly);
+                setIsButtonDisabled(false)
+            } else {
+                setError('Invalid phone number format');
+                setMobileNumber('');
+                setIsButtonDisabled(true)
+            }
+        } else {
+            setError('');
+            setMobileNumber('');
+            setIsButtonDisabled(true)
+        }
+    };
 
     const renderItem = (item: any) => {
-        const active: any = countryCodes.find((item: any) => item.code === selectedValue)?.name;
+        const active: any = countryCodes.find((country: any) => country.code === item.code)?.name;
         const activeFlag = FlagMap[active]
         return (
             <View style={styles.item}>
@@ -68,10 +107,17 @@ const Screen1 = ({ selectedValue, setSelectedValue, isBtnDisabaled, setMobileNum
                         }}
                         renderLeftIcon={activeFlagIcon}
                     />
-                    <TextInput placeholder='Enter phone number' className='text-xl placeholder:tex-[#B2B9BD] text-black font-geist font-medium' onChangeText={(text) => setMobileNumber(text)} />
+                    <TextInput
+                        placeholder="Enter phone number"
+                        className='text-xl placeholder:tex-[#B2B9BD] text-black font-geist font-medium'
+                        value={formattedNumber}
+                        onChangeText={handlePhoneNumberChange}
+                        keyboardType="numeric"
+                        maxLength={getMaxLength(selectedValue)}
+                    />
                 </View>
                 <Button disabled={isBtnDisabaled}>
-                    <Text className='text-center font-geist text-base font-medium' style={{ color: "#FFF" }}>Continue</Text>
+                    <Text className='text-center font-geist text-base font-medium' style={{ color: "#FFF" }} onPress={buttonAction}>Continue</Text>
                 </Button>
             </View>
         </>

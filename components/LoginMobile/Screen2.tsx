@@ -5,15 +5,17 @@ import { TextInput } from 'react-native';
 import Button from '../Buttons/Button';
 import { Text } from 'react-native';
 import { StyleSheet } from 'react-native';
+import { maskMobileNumber } from '@/utils/PhoneNumberHelper';
 
 interface Screen2Props {
     mobileNumber: string;
     isBtnDisabaled: boolean;
     mobileOtp: string[];
     setMobileOtp: (otp:string[])=> void;
+    countryCode: string;
 }
 
-const Screen2 = ({ mobileNumber, isBtnDisabaled, mobileOtp, setMobileOtp }: Screen2Props) => {
+const Screen2 = ({ mobileNumber, isBtnDisabaled, mobileOtp, setMobileOtp,countryCode }: Screen2Props) => {
 
     const inputRefs: any = useRef([]); // Refs for each TextInput
 
@@ -40,7 +42,7 @@ const Screen2 = ({ mobileNumber, isBtnDisabaled, mobileOtp, setMobileOtp }: Scre
         <>
             <View className='w-full '>
                 <Title>Enter the OTP sent to</Title>
-                <Title>{mobileNumber}</Title>
+                <Title>{countryCode + maskMobileNumber(mobileNumber)}</Title>
             </View>
             <View className='w-full flex-1 h-full relative flex flex-col justify-between mt-10 pb-10'>
                 <View style={styles.otpContainer}>
