@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import Screen1 from '@/components/LoginMobile/Screen1';
 import Screen2 from '@/components/LoginMobile/Screen2';
 import Screen3 from '@/components/LoginMobile/Screen3';
+import auth from '@react-native-firebase/auth';
 
 const MobileLogin = () => {
 
@@ -26,8 +27,16 @@ const MobileLogin = () => {
         if (currentStep == 1) router.back()
     }
 
-    const handleSendOtp = ()=>{
-        setCurrentStep(2)
+    const handleSendOtp =async ()=>{
+        console.log("send otp");
+        try {
+            // const confirmation = await auth().signInWithPhoneNumber('+1 650-555-3434');
+            // console.log("confirmation",confirmation);
+        } catch (error) {
+            console.log("error",error);
+        }
+        
+        // setCurrentStep(2)
     }
 
     const renderStep = () => {
