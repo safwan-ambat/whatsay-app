@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet } from 'react-native'
 import { SafeAreaView, View } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import Screen1 from '@/components/LoginMobile/Screen1';
 import Screen2 from '@/components/LoginMobile/Screen2';
 import Screen3 from '@/components/LoginMobile/Screen3';
@@ -21,6 +21,9 @@ const MobileLogin = () => {
     const [finalButtonDisable, setFinalButtonDisable] = useState(true);
     const [otp, setOtp] = useState(['', '', '', '']); // State for OTP digits
 
+    // If null, no SMS has been sent
+  const [confirm, setConfirm] = useState(null);
+
     const handleBack = () => {
         if (currentStep == 3) setCurrentStep(2)
         if (currentStep == 2) setCurrentStep(1)
@@ -29,14 +32,18 @@ const MobileLogin = () => {
 
     const handleSendOtp =async ()=>{
         console.log("send otp");
+        const number = `${countryCode} ${mobileNumber}`
+        console.log("number",number);
+        
         try {
-            // const confirmation = await auth().signInWithPhoneNumber('+1 650-555-3434');
-            // console.log("confirmation",confirmation);
+            await auth().signInWithPhoneNumber(number).then((e:any)=>{
+                console.log("e",e);
+                setConfirm(e);
+            })
+            setCurrentStep(2)
         } catch (error) {
             console.log("error",error);
         }
-        
-        // setCurrentStep(2)
     }
 
     const renderStep = () => {
