@@ -1,88 +1,104 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react';
+import { View, TextInput, Text, StyleSheet, Dimensions } from 'react-native';
 import Title from '../Typography/Title';
-import { View } from 'react-native';
-import { TextInput } from 'react-native';
 import Button from '../Buttons/Button';
-import { Text } from 'react-native';
-import { StyleSheet } from 'react-native';
 import { maskMobileNumber } from '@/utils/PhoneNumberHelper';
 
 interface Screen2Props {
     mobileNumber: string;
     isBtnDisabaled: boolean;
-    mobileOtp: string[];
-    setMobileOtp: (otp:string[])=> void;
+    mobileOtp: string;
+    setMobileOtp: (mobileOtp: string) => void;
     countryCode: string;
+    buttonAction?: () => void;
 }
 
-const Screen2 = ({ mobileNumber, isBtnDisabaled, mobileOtp, setMobileOtp,countryCode }: Screen2Props) => {
+const Screen2 = ({
+    mobileNumber,
+    isBtnDisabaled,
+    mobileOtp,
+    setMobileOtp,
+    countryCode,
+    buttonAction,
+}: Screen2Props) => {
+    const inputRefs = useRef<(TextInput | null)[]>([]); // Refs for each TextInput
+    const otpCount = 6;
 
-    const inputRefs: any = useRef([]); // Refs for each TextInput
+    const handleInputChange = (text: string, index: number) => {
+        const cleanText = text.slice(-1); // Only consider the last digit entered
+        // @ts-ignore
+        setMobileOtp((prevOtp) => {
+            const updatedOtp = prevOtp.split('');
+            updatedOtp[index] = cleanText; // Update the character at the index
+            return updatedOtp.join('');
+        });
 
-    const handleInputChange = (text: any, index: number) => {
-        const updatedOtp:any = [...mobileOtp];
-        updatedOtp[index] = text;
-
-        // If user enters a digit, move to the next input
-        if (text.length === 1 && index < 3) {
+        // Move focus to the next input if a valid digit is entered
+        if (cleanText && index < otpCount - 1) {
             inputRefs.current[index + 1]?.focus();
         }
-
-        setMobileOtp(updatedOtp);
     };
 
-    const handleKeyPress = (e: any, index: any) => {
-        // Handle backspace to move focus back
+    const handleKeyPress = (e: any, index: number) => {
+        // Handle backspace to move focus to the previous input
         if (e.nativeEvent.key === 'Backspace' && mobileOtp[index] === '' && index > 0) {
             inputRefs.current[index - 1]?.focus();
         }
     };
 
+    const screenWidth = Dimensions.get('window').width; // Get screen width
+    const boxMargin = 8; // Margin between OTP boxes
+    const boxWidth = (screenWidth - boxMargin * (otpCount - 1)) / otpCount; // Dynamically calculate box width
+
     return (
         <>
-            <View className='w-full '>
+            <View className="w-full">
                 <Title>Enter the OTP sent to</Title>
                 <Title>{countryCode + maskMobileNumber(mobileNumber)}</Title>
             </View>
-            <View className='w-full flex-1 h-full relative flex flex-col justify-between mt-10 pb-10'>
-                <View style={styles.otpContainer}>
-                    {mobileOtp.map((digit, index) => (
+            <View className="w-full flex-1 h-full relative flex flex-col justify-between mt-10 pb-10">
+                <View style={[styles.otpContainer]}>
+                    {Array.from({ length: otpCount }, (_, index) => (
                         <TextInput
-                        className='font-geist'
-                            key={index}
-                            style={styles.otpBox}
-                            keyboardType="numeric"
-                            maxLength={1}
-                            value={digit}
-                            onChangeText={(text) => handleInputChange(text, index)}
-                            onKeyPress={(e) => handleKeyPress(e, index)}
-                            ref={(ref) => (inputRefs.current[index] = ref)}
-                        />
+                        key={index}
+                        style={[styles.otpBox, { width: boxWidth }]}
+                        keyboardType="numeric"
+                        maxLength={1}
+                        value={mobileOtp[index] || ''} // Get the character at the current index
+                        onChangeText={(text) => handleInputChange(text, index)}
+                        onKeyPress={(e) => handleKeyPress(e, index)}
+                        ref={(ref) => (inputRefs.current[index] = ref)}
+                    />
                     ))}
                 </View>
-                <Button disabled={isBtnDisabaled}>
-                    <Text className='text-center font-geist text-base font-medium' style={{ color: "#FFF" }}>Confirm</Text>
+                <Button disabled={isBtnDisabaled} handleAction={buttonAction}>
+                    <Text
+                        className="text-center font-geist text-base font-medium"
+                        style={{ color: '#FFF' }}
+                    >
+                        Confirm
+                    </Text>
                 </Button>
             </View>
         </>
-    )
-}
+    );
+};
 
-export default Screen2
+export default Screen2;
 
 const styles = StyleSheet.create({
     otpContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
         marginBottom: 16,
+        gap: 4
     },
     otpBox: {
-        width: 80,
         height: 71,
         borderRadius: 12,
         textAlign: 'center',
         fontSize: 36,
-        marginHorizontal: 8,
-        backgroundColor: '#F5F3F0'
-    }
+        // marginHorizontal: 6, // Half of `boxMargin` for even spacing
+        backgroundColor: '#F5F3F0',
+    },
 });

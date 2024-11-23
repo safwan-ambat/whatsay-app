@@ -10,50 +10,63 @@ import { Image } from 'react-native';
 import { countryCodes, FlagMap } from '@/constants/Flags';
 import { formatPhoneNumber, getMaxLength, validatePhoneNumber } from '@/utils/PhoneNumberHelper';
 
+interface CountryCode {
+    code: string;
+    name: string;
+}
+
 interface Screen1Props {
     selectedValue: string;
     setSelectedValue: (selectedValue: string) => void;
-    isBtnDisabaled: boolean;
-    setIsButtonDisabled: (isBtnDisabaled: boolean) => void;
+    isBtnDisabled: boolean;
+    setIsButtonDisabled: (isBtnDisabled: boolean) => void;
     setMobileNumber: (number: string) => void;
     buttonAction: () => void;
+    mobileNumber: string;
 }
 
-const Screen1 = ({ selectedValue, setSelectedValue, isBtnDisabaled, setMobileNumber, setIsButtonDisabled, buttonAction }: Screen1Props) => {
+const Screen1: React.FC<Screen1Props> = ({
+    selectedValue,
+    setSelectedValue,
+    isBtnDisabled,
+    setIsButtonDisabled,
+    setMobileNumber,
+    buttonAction,
+    mobileNumber,
+}) => {
 
     const [formattedNumber, setFormattedNumber] = useState('');
     const [error, setError] = useState('');
-    const [example, setExample] = useState('');
+
+    useEffect(() => {
+        setFormattedNumber(formatPhoneNumber(mobileNumber, selectedValue));
+    }, [mobileNumber, selectedValue]);
 
     const handlePhoneNumberChange = (text: string) => {
-        // Remove any non-numeric characters from input
         const numericOnly = text.replace(/\D/g, '');
 
-        // Check if input contains only numbers
-        if (text !== '' && !/^\d*$/.test(numericOnly)) {
+        if (text && !/^\d*$/.test(numericOnly)) {
             setError('Please enter numbers only');
             return;
         }
 
-        // Format the phone number
         const formatted = formatPhoneNumber(numericOnly, selectedValue);
         setFormattedNumber(formatted);
 
-        // Validate the phone number
         if (numericOnly.length > 0) {
             if (validatePhoneNumber(numericOnly, selectedValue)) {
                 setError('');
                 setMobileNumber(numericOnly);
-                setIsButtonDisabled(false)
+                setIsButtonDisabled(false);
             } else {
                 setError('Invalid phone number format');
                 setMobileNumber('');
-                setIsButtonDisabled(true)
+                setIsButtonDisabled(true);
             }
         } else {
             setError('');
             setMobileNumber('');
-            setIsButtonDisabled(true)
+            setIsButtonDisabled(true);
         }
     };
 
@@ -87,6 +100,8 @@ const Screen1 = ({ selectedValue, setSelectedValue, isBtnDisabaled, setMobileNum
         <>
             <Title>Enter Mobile No</Title>
             <View className='w-full flex-1 h-full relative flex flex-col justify-between mt-10 pb-10'>
+                <View className='w-full flex flex-col gap-2'>
+
                 <View className='w-full flex flex-row items-center gap-2'>
                     <Dropdown
                         style={[styles.dropdown]}
@@ -106,7 +121,7 @@ const Screen1 = ({ selectedValue, setSelectedValue, isBtnDisabaled, setMobileNum
                             setSelectedValue(item.code);
                         }}
                         renderLeftIcon={activeFlagIcon}
-                    />
+                        />
                     <TextInput
                         placeholder="Enter phone number"
                         className='text-xl placeholder:tex-[#B2B9BD] text-black font-geist font-medium'
@@ -114,10 +129,12 @@ const Screen1 = ({ selectedValue, setSelectedValue, isBtnDisabaled, setMobileNum
                         onChangeText={handlePhoneNumberChange}
                         keyboardType="numeric"
                         maxLength={getMaxLength(selectedValue)}
-                    />
+                        />
                 </View>
-                <Button disabled={isBtnDisabaled}>
-                    <Text className='text-center font-geist text-base font-medium' style={{ color: "#FFF" }} onPress={buttonAction}>Continue</Text>
+                {error && <Text style={styles.errorText}>{error}</Text>}
+                        </View>
+                <Button disabled={isBtnDisabled} handleAction={buttonAction}>
+                    <Text className='text-center font-geist text-base font-medium' style={{ color: "#FFF" }}>Continue</Text>
                 </Button>
             </View>
         </>
@@ -157,5 +174,11 @@ const styles = StyleSheet.create({
     textItem: {
         flex: 1,
         fontSize: 16,
+    },
+    errorText: {
+        color: 'red',
+        marginTop: 8,
+        fontSize: 14,
+        paddingLeft: 10
     },
 });

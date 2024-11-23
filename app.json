@@ -16,6 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.safwanambat.whatsay",
       "buildNumber": "7",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "CFBundleIconName": "AppIcon",
         "UIBackgroundModes": [],
@@ -47,7 +48,8 @@
       },
       "permissions": ["VIBRATE"],
       "package": "com.safwanambat.whatsay",
-      "versionCode": 1
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -55,13 +57,14 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "@react-native-firebase/app", "@react-native-firebase/auth",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
       "expo-router",
       "expo-font",
       [
         "@react-native-google-signin/google-signin",
         {
-          "iosUrlScheme": "com.googleusercontent.apps.396092481898-s3r4cvs735fc3oo2097nipogoico5hsb"
+          "iosUrlScheme": "com.googleusercontent.apps.892528727267-fureil15ns3h1qnhn4n2t9vud1d6mrsp"
         }
       ]
     ],
