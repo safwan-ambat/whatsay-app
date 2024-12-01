@@ -1,5 +1,4 @@
 import { getAllArticlesByCategories } from '@/api/apiArticles';
-import { SvgSpinners6DotsRotate } from '@/assets/images/icons/LoadingSpinner';
 import ExpandNewsItem from '@/components/ExpandNewsItem';
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -21,7 +20,6 @@ const NewsDetails = () => {
   const { categoryId, slug } = useLocalSearchParams<{ categoryId: string, slug: string }>();
   const [newsArticles, setNewsArticles] = useState<any>();
   const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   
   const translateY = useSharedValue(0);
   const router = useRouter();
@@ -61,14 +59,13 @@ const NewsDetails = () => {
     (async () => {
       const response = await getAllArticlesByCategories(categoryId);
       setNewsArticles(response)
-      setIsLoading(false)
     })()
   }, []);
 
-  if (isLoading) {
+  if (!newsArticles || !slug) {
     return (
       <View style={styles.errorContainer}>
-        <SvgSpinners6DotsRotate/>
+        <Text>News item not found</Text>
       </View>
     )
   }
