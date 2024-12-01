@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 let APIService = axios.create({
     baseURL: `http://whatsay-backend-loadbalancer-45970015.us-east-2.elb.amazonaws.com:8080/api`,
-    timeout: 1000000, // Adjusted for a reasonable timeout in ms
+    timeout: 100000, // Adjusted for a reasonable timeout in ms
     headers: {
         "Content-Type": "application/json",
     },
