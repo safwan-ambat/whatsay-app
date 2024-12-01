@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 
 let APIService = axios.create({
-    baseURL: `https://appserver.whatsay.news/api`,
-    timeout: 1000000, // Adjusted for a reasonable timeout in ms
+    baseURL: `https://whatsay.news:8080/api`,
+    timeout: 30000, // Adjusted for a reasonable timeout in ms
     headers: {
         "Content-Type": "application/json",
     },
