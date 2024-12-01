@@ -21,7 +21,17 @@
         "CFBundleIconName": "AppIcon",
         "UIBackgroundModes": [],
         "NSCameraUsageDescription": "This app needs access to the camera to take photos.",
-        "NSPhotoLibraryUsageDescription": "This app needs access to photos."
+        "NSPhotoLibraryUsageDescription": "This app needs access to photos.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false,
+          "NSExceptionDomains": {
+            "whatsay-backend-loadbalancer-45970015.us-east-2.elb.amazonaws.com": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSExceptionRequiresForwardSecrecy": false,
+              "NSExceptionMinimumTLSVersion": "TLSv1.1"
+            }
+          }
+        }
       },
       "icon": "./assets/images/icon.png",
       "requireFullScreen": true,
@@ -46,7 +56,10 @@
         "foregroundImage": "./assets/images/splashScreen.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["VIBRATE"],
+      "permissions": [
+        "VIBRATE",
+        "INTERNET"
+      ],
       "package": "com.safwanambat.whatsay",
       "versionCode": 1,
       "googleServicesFile": "./google-services.json"
