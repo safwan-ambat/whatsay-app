@@ -18,6 +18,10 @@ import { CommentProp, User, Reply } from '../../app/types';
 import { mockComments, mockReplies } from '../../constants/commentsData';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSelector } from 'react-redux';
+import { loggedInUserDataSelector } from '@/redux/slice/userSlice';
+import { useRouter } from 'expo-router';
+import { apiAddArticleComment } from '@/api/apiComments';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 const MODAL_HEIGHT = SCREEN_HEIGHT * 1;
@@ -78,6 +82,10 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
 
   const translateY = useSharedValue(MODAL_HEIGHT);
 
+  const loggedInUserData = useSelector(loggedInUserDataSelector);
+
+  const router = useRouter()
+
   const scrollTo = useCallback((destination: number) => {
     'worklet';
     translateY.value = withSpring(destination, { damping: 50, stiffness: 300 });
@@ -131,7 +139,20 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
     };
   });
 
-  const handlePostComment = () => {
+  const handlePostComment = async () => {
+
+    if(!loggedInUserData){
+      router.push('/login/loginScreen');
+    }else{
+      await apiAddArticleComment(newComment.trim(), loggedInUserData.user.id, postId)
+      .then((res:any)=>{
+        console.log("res",res);
+        
+      }).catch((error:any)=>{
+        console.log("error",error);
+        
+      })
+    }
     if (newComment.trim() === '') return;
     Keyboard.dismiss();
 
