@@ -14,7 +14,7 @@ export const apiAddArticleComment = async (comment: string, user: string, post: 
 
 export const apigetAllComments = async (articleId: string) => {
     try {
-        const res: any = await APICaller(APIService.get(`/comments/:${articleId}`))
+        const res: any = await APICaller(APIService.get(`/comments/${articleId}`))
         return res.data;
     } catch (error: any) {
         console.log("Fetching Error: ", error.message || error); // Log the error message
@@ -22,9 +22,11 @@ export const apigetAllComments = async (articleId: string) => {
     }
 }
 
-export const apiCommentLikesToogle = async (commentId: string) => {
+export const apiCommentLikesToogle = async (commentId: string, userId: string) => {
     try {
-        const res: any = await APICaller(APIService.put(`/comments/:${commentId}/like`))
+        const res: any = await APICaller(APIService.put(`/comments/${commentId}/like`, {
+            userId
+        }))
         return res.data;
     } catch (error: any) {
         console.log("Fetching Error: ", error.message || error); // Log the error message
