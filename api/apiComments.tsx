@@ -1,9 +1,9 @@
 import APIService, { APICaller } from "./APIKit";
 
-export const apiAddArticleComment = async (comment: string, user: string, post: string) => {
+export const apiAddArticleComment = async (comment: string, user: string, post: string, parentCommentId?: string) => {
     try {
         const res: any = await APICaller(APIService.post(`/comments/add?id=${post}`, {
-            comment, user
+            comment, user, commentId: parentCommentId
         }))
         return res.data;
     } catch (error: any) {

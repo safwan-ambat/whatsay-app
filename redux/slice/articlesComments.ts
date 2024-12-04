@@ -27,11 +27,21 @@ export const commentSlice = createSlice({
                     comment.likes = action.payload.response
                 }
             })
+        },
+        setReplyComment: (state, action: PayloadAction<any>) => {
+            const replyCommentId = action.payload.replyCommentId;
+            const repliedComment = action.payload.res;
+
+            state.comments.map((comment: ArticleComment) => {
+                if (comment.id = replyCommentId) {
+                    comment.replies.unshift(repliedComment[0])
+                }
+            })
         }
     },
 });
 
-export const { setComment, updateLike } = commentSlice.actions;
+export const { setComment, updateLike, setReplyComment } = commentSlice.actions;
 
 // Add typing for the `state` parameter in selectors
 export const commentsDataSelector = (state: { comments: CommentsState }) => state.comments.comments;

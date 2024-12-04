@@ -22,7 +22,7 @@ import { loggedInUserDataSelector } from '@/redux/slice/userSlice';
 import { useRouter } from 'expo-router';
 import { apiAddArticleComment, apigetAllComments } from '@/api/apiComments';
 import { ArticleComment, User } from '@/types';
-import { commentsDataSelector, setComment } from '@/redux/slice/articlesComments';
+import { commentsDataSelector, setComment, setReplyComment } from '@/redux/slice/articlesComments';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 const MODAL_HEIGHT = SCREEN_HEIGHT * 1;
@@ -37,7 +37,7 @@ interface ExpandableInputProps {
   value: string;
   onChangeText: (text: string) => void;
   placeholder: string;
-  replyingTo: Comment | null;
+  replyingTo: any | null;
   onCancelReply: () => void;
 }
 
@@ -50,8 +50,7 @@ const ExpandableInput: React.FC<ExpandableInputProps> = ({ value, onChangeText, 
       {replyingTo && (
         <View style={styles.replyingToInner}>
           <Text style={styles.replyingToText}>
-            Replying to
-            {/* {replyingTo.author.name} */}
+            Replying to <Text className='capitalize'>{replyingTo?.user.name}</Text>
           </Text>
           <TouchableOpacity onPress={onCancelReply}>
             <AntDesign name="close" size={16} color="#9DA2A9" />
@@ -79,7 +78,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
 
   const [replies, setReplies] = useState<any>(mockReplies);
   const [newComment, setNewComment] = useState('');
-  const [replyingTo, setReplyingTo] = useState<Comment | null>(null);
+  const [replyingTo, setReplyingTo] = useState<any | null>(null);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const navigation = useNavigation();
   const flatListRef = useRef<FlatList>(null);
@@ -153,15 +152,28 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
     if (!loggedInUserData) {
       router.push('/login/loginScreen');
     } else {
-      await apiAddArticleComment(newComment.trim(), loggedInUserData.user.id, postId)
-        .then((res: any) => {
-          const oldComments = [...commentsData.flat()];
-          const newComments = [...oldComments, ...res]; // Merge oldComments with res
-          dispatch(setComment(newComments))
-          setNewComment('')
-        }).catch((error: any) => {
-          console.log("error", error);
-        })
+
+      if (newComment.trim() == '') return;
+
+      if (replyingTo) {
+        const replyCommentId = replyingTo.id;
+        await apiAddArticleComment(newComment.trim(), loggedInUserData.user.id, postId, replyCommentId)
+          .then((res: any) => {
+            dispatch(setReplyComment({ replyCommentId, res }))
+            setNewComment('')
+            setReplyingTo(null)
+          })
+      } else {
+        await apiAddArticleComment(newComment.trim(), loggedInUserData.user.id, postId)
+          .then((res: any) => {
+            const oldComments = [...commentsData.flat()];
+            const newComments = [...oldComments, ...res]; // Merge oldComments with res
+            dispatch(setComment(newComments))
+            setNewComment('')
+          }).catch((error: any) => {
+            console.log("error", error);
+          })
+      }
     }
 
     flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
