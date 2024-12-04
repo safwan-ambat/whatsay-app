@@ -14,7 +14,7 @@ const NavBar = () => {
     if (loggedInUserData) {
       router.push('/profileScreen');
     } else {
-      router.push('/loginScreen');
+      router.push('/login/loginScreen');
     }
   };
 

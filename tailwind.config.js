@@ -12,6 +12,8 @@ module.exports = {
         domine: ["Domine", "serif"],
         rmono: ["Roboto-Mono", "monospace"],
         geist: ["Geist", "sans-serif"],
+        adamina: ["Adamina, serif"],
+        gentonaBook: ["Gentona-Book"]
       },
       fontWeight: {
         thin: "100",

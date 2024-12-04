@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import { store } from "@/redux/store";
+import FONTS from "@/assets/fonts";
 
 let persistor = persistStore(store);
 
@@ -17,18 +18,6 @@ let persistor = persistStore(store);
 SplashScreen.preventAutoHideAsync().catch(() => {
   /* reloading the app might trigger some race conditions, ignore them */
 });
-
-const FONTS = {
-  'Domine': require('../assets/fonts/Domine/static/Domine-Regular.ttf'),
-  'Domine-Medium': require('../assets/fonts/Domine/static/Domine-Medium.ttf'),
-  'Domine-SemiBold': require('../assets/fonts/Domine/static/Domine-SemiBold.ttf'),
-  'Domine-Bold': require('../assets/fonts/Domine/static/Domine-Bold.ttf'),
-  "Roboto-Mono": require("../assets/fonts/RobotoMono-Regular.ttf"),
-  'Geist': require('@/assets/fonts/Geist/Geist-Regular.ttf'),
-  'Geist-Medium': require('@/assets/fonts/Geist/Geist-Medium.ttf'),
-  'Geist-Bold': require('@/assets/fonts/Geist/Geist-Bold.ttf'),
-  'Geist-Light': require('@/assets/fonts/Geist/Geist-Light.ttf'),
-} as const;
 
 export default function RootLayout() {
   const [fontsLoaded, error] = useFonts(FONTS);
@@ -106,6 +95,8 @@ export default function RootLayout() {
                     animation: 'slide_from_right'
                   }}
                 />
+
+                <Stack.Screen name="login/mobile"/>
               </Stack>
             </GestureHandlerRootView>
           </SafeAreaProvider>

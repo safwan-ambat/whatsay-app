@@ -129,7 +129,9 @@ const LoginScreen = () => {
           <TouchableOpacity
             className="w-full bg-white rounded-[12px] py-4 px-6 flex-row items-center justify-center"
             onPress={() => {
-              console.log("Phone sign in pressed");
+              router.replace({
+                pathname: '/login/mobile'
+              })
             }}
           >
             <Image

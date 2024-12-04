@@ -19,7 +19,7 @@ const ProfileScreen = () => {
     await GoogleSignin.signOut();
     await AsyncStorage.removeItem("user");
     dispatch(clearUser());
-    router.replace('/loginScreen');
+    router.replace('/login/loginScreen');
   };
 
   const handleDeleteAccount = () => {
@@ -28,7 +28,7 @@ const ProfileScreen = () => {
   };
 
   if (!loggedInUserData) {
-    router.replace('/loginScreen');
+    router.replace('/login/loginScreen');
     return null;
   }
 

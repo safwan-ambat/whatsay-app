@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "892528727267",
+    "project_id": "whatsay-app-c3627",
+    "storage_bucket": "whatsay-app-c3627.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892528727267:android:28748f82bf711e630021d6",
+        "android_client_info": {
+          "package_name": "com.safwanambat.whatsay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyCnvzJMVYMeezb1YZi8wbg0UXAld-JwM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
