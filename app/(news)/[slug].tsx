@@ -90,10 +90,9 @@ const NewsDetails = () => {
         <Animated.View style={[styles.contentContainer, animatedStyle]}>
           <ExpandNewsItem
             items={newsArticles}
-            initialArticleId={slug}
+            initialArticleId={parseInt(slug, 10)}
             isVisible={true}
             onClose={handleCloseModal}
-            setIsCommentModalVisible={setIsCommentModalVisible}
           />
         </Animated.View>
       </PanGestureHandler>
