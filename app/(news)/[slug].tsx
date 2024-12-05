@@ -22,7 +22,7 @@ const NewsDetails = () => {
   const [newsArticles, setNewsArticles] = useState<any>();
   const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   const translateY = useSharedValue(0);
   const router = useRouter();
 
@@ -90,7 +90,7 @@ const NewsDetails = () => {
         <Animated.View style={[styles.contentContainer, animatedStyle]}>
           <ExpandNewsItem
             items={newsArticles}
-            initialArticleId={parseInt(slug, 10)}
+            initialArticleId={slug}
             isVisible={true}
             onClose={handleCloseModal}
           />

@@ -21,7 +21,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loggedInUserDataSelector } from '@/redux/slice/userSlice';
 import { useRouter } from 'expo-router';
 import { apiAddArticleComment, apigetAllComments } from '@/api/apiComments';
-import { ArticleComment, User } from '@/types';
 import { commentsDataSelector, setComment, setReplyComment } from '@/redux/slice/articlesComments';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');

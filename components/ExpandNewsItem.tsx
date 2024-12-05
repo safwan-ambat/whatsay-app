@@ -16,26 +16,26 @@ import {
     GRADIENT_STYLE,
     CATEGORY_STYLES,
     DEFAULT_CATEGORY_STYLE
-  } from '@/constants/expandedScreenData';
+} from '@/constants/expandedScreenData';
 
-  const StyledView = styled(View);
-  const StyledImage = styled(Image);
-  
-  const getCategoryStyleClasses = (categoryName: string) => {
+const StyledView = styled(View);
+const StyledImage = styled(Image);
+
+const getCategoryStyleClasses = (categoryName: string) => {
     const styles = CATEGORY_STYLES[categoryName] || DEFAULT_CATEGORY_STYLE;
-    
+
     return {
-      container: `mb-4 mr-auto border rounded-full`,
-      text: `text-sm px-4 py-1 rounded-full inline-block`,
-      style: {
-        backgroundColor: styles.backgroundColor,
-        borderColor: styles.borderColor,
-      },
-      textStyle: {
-        color: styles.textColor,
-      }
+        container: `mb-4 mr-auto border rounded-full`,
+        text: `text-sm px-4 py-1 rounded-full inline-block`,
+        style: {
+            backgroundColor: styles.backgroundColor,
+            borderColor: styles.borderColor,
+        },
+        textStyle: {
+            color: styles.textColor,
+        }
     };
-  };
+};
 const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) => {
     const findArticleIndex = items.findIndex((item: any) => item.id == initialArticleId);
 
@@ -44,6 +44,8 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
     const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
     const { animatedValues, closeModal } = useNewsItemAnimations(isCommentModalVisible, onClose);
     const [activeArticle, setActiveArticle] = useState(initialArticleId);
+    console.log("initialArticleId", initialArticleId);
+
 
     useEffect(() => {
         (async () => {
@@ -66,13 +68,13 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
     const renderScreen = ({ item }: any) => {
         const category = categories.find((cat: CategoryType) => cat.id === item.category_id);
         const imageWrapperStyle = {
-          ...IMAGE_WRAPPER_STYLE,
-          borderBottomRightRadius: isCommentModalVisible ? 20 : 0,
-          borderBottomLeftRadius: isCommentModalVisible ? 20 : 0,
+            ...IMAGE_WRAPPER_STYLE,
+            borderBottomRightRadius: isCommentModalVisible ? 20 : 0,
+            borderBottomLeftRadius: isCommentModalVisible ? 20 : 0,
         };
 
         return (
-            <Animated.View 
+            <Animated.View
                 style={[{ width: SCREEN_DIMENSIONS.width, backgroundColor: isCommentModalVisible ? '#F3F4F6' : 'white', transform: [{ scale: animatedValues.scale }] }]}
                 {...panResponder.panHandlers}
             >
@@ -126,20 +128,20 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                     <StyledView className="p-[16px]">
                         <Text className="text-[20px] font-domine mb-[12px]">{item.title}</Text>
                         <Text className="font-geist font-light mb-4 text-[16px] leading-6">{item.summary}</Text>
-                        
+
                         {category && (
-      <View 
-        className={getCategoryStyleClasses(category.name).container}
-        style={getCategoryStyleClasses(category.name).style}
-      >
-        <Text 
-          className={getCategoryStyleClasses(category.name).text}
-          style={getCategoryStyleClasses(category.name).textStyle}
-        >
-          {category.name}
-        </Text>
-      </View>
-    )}
+                            <View
+                                className={getCategoryStyleClasses(category.name).container}
+                                style={getCategoryStyleClasses(category.name).style}
+                            >
+                                <Text
+                                    className={getCategoryStyleClasses(category.name).text}
+                                    style={getCategoryStyleClasses(category.name).textStyle}
+                                >
+                                    {category.name}
+                                </Text>
+                            </View>
+                        )}
                     </StyledView>
                 </Animated.View>
 
@@ -160,7 +162,7 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
 
     const handleScroll = useCallback((event: any) => {
         const slideIndex = Math.round(event.nativeEvent.contentOffset.x / SCREEN_DIMENSIONS.width);
-        setActiveArticle(slideIndex);
+        setActiveArticle(items[slideIndex].id);
     }, []);
 
     return (
