@@ -1,10 +1,18 @@
 import { useNewsItemAnimations } from '@/hooks/useAnimations';
-import { useSwipeGesture } from '@/hooks/useSwipeUp';
+import { useCombinedSwipe } from '@/hooks/useCombined';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styled } from 'nativewind';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Animated, FlatList } from 'react-native';
+import { 
+    View, 
+    Text, 
+    Image, 
+    Animated, 
+    FlatList,
+    Dimensions,
+    Platform
+} from 'react-native';
 import Reanimated from 'react-native-reanimated';
 import CommentSectionModal from './comment/commentSectionModal';
 import { getAllCategories } from '@/api/apiCategories';
@@ -23,7 +31,6 @@ const StyledImage = styled(Image);
 
 const getCategoryStyleClasses = (categoryName: string) => {
     const styles = CATEGORY_STYLES[categoryName] || DEFAULT_CATEGORY_STYLE;
-
     return {
         container: `mb-4 mr-auto border rounded-full`,
         text: `text-sm px-4 py-1 rounded-full inline-block`,
@@ -36,16 +43,32 @@ const getCategoryStyleClasses = (categoryName: string) => {
         }
     };
 };
-const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) => {
+
+interface ExpandNewsItemProps {
+    items: any[];
+    initialArticleId: number | string;
+    isVisible: boolean;
+    onClose: () => void;
+}
+
+const ExpandNewsItem: React.FC<ExpandNewsItemProps> = ({ 
+    items, 
+    initialArticleId, 
+    isVisible, 
+    onClose 
+}) => {
     const findArticleIndex = items.findIndex((item: any) => item.id == initialArticleId);
-
+    const flatListRef = useRef<FlatList>(null);
     const [categories, setCategories] = useState<CategoryType[]>([]);
-    const flatListRef = useRef<any>(null);
     const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
-    const { animatedValues, closeModal } = useNewsItemAnimations(isCommentModalVisible, onClose);
+    const { animatedValues } = useNewsItemAnimations(isCommentModalVisible, onClose); // Removed closeModal from destructuring
     const [activeArticle, setActiveArticle] = useState(initialArticleId);
-    console.log("initialArticleId", initialArticleId);
+    const currentIndexRef = useRef(findArticleIndex);
 
+    const handleCommentModalClose = () => {
+        setIsCommentModalVisible(false);
+        // Don't call onClose here as it would close the main modal
+    };
 
     useEffect(() => {
         (async () => {
@@ -60,12 +83,45 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
         })();
     }, []);
 
-    const panResponder = useSwipeGesture({
-        onSwipeUp: () => setIsCommentModalVisible(true),
+    const { panResponder, scrollEnabled, animatedStyle } = useCombinedSwipe({
+        data: items,
+        currentIndex: currentIndexRef.current,
+        onSwipeLeft: (index) => {
+            if (flatListRef.current && !isCommentModalVisible) {
+                flatListRef.current.scrollToIndex({
+                    index,
+                    animated: true
+                });
+            }
+        },
+        onSwipeRight: (index) => {
+            if (flatListRef.current && !isCommentModalVisible) {
+                flatListRef.current.scrollToIndex({
+                    index,
+                    animated: true
+                });
+            }
+        },
+        onSwipeUp: () => {
+            if (!isCommentModalVisible) {
+                setIsCommentModalVisible(true);
+            }
+        },
+        onSwipeDown: () => {
+            if (!isCommentModalVisible && onClose) {
+                onClose();
+            }
+        },
         isCommentModalVisible
     });
 
-    const renderScreen = ({ item }: any) => {
+    const handleScroll = useCallback((event: any) => {
+        const slideIndex = Math.round(event.nativeEvent.contentOffset.x / SCREEN_DIMENSIONS.width);
+        currentIndexRef.current = slideIndex;
+        setActiveArticle(items[slideIndex].id);
+    }, [items]);
+
+    const renderScreen = ({ item }: { item: any }) => {
         const category = categories.find((cat: CategoryType) => cat.id === item.category_id);
         const imageWrapperStyle = {
             ...IMAGE_WRAPPER_STYLE,
@@ -75,7 +131,11 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
 
         return (
             <Animated.View
-                style={[{ width: SCREEN_DIMENSIONS.width, backgroundColor: isCommentModalVisible ? '#F3F4F6' : 'white', transform: [{ scale: animatedValues.scale }] }]}
+                style={[{ 
+                    width: SCREEN_DIMENSIONS.width, 
+                    backgroundColor: isCommentModalVisible ? '#F3F4F6' : 'white', 
+                    transform: [{ scale: animatedValues.scale }] 
+                }]}
                 {...panResponder.panHandlers}
             >
                 <Animated.View style={[
@@ -87,9 +147,19 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                         }),
                     }
                 ]}>
-                    <StyledImage source={{ uri: item.image_url }} style={IMAGE_STYLE} resizeMode="cover" />
-                    <Animated.View style={[GRADIENT_STYLE, { opacity: animatedValues.gradientOpacity }]}>
-                        <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={{ flex: 1 }} />
+                    <StyledImage 
+                        source={{ uri: item.image_url }} 
+                        style={IMAGE_STYLE} 
+                        resizeMode="cover" 
+                    />
+                    <Animated.View style={[
+                        GRADIENT_STYLE, 
+                        { opacity: animatedValues.gradientOpacity }
+                    ]}>
+                        <LinearGradient 
+                            colors={['transparent', 'rgba(0,0,0,0.8)']} 
+                            style={{ flex: 1 }} 
+                        />
                     </Animated.View>
 
                     <Animated.View style={{
@@ -100,9 +170,12 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                         transform: [{ translateY: animatedValues.titlePosition }],
                     }}>
                         {isCommentModalVisible && (
-                            <Text className="text-[22px] font-domine text-white">{item.title}</Text>
+                            <Text className="text-[22px] font-domine text-white">
+                                {item.title}
+                            </Text>
                         )}
                     </Animated.View>
+
                     <Animated.View style={{
                         position: 'absolute',
                         bottom: 12,
@@ -111,8 +184,9 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                             translateY: animatedValues.dragIndicator
                         }],
                     }}>
-                        {isCommentModalVisible &&
-                            <View className='h-[4px] w-[24px] rounded-full bg-[#FFFFFF]/20' />}
+                        {isCommentModalVisible && (
+                            <View className='h-[4px] w-[24px] rounded-full bg-[#FFFFFF]/20' />
+                        )}
                     </Animated.View>
                 </Animated.View>
 
@@ -126,8 +200,12 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                     }],
                 }}>
                     <StyledView className="p-[16px]">
-                        <Text className="text-[20px] font-domine mb-[12px]">{item.title}</Text>
-                        <Text className="font-geist font-light mb-4 text-[16px] leading-6">{item.summary}</Text>
+                        <Text className="text-[20px] font-domine mb-[12px]">
+                            {item.title}
+                        </Text>
+                        <Text className="font-geist font-light mb-4 text-[16px] leading-6">
+                            {item.summary}
+                        </Text>
 
                         {category && (
                             <View
@@ -152,7 +230,7 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                 )}
             </Animated.View>
         );
-    }
+    };
 
     const getItemLayout = useCallback((_: any, index: number) => ({
         length: SCREEN_DIMENSIONS.width,
@@ -160,14 +238,12 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
         index,
     }), []);
 
-    const handleScroll = useCallback((event: any) => {
-        const slideIndex = Math.round(event.nativeEvent.contentOffset.x / SCREEN_DIMENSIONS.width);
-        setActiveArticle(items[slideIndex].id);
-    }, []);
-
     return (
         <Reanimated.View style={[{ flex: 1, marginTop: 50 }]}>
-            <StyledView style={{ flex: 1, backgroundColor: 'white' }}>
+            <Animated.View style={[
+                { flex: 1, backgroundColor: 'white' },
+                animatedStyle
+            ]}>
                 <FlatList
                     ref={flatListRef}
                     data={items}
@@ -180,14 +256,14 @@ const ExpandNewsItem = ({ items, initialArticleId, isVisible, onClose }: any) =>
                     onMomentumScrollEnd={handleScroll}
                     initialScrollIndex={findArticleIndex}
                     scrollEventThrottle={16}
+                    scrollEnabled={scrollEnabled && !isCommentModalVisible}
                     decelerationRate="fast"
                     snapToInterval={SCREEN_DIMENSIONS.width}
                     snapToAlignment='center'
                 />
-            </StyledView>
-
+            </Animated.View>
             <CommentSectionModal
-                postId={activeArticle}
+                postId={activeArticle.toString()}
                 isVisible={isCommentModalVisible}
                 onClose={() => setIsCommentModalVisible(false)}
             />
