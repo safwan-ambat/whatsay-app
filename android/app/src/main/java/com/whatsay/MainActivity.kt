@@ -1,4 +1,4 @@
-package com.safwanambat.whatsay
+package com.whatsay
 
 import android.os.Build
 import android.os.Bundle

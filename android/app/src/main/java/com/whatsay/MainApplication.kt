@@ -1,4 +1,4 @@
-package com.safwanambat.whatsay
+package com.whatsay
 
 import android.app.Application
 import android.content.res.Configuration

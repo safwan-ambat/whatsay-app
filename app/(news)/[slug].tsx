@@ -2,7 +2,7 @@ import { ActivityIndicator } from 'react-native';
 import { getAllArticlesByCategories } from '@/api/apiArticles';
 import ExpandNewsItem from '@/components/ExpandNewsItem';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState,useRef } from 'react';
 import { Platform, StyleSheet, Dimensions } from 'react-native';
 import { Text } from 'react-native';
 import { View } from 'react-native';
@@ -14,6 +14,7 @@ import Animated, {
   useSharedValue,
   withSpring
 } from 'react-native-reanimated';
+import LottieView from 'lottie-react-native';
 
 const ContentWrapper = Platform.OS === 'android' ? GestureHandlerRootView : View;
 
@@ -22,6 +23,7 @@ const NewsDetails = () => {
   const [newsArticles, setNewsArticles] = useState<any>();
   const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const animation = useRef<LottieView>(null);
 
   const translateY = useSharedValue(0);
   const router = useRouter();
@@ -68,7 +70,15 @@ const NewsDetails = () => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="black" />
+        <LottieView  
+         autoPlay
+         ref={animation}
+         style={{
+           width: 200,
+           height: 200,
+           backgroundColor: '#eee',
+         }}
+        source={require('@/assets/animations/Animation - 1733546313504.json')}  />
       </View>
     );
   }
@@ -108,6 +118,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
+    height:500
   },
   errorContainer: {
     flex: 1,
