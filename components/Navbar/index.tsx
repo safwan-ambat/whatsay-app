@@ -24,7 +24,7 @@ const NavBar = () => {
         <TouchableOpacity onPress={handleProfilePress}>
           {loggedInUserData ? (
             <Image
-              source={{ uri: loggedInUserData.user?.photo }}
+              source={{ uri: loggedInUserData.user?.pic }}
               className="w-[40px] h-[40px] rounded-full"
               resizeMode="cover"
             />

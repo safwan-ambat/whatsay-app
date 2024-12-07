@@ -22,7 +22,7 @@ const NewsDetails = () => {
   const [newsArticles, setNewsArticles] = useState<any>();
   const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   const translateY = useSharedValue(0);
   const router = useRouter();
 
@@ -93,7 +93,6 @@ const NewsDetails = () => {
             initialArticleId={slug}
             isVisible={true}
             onClose={handleCloseModal}
-            setIsCommentModalVisible={setIsCommentModalVisible}
           />
         </Animated.View>
       </PanGestureHandler>

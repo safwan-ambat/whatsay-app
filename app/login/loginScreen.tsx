@@ -39,16 +39,17 @@ const LoginScreen = () => {
 
       const { user, idToken } = userInfo.data;
 
-      dispatch(setUser({
-        user: user,
-        token: idToken
-      }));
-
+      
       // Store user data in AsyncStorage for session persistence
       await AsyncStorage.setItem('user', JSON.stringify(userInfo));
-
+      
       // Send user data to the backend API
-      await storeUser(userInfo, 'via google');
+      const userData = await storeUser(userInfo, 'via google');
+      
+      dispatch(setUser({
+        user: userData,
+        token: idToken
+      }));
 
       // Navigate to discover screen
       router.replace({

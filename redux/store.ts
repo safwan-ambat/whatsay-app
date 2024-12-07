@@ -10,6 +10,7 @@ import {
 } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Use AsyncStorage for React Native
 import { usersSlice } from "./slice/userSlice";
+import { commentSlice } from "./slice/articlesComments";
 
 // Configuring the persistence
 const persistConfig = {
@@ -21,6 +22,7 @@ const persistConfig = {
 // Combine reducers
 export const reducer = combineReducers({
   users: usersSlice.reducer,
+  comments: commentSlice.reducer,
 });
 
 // Persist the reducer

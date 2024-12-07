@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 let APIService = axios.create({
     baseURL: `https://whatsay.news:8080/api`,
+    // baseURL: `http://localhost:8080/api`,
     timeout: 30000, // Adjusted for a reasonable timeout in ms
     headers: {
         "Content-Type": "application/json",
@@ -19,7 +20,7 @@ APIService.interceptors.response.use(
 export async function APICaller<Type>(apiCall: Promise<AxiosResponse<Type>>): Promise<Type | undefined> {
     try {
         const response = await apiCall;
-        
+
         if ([200, 201, 204].includes(response.status)) {
             return response.data;
         }
