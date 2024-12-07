@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
-import { 
-  View, Text, TouchableOpacity, FlatList, TextInput, Dimensions, 
+import {
+  View, Text, TouchableOpacity, FlatList, TextInput, Dimensions,
   StyleSheet, Image, Platform, Keyboard, KeyboardAvoidingView
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -14,10 +14,14 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import UserComment from './userComment';
-import { CommentProp, User, Reply } from '../../app/types';
 import { mockComments, mockReplies } from '../../constants/commentsData';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useDispatch, useSelector } from 'react-redux';
+import { loggedInUserDataSelector } from '@/redux/slice/userSlice';
+import { useRouter } from 'expo-router';
+import { apiAddArticleComment, apigetAllComments } from '@/api/apiComments';
+import { commentsDataSelector, setComment, setReplyComment } from '@/redux/slice/articlesComments';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 const MODAL_HEIGHT = SCREEN_HEIGHT * 1;
@@ -32,7 +36,7 @@ interface ExpandableInputProps {
   value: string;
   onChangeText: (text: string) => void;
   placeholder: string;
-  replyingTo: CommentProp | null;
+  replyingTo: any | null;
   onCancelReply: () => void;
 }
 
@@ -45,7 +49,7 @@ const ExpandableInput: React.FC<ExpandableInputProps> = ({ value, onChangeText, 
       {replyingTo && (
         <View style={styles.replyingToInner}>
           <Text style={styles.replyingToText}>
-            Replying to {replyingTo.author.name}
+            Replying to <Text className='capitalize'>{replyingTo?.user.name}</Text>
           </Text>
           <TouchableOpacity onPress={onCancelReply}>
             <AntDesign name="close" size={16} color="#9DA2A9" />
@@ -62,35 +66,33 @@ const ExpandableInput: React.FC<ExpandableInputProps> = ({ value, onChangeText, 
           setInputHeight(event.nativeEvent.contentSize.height);
         }}
       />
-      
+
     </View>
   );
 };
 
 const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVisible, onClose }) => {
-  const [comments, setComments] = useState<CommentProp[]>([]);
-  const [replies, setReplies] = useState<{ [key: string]: Reply[] }>(mockReplies);
+
+  const dispatch = useDispatch();
+
+  const [replies, setReplies] = useState<any>(mockReplies);
   const [newComment, setNewComment] = useState('');
-  const [replyingTo, setReplyingTo] = useState<CommentProp | null>(null);
+  const [replyingTo, setReplyingTo] = useState<any | null>(null);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const navigation = useNavigation();
   const flatListRef = useRef<FlatList>(null);
 
   const translateY = useSharedValue(MODAL_HEIGHT);
 
+  const loggedInUserData = useSelector(loggedInUserDataSelector);
+  const commentsData = useSelector(commentsDataSelector);
+
+  const router = useRouter()
+
   const scrollTo = useCallback((destination: number) => {
     'worklet';
     translateY.value = withSpring(destination, { damping: 50, stiffness: 300 });
   }, []);
-
-  useEffect(() => {
-    if (isVisible) {
-      scrollTo(0);
-      setComments(mockComments);
-    } else {
-      scrollTo(MODAL_HEIGHT);
-    }
-  }, [isVisible, scrollTo]);
 
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener(
@@ -107,6 +109,19 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
       keyboardWillHideListener.remove();
     };
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        scrollTo(0);
+        await apigetAllComments(postId).then((response) => {
+          dispatch(setComment(response))
+        })
+      } catch (error) {
+        console.log("Comments Fetching Error", error)
+      }
+    })()
+  }, [isVisible, scrollTo])
 
   const gestureHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, { startY: number }>({
     onStart: (_, context) => {
@@ -131,60 +146,39 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
     };
   });
 
-  const handlePostComment = () => {
-    if (newComment.trim() === '') return;
-    Keyboard.dismiss();
+  const handlePostComment = async () => {
 
-    const currentUser: User = {
-      id: 'currentUser',
-      name: 'Current User',
-      avatar: 'https://i.pravatar.cc/150?img=0'
-    };
-
-    if (replyingTo) {
-      const newReply: Reply = {
-        id: `reply-${Date.now()}`,
-        commentId: replyingTo.id,
-        author: currentUser,
-        content: newComment,
-        timestamp: new Date().toISOString(),
-        likesCount: 0,
-        liked: false
-      };
-
-      setReplies(prevReplies => ({
-        ...prevReplies,
-        [replyingTo.id]: [...(prevReplies[replyingTo.id] || []), newReply]
-      }));
-
-      setComments(prevComments => 
-        prevComments.map(comment => 
-          comment.id === replyingTo.id 
-            ? { ...comment, repliesCount: comment.repliesCount + 1 }
-            : comment
-        )
-      );
-
-      setReplyingTo(null);
+    if (!loggedInUserData) {
+      router.push('/login/loginScreen');
     } else {
-      const newCommentObj: CommentProp = {
-        id: `${Date.now()}`,
-        author: currentUser,
-        content: newComment,
-        timestamp: new Date().toISOString(),
-        likesCount: 0,
-        repliesCount: 0,
-        liked: false
-      };
 
-      setComments(prevComments => [newCommentObj, ...prevComments]);
+      if (newComment.trim() == '') return;
+
+      if (replyingTo) {
+        const replyCommentId = replyingTo.id;
+        await apiAddArticleComment(newComment.trim(), loggedInUserData.user.id, postId, replyCommentId)
+          .then((res: any) => {
+            dispatch(setReplyComment({ replyCommentId, res }))
+            setNewComment('')
+            setReplyingTo(null)
+          })
+      } else {
+        await apiAddArticleComment(newComment.trim(), loggedInUserData.user.id, postId)
+          .then((res: any) => {
+            const oldComments = [...commentsData.flat()];
+            const newComments = [...oldComments, ...res]; // Merge oldComments with res
+            dispatch(setComment(newComments))
+            setNewComment('')
+          }).catch((error: any) => {
+            console.log("error", error);
+          })
+      }
     }
 
-    setNewComment('');
     flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
   };
 
-  const handleReply = (comment: CommentProp) => {
+  const handleReply = (comment: Comment) => {
     setReplyingTo(comment);
   };
 
@@ -194,7 +188,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
     <View style={StyleSheet.absoluteFill}>
       <PanGestureHandler onGestureEvent={gestureHandler}>
         <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
-          <KeyboardAvoidingView 
+          <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.commentContainer}
             keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
@@ -206,28 +200,29 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
             <NativeViewGestureHandler disallowInterruption={true}>
               <FlatList
                 ref={flatListRef}
-                data={comments}
+                data={commentsData}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                  <UserComment 
-                    comment={item} 
-                    navigation={navigation} 
+                  <UserComment
+                    comment={item}
+                    navigation={navigation}
                     onReply={() => handleReply(item)}
                     replies={replies[item.id] || []}
+                    postId={postId}
                   />
                 )}
                 style={styles.commentList}
 
 
-                
+
               />
             </NativeViewGestureHandler>
 
             <BlurView intensity={10} tint="light" style={[styles.inputContainer, { bottom: keyboardHeight }]}>
               <LinearGradient
                 colors={['rgba(243, 244, 246, 0)', '#F3F4F6']}
-                start={{x: 0, y: 0}}
-                end={{x: 0, y: 1}}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
                 style={StyleSheet.absoluteFill}
               />
               <View style={styles.inputField}>
@@ -256,13 +251,13 @@ const styles = StyleSheet.create({
 
 
   modalContainer: {
-    height:"100%" ,
+    height: "100%",
     width: '100%',
     position: 'absolute',
     bottom: 0,
   },
   commentContainer: {
-    
+
     height: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.52 : SCREEN_HEIGHT * 0.53,
     width: '100%',
     position: 'absolute',
@@ -286,54 +281,54 @@ const styles = StyleSheet.create({
   },
 
 
-// inputField
-expandableInputContainer: {
-  flex: 1,
-  backgroundColor: "white",
-  borderRadius: 24,
-  marginRight: -12,
-  paddingVertical: 8,
-  paddingHorizontal: 16,
-},
+  // inputField
+  expandableInputContainer: {
+    flex: 1,
+    backgroundColor: "white",
+    borderRadius: 24,
+    marginRight: -12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
 
-replyingToInner: {
-  
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  paddingTop: 4,
-},
-replyingToText: {
-  fontFamily: 'Geist',
-  fontSize: 12,
-  color: '#9DA2A9',
-},
+  replyingToInner: {
+
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 4,
+  },
+  replyingToText: {
+    fontFamily: 'Geist',
+    fontSize: 12,
+    color: '#9DA2A9',
+  },
 
 
   inputContainer: {
-    width:SCREEN_WIDTH,
-    position:"absolute",
-    height:94,
-    bottom:0,
-    
+    width: SCREEN_WIDTH,
+    position: "absolute",
+    height: 94,
+    bottom: 0,
+
   },
 
   inputField: {
-    width:SCREEN_WIDTH,
-    paddingHorizontal:16,
+    width: SCREEN_WIDTH,
+    paddingHorizontal: 16,
   },
-  
+
   replyingToContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal:16,
+    paddingHorizontal: 16,
   },
 
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  
+
   // input: {
   //   flex: 1,
   //   borderRadius: 100,
