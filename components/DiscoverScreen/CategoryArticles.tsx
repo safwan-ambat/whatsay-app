@@ -12,6 +12,7 @@ import {
     travel,
     world
 } from '@/assets';
+import useLocation from '@/hooks/useLocation';
 
 type CategoryIconKey = 'categoryKey' | string;
 
@@ -39,6 +40,8 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
     const [articles, setArticles] = useState<any[]>([])
 
     const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+
+    const {latitude, longitude, errorMsg, location} = useLocation();
 
     const activeIndex = useSharedValue(0);
     const translateX = useSharedValue(0);
@@ -87,6 +90,21 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
                     className='w-[28px] h-[28px] mr-[8px]'
                     resizeMode='contain' />
                 <Text className='text-[20px] font-domine'>{category.name}</Text>
+            </View>
+            <View className='flex flex-col gap-1'>
+                <Text>Longitude: {longitude}</Text>
+                <Text>Latitude: {latitude}</Text>
+                <Text>city: {location[0].city}</Text>
+                <Text>country: {location[0].country}</Text>
+                <Text>district: {location[0].district}</Text>
+                <Text>isoCountryCode: {location[0].isoCountryCode}</Text>
+                <Text>name: {location[0].name}</Text>
+                <Text>postalCode: {location[0].postalCode}</Text>
+                <Text>region: {location[0].region}</Text>
+                <Text>street: {location[0].street}</Text>
+                <Text>streetNumber: {location[0].streetNumber}</Text>
+                <Text>subregion: {location[0].subregion}</Text>
+                <Text>timezone: {location[0].timezone}</Text>
             </View>
             <View style={[styles.cardContainer, , { width: SCREEN_WIDTH }]}>
                 {articles.slice(0, 3).map((item, itemIndex) => {
