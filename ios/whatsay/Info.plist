@@ -92,5 +92,15 @@
 	<string>Automatic</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIBackgroundModes</key>
+  	<array>
+    	<string>location</string>
+  	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+<string>We use your location to provide personalized experiences.</string>
+
+<key>NSLocationAlwaysUsageDescription</key>
+<string>We use your location to improve the app's functionality even when it is not active.</string>
+
 </dict>
 </plist>

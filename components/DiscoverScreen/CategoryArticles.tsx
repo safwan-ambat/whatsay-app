@@ -94,17 +94,17 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
             <View className='flex flex-col gap-1'>
                 <Text>Longitude: {longitude}</Text>
                 <Text>Latitude: {latitude}</Text>
-                <Text>city: {location[0].city}</Text>
-                <Text>country: {location[0].country}</Text>
-                <Text>district: {location[0].district}</Text>
-                <Text>isoCountryCode: {location[0].isoCountryCode}</Text>
-                <Text>name: {location[0].name}</Text>
-                <Text>postalCode: {location[0].postalCode}</Text>
-                <Text>region: {location[0].region}</Text>
-                <Text>street: {location[0].street}</Text>
-                <Text>streetNumber: {location[0].streetNumber}</Text>
-                <Text>subregion: {location[0].subregion}</Text>
-                <Text>timezone: {location[0].timezone}</Text>
+                <Text>city: {location[0]?.city}</Text>
+                <Text>country: {location[0]?.country}</Text>
+                <Text>district: {location[0]?.district}</Text>
+                <Text>isoCountryCode: {location[0]?.isoCountryCode}</Text>
+                <Text>name: {location[0]?.name}</Text>
+                <Text>postalCode: {location[0]?.postalCode}</Text>
+                <Text>region: {location[0]?.region}</Text>
+                <Text>street: {location[0]?.street}</Text>
+                <Text>streetNumber: {location[0]?.streetNumber}</Text>
+                <Text>subregion: {location[0]?.subregion}</Text>
+                <Text>timezone: {location[0]?.timezone}</Text>
             </View>
             <View style={[styles.cardContainer, , { width: SCREEN_WIDTH }]}>
                 {articles.slice(0, 3).map((item, itemIndex) => {
