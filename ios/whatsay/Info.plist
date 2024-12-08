@@ -97,10 +97,13 @@
     	<string>location</string>
   	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
-<string>We use your location to provide personalized experiences.</string>
+	<string>This app needs access to your location to provide personalized services.</string>
 
-<key>NSLocationAlwaysUsageDescription</key>
-<string>We use your location to improve the app's functionality even when it is not active.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs access to your location for enhanced functionality.</string>
+
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location even when the app is in the background.</string>
 
 </dict>
 </plist>
