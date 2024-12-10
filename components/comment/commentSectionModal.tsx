@@ -87,7 +87,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
   const loggedInUserData = useSelector(loggedInUserDataSelector);
   const commentsData = useSelector(commentsDataSelector);
 
-  const router = useRouter()
+  const router = useRouter();
 
   const scrollTo = useCallback((destination: number) => {
     'worklet';

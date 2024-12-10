@@ -24,6 +24,7 @@
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.4.1",
     "@reduxjs/toolkit": "^2.3.0",
+    "@supabase/supabase-js": "^2.47.3",
     "axios": "^1.7.7",
     "expo": "~51.0.39",
     "expo-blur": "^13.0.2",
