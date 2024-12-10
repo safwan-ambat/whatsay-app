@@ -36,12 +36,19 @@ interface ExpandableInputProps {
   value: string;
   onChangeText: (text: string) => void;
   placeholder: string;
+  placeholderTextColor: string;
   replyingTo: any | null;
   onCancelReply: () => void;
 }
 
-
-const ExpandableInput: React.FC<ExpandableInputProps> = ({ value, onChangeText, placeholder, replyingTo, onCancelReply }) => {
+const ExpandableInput: React.FC<ExpandableInputProps> = ({ 
+  value, 
+  onChangeText, 
+  placeholder, 
+  placeholderTextColor,
+  replyingTo, 
+  onCancelReply 
+}) => {
   const [inputHeight, setInputHeight] = useState(48);
 
   return (
@@ -60,19 +67,18 @@ const ExpandableInput: React.FC<ExpandableInputProps> = ({ value, onChangeText, 
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
+        placeholderTextColor={placeholderTextColor}
         multiline
         style={[{ flex: 1 }, { height: Math.max(48, inputHeight) }]}
         onContentSizeChange={(event) => {
           setInputHeight(event.nativeEvent.contentSize.height);
         }}
       />
-
     </View>
   );
 };
 
 const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVisible, onClose }) => {
-
   const dispatch = useDispatch();
 
   const [replies, setReplies] = useState<any>(mockReplies);
@@ -87,7 +93,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
   const loggedInUserData = useSelector(loggedInUserDataSelector);
   const commentsData = useSelector(commentsDataSelector);
 
-  const router = useRouter();
+  const router = useRouter()
 
   const scrollTo = useCallback((destination: number) => {
     'worklet';
@@ -147,13 +153,11 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
   });
 
   const handlePostComment = async () => {
-
     if (!loggedInUserData) {
       router.push('/login/loginScreen');
     } else {
-
       if (newComment.trim() == '') return;
-
+  
       if (replyingTo) {
         const replyCommentId = replyingTo.id;
         await apiAddArticleComment(newComment.trim(), loggedInUserData.user.id, postId, replyCommentId)
@@ -161,23 +165,25 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
             dispatch(setReplyComment({ replyCommentId, res }))
             setNewComment('')
             setReplyingTo(null)
+            Keyboard.dismiss()  // Add this line
           })
       } else {
         await apiAddArticleComment(newComment.trim(), loggedInUserData.user.id, postId)
           .then((res: any) => {
             const oldComments = [...commentsData.flat()];
-            const newComments = [...oldComments, ...res]; // Merge oldComments with res
+            const newComments = [...oldComments, ...res];
             dispatch(setComment(newComments))
             setNewComment('')
+            Keyboard.dismiss()  // Add this line
           }).catch((error: any) => {
             console.log("error", error);
           })
       }
     }
-
+  
     flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
   };
-
+  
   const handleReply = (comment: Comment) => {
     setReplyingTo(comment);
   };
@@ -212,9 +218,6 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
                   />
                 )}
                 style={styles.commentList}
-
-
-
               />
             </NativeViewGestureHandler>
 
@@ -231,6 +234,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
                     value={newComment}
                     onChangeText={setNewComment}
                     placeholder={replyingTo ? "Write a reply..." : "Add a comment..."}
+                    placeholderTextColor="#C4C4C4"
                     replyingTo={replyingTo}
                     onCancelReply={() => setReplyingTo(null)}
                   />
@@ -248,8 +252,6 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
 };
 
 const styles = StyleSheet.create({
-
-
   modalContainer: {
     height: "100%",
     width: '100%',
@@ -257,7 +259,6 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   commentContainer: {
-
     height: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.52 : SCREEN_HEIGHT * 0.53,
     width: '100%',
     position: 'absolute',
@@ -279,9 +280,6 @@ const styles = StyleSheet.create({
   commentList: {
     flex: 1,
   },
-
-
-  // inputField
   expandableInputContainer: {
     flex: 1,
     backgroundColor: "white",
@@ -290,9 +288,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
   },
-
   replyingToInner: {
-
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -303,44 +299,32 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#9DA2A9',
   },
-
-
   inputContainer: {
     width: SCREEN_WIDTH,
     position: "absolute",
     height: 94,
     bottom: 0,
-
   },
-
   inputField: {
     width: SCREEN_WIDTH,
     paddingHorizontal: 16,
   },
-
   replyingToContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
   },
-
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
-  // input: {
-  //   flex: 1,
-  //   borderRadius: 100,
-  //   paddingHorizontal: 16,
-  //   marginRight: -12,
-  // },
   commentIcon: {
     width: 68,
     height: 68,
     transform: [
       { translateY: 5 },
-      { translateX: 10 }],
+      { translateX: 10 }
+    ],
   },
 });
 
