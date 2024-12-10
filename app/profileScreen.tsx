@@ -54,7 +54,7 @@ const ProfileScreen = () => {
       <View className="items-center mt-[44px] flex-row justify-center">
         <View className="flex-1 items-center">
           <Image
-            source={{ uri: loggedInUserData.user?.pic }}
+            source={{ uri: loggedInUserData.user?.photo }}
             className="w-[120px] h-[120px] rounded-full border-white border-[3px]"
             resizeMode="cover"
           />

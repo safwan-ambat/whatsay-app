@@ -8,6 +8,7 @@ import { loggedInUserDataSelector } from '@/redux/slice/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { apiCommentLikesToogle } from '@/api/apiComments';
 import { updateLike } from '@/redux/slice/articlesComments';
+import { useRouter } from 'expo-router';
 
 interface UserCommentProps {
   comment: ArticleComment;
@@ -22,15 +23,21 @@ const UserComment: React.FC<UserCommentProps> = ({ comment, navigation, onReply,
   const loggedInUserData = useSelector(loggedInUserDataSelector);
 
   const dispatch = useDispatch();
+  const router = useRouter()
 
   const [showReplies, setShowReplies] = useState(false);
 
   const handleLike = async () => {
     try {
-      await apiCommentLikesToogle(comment.id, loggedInUserData.user.id)
-        .then((response) => {
-          dispatch(updateLike({ commentId: comment.id, response }));
-        })
+      if (!loggedInUserData) {
+        return router.push('/login/loginScreen');
+      }else{
+        await apiCommentLikesToogle(comment.id, loggedInUserData.user.id)
+          .then((response) => {
+            dispatch(updateLike({ commentId: comment.id, response }));
+          })
+      }
+
     } catch (error) {
       console.log("Failed to like", error);
     }
@@ -51,7 +58,11 @@ const UserComment: React.FC<UserCommentProps> = ({ comment, navigation, onReply,
             <View className="flex-row mt-2 items-center">
 
               <TouchableOpacity onPress={handleLike} className="flex-row items-center mr-4">
-                <AntDesign name={comment.likes?.includes(loggedInUserData.user.id) ? "heart" : "hearto"} size={16} color={comment.likes?.includes(loggedInUserData.user.id) ? "red" : "black"} />
+                <AntDesign
+                  size={16}
+                  name={comment.likes?.includes(loggedInUserData?.user?.id) ? "heart" : "hearto"}
+                  color={comment.likes?.includes(loggedInUserData?.user?.id) ? "red" : "black"}
+                />
                 <Text className="ml-1 font-geist  text-[#000000]/60 text-[12px]">{comment.likes?.length}</Text>
               </TouchableOpacity>
 
