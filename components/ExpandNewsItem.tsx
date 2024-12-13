@@ -11,7 +11,8 @@ import {
     Animated, 
     FlatList,
     Dimensions,
-    Platform
+    Platform,
+    TouchableOpacity
 } from 'react-native';
 import Reanimated from 'react-native-reanimated';
 import CommentSectionModal from './comment/commentSectionModal';
@@ -121,6 +122,10 @@ const ExpandNewsItem: React.FC<ExpandNewsItemProps> = ({
         setActiveArticle(items[slideIndex].id);
     }, [items]);
 
+    const handleUpButtonPress = () => {
+        setIsCommentModalVisible(true);
+    };
+
     const renderScreen = ({ item }: { item: any }) => {
         const category = categories.find((cat: CategoryType) => cat.id === item.category_id);
         const imageWrapperStyle = {
@@ -224,9 +229,13 @@ const ExpandNewsItem: React.FC<ExpandNewsItemProps> = ({
                 </Animated.View>
 
                 {!isCommentModalVisible && (
-                    <View className="absolute bottom-[40px] self-center bg-[#F7F7F7] rounded-full px-[20px] py-[8px]">
+                    <TouchableOpacity 
+                        className="absolute bottom-[40px] self-center bg-[#F7F7F7] rounded-full px-[20px] py-[8px]"
+                        onPress={handleUpButtonPress}
+                        activeOpacity={0.7}
+                    >
                         <AntDesign name="up" size={12} color="#9DA2A9" />
-                    </View>
+                    </TouchableOpacity>
                 )}
             </Animated.View>
         );
