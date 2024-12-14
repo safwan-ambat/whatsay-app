@@ -78,6 +78,7 @@ const ExpandableInput: React.FC<ExpandableInputProps> = ({
   );
 };
 
+const INPUT_CONTAINER_HEIGHT = 94;
 const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVisible, onClose }) => {
   const dispatch = useDispatch();
 
@@ -218,6 +219,9 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
                   />
                 )}
                 style={styles.commentList}
+                contentContainerStyle={{
+                  paddingBottom: INPUT_CONTAINER_HEIGHT + 16 // Added extra padding for better spacing
+                }}
               />
             </NativeViewGestureHandler>
 
