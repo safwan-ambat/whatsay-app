@@ -55,3 +55,13 @@ export interface ArticleComment {
   user: User; // User who posted the comment
   user_id: string; // User ID of the commenter
 }
+
+
+ export interface ExpandableInputProps {
+  value: string;
+  onChangeText: (text: string) => void;
+  placeholder: string;
+  placeholderTextColor: string;
+  replyingTo: any | null;
+  onCancelReply: () => void;
+}
