@@ -8,7 +8,6 @@ import { AntDesign } from '@expo/vector-icons';
 import { NativeViewGestureHandler, PanGestureHandler } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import UserComment from './userComment';
-import { mockReplies } from '../../constants/commentsData';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +16,7 @@ import { useRouter } from 'expo-router';
 import { apiAddArticleComment, apigetAllComments } from '@/api/apiComments';
 import { commentsDataSelector, setComment, setReplyComment } from '@/redux/slice/articlesComments';
 import { useCommentSectionAnimation, commentSectionStyles as styles } from '@/hooks/useCommentsection';
-import {ExpandableInputProps} from '@/types'
+import { ExpandableInputProps } from '@/types';
 
 interface CommentSectionModalProps {
   postId: string;
@@ -31,9 +30,17 @@ const ExpandableInput: React.FC<ExpandableInputProps> = ({
   placeholder, 
   placeholderTextColor,
   replyingTo, 
-  onCancelReply 
+  onCancelReply,
+  inputRef // Add input ref prop
 }) => {
   const [inputHeight, setInputHeight] = useState(48);
+
+  // Focus input when replyingTo changes
+  useEffect(() => {
+    if (replyingTo && inputRef?.current) {
+      inputRef.current.focus();
+    }
+  }, [replyingTo]);
 
   return (
     <View style={styles.expandableInputContainer}>
@@ -48,6 +55,7 @@ const ExpandableInput: React.FC<ExpandableInputProps> = ({
         </View>
       )}
       <TextInput
+        ref={inputRef}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
@@ -64,12 +72,13 @@ const ExpandableInput: React.FC<ExpandableInputProps> = ({
 
 const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVisible, onClose }) => {
   const dispatch = useDispatch();
-  const [replies, setReplies] = useState<any>(mockReplies);
+  const [replies, setReplies] = useState<any>([]);
   const [newComment, setNewComment] = useState('');
   const [replyingTo, setReplyingTo] = useState<any | null>(null);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const navigation = useNavigation();
   const flatListRef = useRef<FlatList>(null);
+  const inputRef = useRef<TextInput>(null);
   
   const loggedInUserData = useSelector(loggedInUserDataSelector);
   const commentsData = useSelector(commentsDataSelector);
@@ -77,13 +86,23 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
 
   const { scrollTo, gestureHandler, rBottomSheetStyle } = useCommentSectionAnimation(onClose);
 
+  // Enhanced keyboard handling
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener(
-      'keyboardWillShow',
-      (e) => setKeyboardHeight(e.endCoordinates.height)
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+        // Scroll to bottom when keyboard shows
+        if (flatListRef.current) {
+          setTimeout(() => {
+            flatListRef.current?.scrollToEnd({ animated: true });
+          }, 100);
+        }
+      }
     );
+    
     const keyboardWillHideListener = Keyboard.addListener(
-      'keyboardWillHide',
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
       () => setKeyboardHeight(0)
     );
 
@@ -104,49 +123,61 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
         console.log("Comments Fetching Error", error)
       }
     })()
-  }, [isVisible, scrollTo])
+  }, [isVisible, scrollTo]);
 
   const handlePostComment = async () => {
     if (!loggedInUserData) {
       router.push('/login/loginScreen');
-    } else {
-      if (newComment.trim() == '') return;
-  
+      return;
+    }
+
+    if (newComment.trim() === '') return;
+
+    try {
       if (replyingTo) {
         const replyCommentId = replyingTo.id;
-        await apiAddArticleComment(newComment.trim(), loggedInUserData.user.id, postId, replyCommentId)
-          .then((res: any) => {
-            dispatch(setReplyComment({ replyCommentId, res }))
-            setNewComment('')
-            setReplyingTo(null)
-            Keyboard.dismiss()
-          })
+        const res = await apiAddArticleComment(
+          newComment.trim(), 
+          loggedInUserData.user.id, 
+          postId, 
+          replyCommentId
+        );
+        dispatch(setReplyComment({ replyCommentId, res }));
+        setNewComment('');
+        setReplyingTo(null);
       } else {
-        await apiAddArticleComment(newComment.trim(), loggedInUserData.user.id, postId)
-          .then((res: any) => {
-            const oldComments = [...commentsData.flat()];
-            const newComments = [...oldComments, ...res];
-            dispatch(setComment(newComments))
-            setNewComment('')
-            Keyboard.dismiss()
-          }).catch((error: any) => {
-            console.log("error", error);
-          })
+        const res = await apiAddArticleComment(
+          newComment.trim(), 
+          loggedInUserData.user.id, 
+          postId
+        );
+        const oldComments = [...commentsData.flat()];
+        const newComments = [...oldComments, ...res];
+        dispatch(setComment(newComments));
+        setNewComment('');
       }
+      
+      Keyboard.dismiss();
+      flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+    } catch (error) {
+      console.log("Error posting comment:", error);
     }
-  
-    flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
   };
   
-  const handleReply = (comment: Comment) => {
+  const handleReply = useCallback((comment: Comment) => {
     setReplyingTo(comment);
-  };
+    // Focus input when reply is initiated
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   if (!isVisible) return null;
 
-const INPUT_CONTAINER_HEIGHT = 94;
+  const INPUT_CONTAINER_HEIGHT = 94;
+  
   return (
-    <  View style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}>
+    <View style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}>
       <PanGestureHandler onGestureEvent={gestureHandler}>
         <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
           <KeyboardAvoidingView
@@ -174,7 +205,7 @@ const INPUT_CONTAINER_HEIGHT = 94;
                 )}
                 style={styles.commentList}
                 contentContainerStyle={{
-                  paddingBottom: INPUT_CONTAINER_HEIGHT + 16
+                  paddingBottom: INPUT_CONTAINER_HEIGHT + keyboardHeight + 16
                 }}
               />
             </NativeViewGestureHandler>
@@ -189,12 +220,16 @@ const INPUT_CONTAINER_HEIGHT = 94;
               <View style={styles.inputField}>
                 <View style={styles.inputWrapper}>
                   <ExpandableInput
+                    inputRef={inputRef}
                     value={newComment}
                     onChangeText={setNewComment}
                     placeholder={replyingTo ? "Write a reply..." : "Add a comment..."}
                     placeholderTextColor="#C4C4C4"
                     replyingTo={replyingTo}
-                    onCancelReply={() => setReplyingTo(null)}
+                    onCancelReply={() => {
+                      setReplyingTo(null);
+                      Keyboard.dismiss();
+                    }}
                   />
                   <TouchableOpacity onPress={handlePostComment}>
                     <Image source={require('@/assets/commentIcon.webp')} style={styles.commentIcon} />
