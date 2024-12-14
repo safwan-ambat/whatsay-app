@@ -8,14 +8,13 @@ export const storeUser = async (userInfo: any, loginType: 'via google' | 'via ph
         //     data: {...userInfo, loginType}
         // }))
         // return res.data;
-        const userData = JSON.parse(userInfo);
 
         const userinfo = {
-            first_name: userData.data.user.givenName,
-            last_name: userData.data.user.familyName,
-            name: userData.data.user.name,
-            email: userData.data.user.email,
-            pic: userData.data.user.photo,
+            first_name: userInfo.data.user.givenName,
+            last_name: userInfo.data.user.familyName,
+            name: userInfo.data.user.name,
+            email: userInfo.data.user.email,
+            pic: userInfo.data.user.photo,
             login_through: loginType
         }
         // Find user in the database
