@@ -56,7 +56,7 @@ export interface ArticleComment {
   user_id: string; // User ID of the commenter
 }
 
-
+import { TextInput } from 'react-native';
  export interface ExpandableInputProps {
   value: string;
   onChangeText: (text: string) => void;
@@ -64,4 +64,5 @@ export interface ArticleComment {
   placeholderTextColor: string;
   replyingTo: any | null;
   onCancelReply: () => void;
+  inputRef?: React.RefObject<TextInput>;
 }
