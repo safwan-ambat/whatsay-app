@@ -78,7 +78,7 @@ const UserComment: React.FC<UserCommentProps> = ({ comment, navigation, onReply,
             </View>
           </View>
         </View>
-        {showReplies && comment.replies.length > 0 && (
+        {showReplies && comment.replies && comment.replies.length > 0 && (
           <View className="mt-2">
             {comment.replies.map((reply: any) => (
               <UserReply key={reply.id} reply={reply} navigation={navigation} postId={postId} />

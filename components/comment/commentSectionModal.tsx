@@ -152,7 +152,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
           postId
         );
         const oldComments = [...commentsData.flat()];
-        const newComments = [...oldComments, ...res];
+        const newComments = [...res, ...oldComments];
         dispatch(setComment(newComments));
         setNewComment('');
       }
