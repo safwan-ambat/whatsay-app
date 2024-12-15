@@ -84,7 +84,6 @@ export const commentSectionStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     borderRadius: 24,
-    marginRight: -12,
     paddingVertical: 8,
     paddingHorizontal: 16,
   },
@@ -117,13 +116,12 @@ export const commentSectionStyles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
+    // height: "100%",
+    maxHeight: 68
   },
   commentIcon: {
-    width: 68,
-    height: 68,
-    transform: [
-      { translateY: 5 },
-      { translateX: 10 }
-    ],
+    width: 40,
+    height: 40
   },
 });

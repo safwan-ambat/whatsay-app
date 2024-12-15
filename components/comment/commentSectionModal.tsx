@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import {
-  View, Text, TouchableOpacity, FlatList, TextInput, Platform, 
+  View, Text, TouchableOpacity, FlatList, TextInput, Platform,
   Keyboard, KeyboardAvoidingView, Image
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -17,6 +17,8 @@ import { apiAddArticleComment, apigetAllComments } from '@/api/apiComments';
 import { commentsDataSelector, setComment, setReplyComment } from '@/redux/slice/articlesComments';
 import { useCommentSectionAnimation, commentSectionStyles as styles } from '@/hooks/useCommentsection';
 import { ExpandableInputProps } from '@/types';
+import LottieView from 'lottie-react-native';
+import { ImageBackground } from 'react-native';
 
 interface CommentSectionModalProps {
   postId: string;
@@ -24,12 +26,12 @@ interface CommentSectionModalProps {
   onClose: () => void;
 }
 
-const ExpandableInput: React.FC<ExpandableInputProps> = ({ 
-  value, 
-  onChangeText, 
-  placeholder, 
+const ExpandableInput: React.FC<ExpandableInputProps> = ({
+  value,
+  onChangeText,
+  placeholder,
   placeholderTextColor,
-  replyingTo, 
+  replyingTo,
   onCancelReply,
   inputRef // Add input ref prop
 }) => {
@@ -79,7 +81,12 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
   const navigation = useNavigation();
   const flatListRef = useRef<FlatList>(null);
   const inputRef = useRef<TextInput>(null);
-  
+
+  const animation = useRef<LottieView>(null);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+
   const loggedInUserData = useSelector(loggedInUserDataSelector);
   const commentsData = useSelector(commentsDataSelector);
   const router = useRouter();
@@ -100,7 +107,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
         }
       }
     );
-    
+
     const keyboardWillHideListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
       () => setKeyboardHeight(0)
@@ -126,44 +133,49 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
   }, [isVisible, scrollTo]);
 
   const handlePostComment = async () => {
+    setIsLoading(true)
     if (!loggedInUserData) {
       router.push('/login/loginScreen');
       return;
     }
 
-    if (newComment.trim() === '') return;
+    if (newComment.trim() === ''){
+      setIsLoading(false)
+      return;
+    } 
 
     try {
+
       if (replyingTo) {
         const replyCommentId = replyingTo.id;
         const res = await apiAddArticleComment(
-          newComment.trim(), 
-          loggedInUserData.user.id, 
-          postId, 
+          newComment.trim(),
+          loggedInUserData.user.id,
+          postId,
           replyCommentId
         );
-        dispatch(setReplyComment({ replyCommentId, res }));
+        dispatch(setComment(res))
         setNewComment('');
         setReplyingTo(null);
       } else {
         const res = await apiAddArticleComment(
-          newComment.trim(), 
-          loggedInUserData.user.id, 
+          newComment.trim(),
+          loggedInUserData.user.id,
           postId
         );
-        const oldComments = [...commentsData.flat()];
-        const newComments = [...res, ...oldComments];
-        dispatch(setComment(newComments));
+        dispatch(setComment(res))
         setNewComment('');
       }
-      
+
       Keyboard.dismiss();
       flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
     } catch (error) {
       console.log("Error posting comment:", error);
+    }finally{
+      setIsLoading(false)
     }
   };
-  
+
   const handleReply = useCallback((comment: Comment) => {
     setReplyingTo(comment);
     // Focus input when reply is initiated
@@ -175,7 +187,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
   if (!isVisible) return null;
 
   const INPUT_CONTAINER_HEIGHT = 94;
-  
+
   return (
     <View style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}>
       <PanGestureHandler onGestureEvent={gestureHandler}>
@@ -218,7 +230,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
                 style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
               />
               <View style={styles.inputField}>
-                <View style={styles.inputWrapper}>
+                <View style={styles.inputWrapper} className={`h-${replyingTo ? 'full' : ''}`}>
                   <ExpandableInput
                     inputRef={inputRef}
                     value={newComment}
@@ -231,8 +243,25 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
                       Keyboard.dismiss();
                     }}
                   />
-                  <TouchableOpacity onPress={handlePostComment}>
-                    <Image source={require('@/assets/commentIcon.webp')} style={styles.commentIcon} />
+
+                  <TouchableOpacity onPress={handlePostComment} className='flex flex-row' disabled={isLoading}>
+
+                    {isLoading ?
+                      <ImageBackground source={require('@/assets/bg/BtnBg.webp')} className='w-[40px] h-[40px] flex items-center justify-center'>
+                        <LottieView
+                          autoPlay
+                          ref={animation}
+                          style={{
+                            width: 20,
+                            height: 20
+                          }}
+                          // Find more Lottie files at https://lottiefiles.com/featured
+                          source={require('@/assets/animations/loading.json')}
+                        />
+                      </ImageBackground>
+                      :
+                      <Image source={require('@/assets/commentIcon.webp')} style={styles.commentIcon} />
+                    }
                   </TouchableOpacity>
                 </View>
               </View>
