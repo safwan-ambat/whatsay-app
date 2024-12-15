@@ -118,7 +118,7 @@ export const commentSectionStyles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     // height: "100%",
-    maxHeight: 68
+    height: 68
   },
   commentIcon: {
     width: 40,
