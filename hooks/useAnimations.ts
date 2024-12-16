@@ -105,18 +105,20 @@ export const useNewsItemAnimations = (isCommentSectionOpen: boolean, onClose: ()
     ];
 
     const dragIndicatorAnimation = Animated.sequence([
+      // First spring: Bounce up higher with less friction for more "bounce"
       Animated.spring(animatedValues.dragIndicator, {
-        toValue: isCommentSectionOpen ? -12 : 20,
+        toValue: isCommentSectionOpen ? -12 : 14, // Increased initial bounce height
         useNativeDriver: true,
-        tension: 100,
-        friction: 10,
+        tension: 4000,  // Increased tension for faster initial movement
+        friction: 30,   // Reduced friction for more bounce
       }),
+      // Second spring: Settle to final position with more dampening
       Animated.spring(animatedValues.dragIndicator, {
-        toValue: isCommentSectionOpen ? 0 : 20,
+        toValue: isCommentSectionOpen ? -2 : 12,  // Final resting position
         useNativeDriver: true,
-        tension: 100,
-        friction: 10,
-      }),
+        tension: 20,   // Lower tension for smoother settling
+        friction: 3,   // Moderate friction for gentle settling
+      })
     ]);
 
     Animated.parallel([

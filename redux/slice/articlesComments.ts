@@ -33,7 +33,7 @@ export const commentSlice = createSlice({
             const repliedComment = action.payload.res;
 
             state.comments.map((comment: ArticleComment) => {
-                if (comment.id = replyCommentId) {
+                if (comment.id == replyCommentId) {
                     comment.replies.unshift(repliedComment[0])
                 }
             })
