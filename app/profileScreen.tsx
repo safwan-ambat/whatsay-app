@@ -7,11 +7,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { clearUser, loggedInUserDataSelector, setUser } from '@/redux/slice/userSlice';
+import useLocation from '@/hooks/useLocation';
 
 const ProfileScreen = () => {
   const router = useRouter();
 
   const loggedInUserData = useSelector(loggedInUserDataSelector);
+  const {latitude, longitude, errorMsg, location} = useLocation();
 
   const dispatch = useDispatch();
 
@@ -73,6 +75,12 @@ const ProfileScreen = () => {
         <View>
           <Text className="text-lg font-domine mb-1">Email Address</Text>
           <Text className="text-gray-600">{loggedInUserData.user?.email}</Text>
+        </View>
+
+        <View className="mb-8">
+          <Text className="text-lg font-domine mb-1">Location</Text>
+          <Text className="text-gray-600">{location?.district} / {location?.city} / {location?.country}</Text>
+          <Text className="text-gray-600">{location?.timezone}</Text>
         </View>
       </View>
 

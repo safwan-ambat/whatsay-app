@@ -31,7 +31,8 @@
               "NSExceptionMinimumTLSVersion": "TLSv1.1"
             }
           }
-        }
+        },
+        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to provide personalized services."
       },
       "icon": "./assets/images/icon.png",
       "requireFullScreen": true,
@@ -58,7 +59,9 @@
       },
       "permissions": [
         "VIBRATE",
-        "INTERNET"
+        "INTERNET",
+        "ACCESS_FINE_LOCATION",
+      "ACCESS_COARSE_LOCATION"
       ],
       "package": "com.safwanambat.whatsay",
       "versionCode": 1,
