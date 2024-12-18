@@ -92,7 +92,7 @@ export default function RootLayout() {
                   name="(news)/[slug]"
                   options={{
                     gestureEnabled: true,
-                    animation: 'slide_from_right'
+                    animation: 'fade'
                   }}
                 />
 
