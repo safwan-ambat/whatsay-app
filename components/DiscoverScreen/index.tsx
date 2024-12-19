@@ -8,14 +8,19 @@ import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import CategoryArticles from './CategoryArticles';
 import { getCategories } from '@/api/apiCategories';
+import useLocation from '@/hooks/useLocation';
+import { getLast24HoursRange } from '@/utils/DataAndTimeHelper';
 
 const DiscoverScreen = () => {
     const [categories, setCategories] = useState<CategoryType[]>([]);
-    
+    const { location, errorMsg } = useLocation();
+
     useEffect(() => {
         (async () => {
+            const { from, to } = getLast24HoursRange();
             try {
-                const response = await getCategories();
+                const response = await getCategories(from, to);
+
                 // Ensure index is number type
                 const categoriesWithIndex = response.map((category: Omit<CategoryType, 'index'>, idx: number) => ({
                     ...category,
@@ -26,7 +31,7 @@ const DiscoverScreen = () => {
                 console.error("Error fetching categories:", error);
             }
         })();
-    }, []);
+    }, [location]);
 
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -35,8 +40,8 @@ const DiscoverScreen = () => {
                 className="h-[100px] w-full absolute top-0 z-10 bg-fixed">
             </LinearGradient>
             {categories.map((category: CategoryType) => (
-                <CategoryArticles 
-                    category={category} 
+                <CategoryArticles
+                    category={category}
                     key={category.id}
                 />
             ))}

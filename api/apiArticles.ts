@@ -1,9 +1,9 @@
 import { supabase } from "@/config/supabase";
 import APIService, { APICaller } from "./APIKit";
 
-export const getAllArticlesByCategories = async (categoryId: string) => {
+export const getAllArticlesByCategories = async (categoryId: string,from:string, to:string) => {
     try {
-        const res = await APICaller(APIService.get(`/newsByCategory?id=${categoryId}`))
+        const res = await APICaller(APIService.get(`/newsByCategory?id=${categoryId}&&from=${from}&&to=${to}`))
         return res.data;
 
         // if (!categoryId) throw new Error("Category ID Missing!");

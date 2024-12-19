@@ -22,9 +22,9 @@ export const getAllCategories = async () => {
 }
 
 // API function to fetch all categories that have associated articles
-export const getCategories = async () => {
+export const getCategories = async (from: string, to: string) => {
     try {
-        const res = await APICaller(APIService.get('/categoryWithArticles'))
+        const res = await APICaller(APIService.get(`/categoryWithArticles?from=${from}&&to=${to}`,))
         return res.data;
 
         // const { data: todos, error } = await supabase
