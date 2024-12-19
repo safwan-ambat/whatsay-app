@@ -17,17 +17,16 @@ const DiscoverScreen = () => {
 
     useEffect(() => {
         (async () => {
+            const { from, to } = getLast24HoursRange();
             try {
-                if (location) {
-                    const { from, to } = getLast24HoursRange();
-                    const response = await getCategories(from, to);
-                    // Ensure index is number type
-                    const categoriesWithIndex = response.map((category: Omit<CategoryType, 'index'>, idx: number) => ({
-                        ...category,
-                        index: Number(idx) // Explicitly convert to number
-                    }));
-                    setCategories(categoriesWithIndex);
-                }
+                const response = await getCategories(from, to);
+
+                // Ensure index is number type
+                const categoriesWithIndex = response.map((category: Omit<CategoryType, 'index'>, idx: number) => ({
+                    ...category,
+                    index: Number(idx) // Explicitly convert to number
+                }));
+                setCategories(categoriesWithIndex);
             } catch (error) {
                 console.error("Error fetching categories:", error);
             }
