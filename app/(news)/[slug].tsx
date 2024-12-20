@@ -14,6 +14,7 @@ import Animated, {
   useSharedValue,
   withSpring
 } from 'react-native-reanimated';
+import { getLast24HoursRange } from '@/utils/DataAndTimeHelper';
 
 const ContentWrapper = Platform.OS === 'android' ? GestureHandlerRootView : View;
 
@@ -56,8 +57,9 @@ const NewsDetails = () => {
 
   useEffect(() => {
     (async () => {
+      const { from, to } = getLast24HoursRange();
       try {
-        const response = await getAllArticlesByCategories(categoryId);
+        const response = await getAllArticlesByCategories(categoryId,from,to);
         setNewsArticles(response);
       } finally {
         setIsLoading(false);
