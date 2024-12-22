@@ -1,9 +1,10 @@
+import { AuthPayload } from '@/types/UserTypes';
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 
 // Define the UsersState interface
 export interface UsersState {
-  user: any | null;
+  user: AuthPayload | null;
   isAuthenticated: boolean;
 }
 
