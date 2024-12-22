@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,14 +8,21 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { clearUser, loggedInUserDataSelector, setUser } from '@/redux/slice/userSlice';
 import useLocation from '@/hooks/useLocation';
+import { AuthPayload } from '@/types/UserTypes';
+import { deletUser } from '@/api/apiUser';
+import LottieView from 'lottie-react-native';
 
 const ProfileScreen = () => {
   const router = useRouter();
 
-  const loggedInUserData = useSelector(loggedInUserDataSelector);
-  const {latitude, longitude, errorMsg, location} = useLocation();
+  const loggedInUserData: AuthPayload | null = useSelector(loggedInUserDataSelector);
+  const { latitude, longitude, errorMsg, location } = useLocation();
+
+  const [isDeleting, setIsDeleteing] = useState<boolean>(false);
 
   const dispatch = useDispatch();
+
+  const animation = useRef<LottieView>(null);
 
   const handleLogout = async () => {
     await GoogleSignin.signOut();
@@ -24,10 +31,38 @@ const ProfileScreen = () => {
     router.replace('/login/loginScreen');
   };
 
-  const handleDeleteAccount = () => {
-    // Implement account deletion logic here
-    console.log('Delete account pressed');
+  const handleDeleteAccount = async () => {
+    setIsDeleteing(true)
+    const userId = loggedInUserData?.user.id;
+
+    if (!userId) {
+      console.log("User id not found");
+      setIsDeleteing(false);
+      return;
+    }
+
+    try {
+      const res = await deletUser(userId);
+
+      if (res.deleted) {
+        await AsyncStorage.removeItem("user");
+        dispatch(clearUser());
+        router.replace('/login/loginScreen');
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log("Error is:", error.message);
+      } else {
+        console.log("Unknown error occurred:", error);
+      }
+    } finally {
+      setIsDeleteing(false)
+    }
+
   };
+
+  // console.log("loggedInUserData",loggedInUserData);
+
 
   if (!loggedInUserData) {
     router.replace('/login/loginScreen');
@@ -93,10 +128,19 @@ const ProfileScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="mt-4 bg-[#FFE9E9] rounded-xl py-4"
+          className="mt-4 bg-[#FFE9E9] rounded-xl py-4 flex justify-center items-center"
           onPress={handleDeleteAccount}
         >
-          <Text className="text-[#B01212] text-center">Delete your account</Text>
+          {!isDeleting && <Text className="text-[#B01212] text-center">Delete your account</Text>}
+          {isDeleting && <LottieView
+            autoPlay
+            ref={animation}
+            style={{
+              width: 20,
+              height: 20
+            }}
+            source={require('@/assets/animations/loading.json')}
+          />}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
