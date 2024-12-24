@@ -15,6 +15,7 @@ import Animated, {
   withSpring
 } from 'react-native-reanimated';
 import { getLast24HoursRange } from '@/utils/DataAndTimeHelper';
+import Loader from '@/components/loader';
 
 const ContentWrapper = Platform.OS === 'android' ? GestureHandlerRootView : View;
 
@@ -70,7 +71,7 @@ const NewsDetails = () => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="black" />
+        <Loader/>
       </View>
     );
   }
