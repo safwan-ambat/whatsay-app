@@ -50,7 +50,7 @@ const TermsModal: React.FC<TermsModalProps> = ({ isVisible, onClose, onAccept })
               This is a summary of our full Terms and Conditions. Please read the complete version before using the app.
             </Text>
             <Text className="text-base leading-6 text-gray-700 font-medium">
-              By continuing, you confirm that you have read and agree to our <Text className="text-blue-500 " onPress={() => Linking.openURL('https://whatsay-web.vercel.app/')}>Terms and Conditions</Text> and <Text className="text-blue-500 " onPress={() => Linking.openURL('https://whatsay-privacy-and-policy.vercel.app/')}>Privacy Policy</Text>.
+              By continuing, you confirm that you have read and agree to our <Text className="text-blue-500 " onPress={() => Linking.openURL('https://whatsay-web.vercel.app/terms')}>Terms and Conditions</Text> and <Text className="text-blue-500 " onPress={() => Linking.openURL('https://whatsay-privacy-and-policy.vercel.app/')}>Privacy Policy</Text>.
             </Text>
           </View>
         </ScrollView>
