@@ -7,10 +7,9 @@ import { useSharedValue } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { getAllArticlesByCategories } from '@/api/apiArticles';
 import {
-    automobile,breakingNews,business,curatedForYou,entertainment,health,
-    internationalNews,lifestyle,opinions,politics,science,sports,startup,technology,
-    travel,
-    world
+    automobile, breakingNews, business, curatedForYou, entertainment, health,
+    internationalNews, lifestyle, opinions, politics, science, sports, startup, technology,
+    travel, world
 } from '@/assets';
 import { getLast24HoursRange } from '@/utils/DataAndTimeHelper';
 
@@ -36,17 +35,15 @@ const categoryIcons: Record<CategoryIconKey, any> = {
 };
 
 const CategoryArticles = ({ category }: { category: CategoryType }) => {
-
     const [articles, setArticles] = useState<any[]>([])
-
-    const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+    const { width: SCREEN_WIDTH } = useWindowDimensions();
+    const isTablet = SCREEN_WIDTH >= 768;
 
     const activeIndex = useSharedValue(0);
     const translateX = useSharedValue(0);
     const router = useRouter();
 
     const handleSwipe = useCallback((swipedArticle: any, direction: 'left' | 'right') => {
-        
         try {
             setArticles((prevData): any => {
                 const newData = prevData.filter((article: any) => article.id !== swipedArticle.id);
@@ -62,7 +59,7 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
         router.push({
             pathname: '/(news)/[slug]',
             params: {
-                slug: itemId.toString(),  // This represents `newsId`
+                slug: itemId.toString(),
                 categoryId: categoryId.toString(),
             }
         });
@@ -72,26 +69,34 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
         (async () => {
             const { from, to } = getLast24HoursRange();
             try {
-                const response = await getAllArticlesByCategories(category.id as string,from,to);
+                const response = await getAllArticlesByCategories(category.id as string, from, to);
                 setArticles(response)
             } catch (error) {
                 console.log("error", error);
             }
         })()
-    }, [])
+    }, []);
 
     return (
         <View className='border-b-2 border-[#F3F4F6] pb-[300px] pt-5'>
-            {/* Category Title */}
-            <View className='flex-row items-center pl-[16px]'>
+            <View className={`flex-row items-center ${isTablet ? 'pl-[32px]' : 'pl-[16px]'}`}>
                 <Image
                     source={categoryIcons[category.name as CategoryIconKey]}
-                    className='w-[28px] h-[28px] mr-[8px]'
+                    className={`${isTablet ? 'w-[36px] h-[36px]' : 'w-[28px] h-[28px]'} mr-[8px]`}
                     resizeMode='contain' />
-                <Text className='text-[20px] font-domine'>{category.name}</Text>
+                <Text className={`font-domine ${isTablet ? 'text-[24px]' : 'text-[20px]'}`}>
+                    {category.name}
+                </Text>
             </View>
-            <View style={[styles.cardContainer, , { width: SCREEN_WIDTH }]}>
-                {articles.slice(0, 3).map((item, itemIndex) => {
+            <View style={[
+                styles.cardContainer, 
+                { 
+                    width: SCREEN_WIDTH,
+                    height: isTablet ? 820 : Platform.OS === 'ios' ? 180 : 260,
+                    paddingBottom: isTablet ? 560 : Platform.OS === 'ios' ? 20 : 60,
+                }
+            ]}>
+                {articles.slice(0, isTablet ? 4 : 3).map((item, itemIndex) => {
                     return (
                         <Card
                             key={item.id}
@@ -101,7 +106,7 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
                                 image: item.image_url,
                             }}
                             index={itemIndex}
-                            totalCards={Math.min(articles.length, 3)}
+                            totalCards={Math.min(articles.length, isTablet ? 4 : 3)}
                             activeIndex={activeIndex}
                             translateX={translateX}
                             categoryIndex={category.index}
@@ -119,15 +124,13 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
     )
 }
 
-export default CategoryArticles
+export default CategoryArticles;
 
 const styles = StyleSheet.create({
     cardContainer: {
-        height: Platform.OS === 'ios' ? 180 : 260,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'white',
         overflow: 'visible',
-        paddingBottom: Platform.OS === 'ios' ? 20 : 60,
     },
 });

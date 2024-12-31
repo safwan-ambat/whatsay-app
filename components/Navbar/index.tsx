@@ -1,30 +1,39 @@
 // components/Navbar/index.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import menuIcon from '@/assets/iconMenu.webp';
 import { useSelector } from "react-redux";
 import { loggedInUserDataSelector } from '@/redux/slice/userSlice';
+import TermsModal from '@/components/t&c';
 
 const NavBar = () => {
   const router = useRouter();
   const loggedInUserData = useSelector(loggedInUserDataSelector);
+  const [isTermsModalVisible, setIsTermsModalVisible] = useState(false);
 
   const handleProfilePress = () => {
-    if (loggedInUserData) {
+    if (loggedInUserData?.user) {  // Add optional chaining here
       router.push('/profileScreen');
     } else {
-      router.push('/login/loginScreen');
+      setIsTermsModalVisible(true);
     }
   };
+
+  const handleTermsAccept = () => {
+    // You might want to store this acceptance in your Redux store or AsyncStorage
+    console.log('Terms accepted');
+  };
+
+  const userProfilePic = loggedInUserData?.user?.pic;  // Safely access nested properties
 
   return (
     <View className="absolute top-0 left-0 right-0 z-10">
       <View className="flex-row justify-between items-center pt-4 px-[18px] pb-5 rounded-b-[60px] bg-white">
         <TouchableOpacity onPress={handleProfilePress}>
-          {loggedInUserData ? (
+          {userProfilePic ? (  // Check if profile pic exists
             <Image
-              source={{ uri: loggedInUserData.user?.photo }}
+              source={{ uri: userProfilePic }}
               className="w-[40px] h-[40px] rounded-full"
               resizeMode="cover"
             />
@@ -41,6 +50,12 @@ const NavBar = () => {
           {/* <Image source={searchIcon} className="w-9 h-9 hidden" resizeMode="contain" /> */}
         </View>
       </View>
+
+      <TermsModal
+        isVisible={isTermsModalVisible}
+        onClose={() => setIsTermsModalVisible(false)}
+        onAccept={handleTermsAccept}
+      />
     </View>
   );
 };

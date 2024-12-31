@@ -11,6 +11,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import { store } from "@/redux/store";
 import FONTS from "@/assets/fonts";
+import useLocation from "@/hooks/useLocation";
 
 let persistor = persistStore(store);
 
@@ -21,6 +22,8 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 
 export default function RootLayout() {
   const [fontsLoaded, error] = useFonts(FONTS);
+
+  const {latitude, longitude, errorMsg} = useLocation();
 
   useEffect(() => {
     const hideSplash = async () => {
@@ -92,7 +95,7 @@ export default function RootLayout() {
                   name="(news)/[slug]"
                   options={{
                     gestureEnabled: true,
-                    animation: 'slide_from_right'
+                    animation: 'fade'
                   }}
                 />
 

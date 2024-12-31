@@ -7,13 +7,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { clearUser, loggedInUserDataSelector, setUser } from '@/redux/slice/userSlice';
-import LottieView from 'lottie-react-native';
+import useLocation from '@/hooks/useLocation';
+import { AuthPayload } from '@/types/UserTypes';
 import { deletUser } from '@/api/apiUser';
+import LottieView from 'lottie-react-native';
 
 const ProfileScreen = () => {
   const router = useRouter();
 
-  const loggedInUserData = useSelector(loggedInUserDataSelector);
+  const loggedInUserData: AuthPayload | null = useSelector(loggedInUserDataSelector);
+  const { latitude, longitude, errorMsg, location } = useLocation();
 
   const [isDeleting, setIsDeleteing] = useState<boolean>(false);
 
@@ -58,6 +61,9 @@ const ProfileScreen = () => {
 
   };
 
+  // console.log("loggedInUserData",loggedInUserData);
+
+
   if (!loggedInUserData) {
     router.replace('/login/loginScreen');
     return null;
@@ -85,7 +91,7 @@ const ProfileScreen = () => {
       <View className="items-center mt-[44px] flex-row justify-center">
         <View className="flex-1 items-center">
           <Image
-            source={{ uri: loggedInUserData.user?.photo }}
+            source={{ uri: loggedInUserData.user?.pic }}
             className="w-[120px] h-[120px] rounded-full border-white border-[3px]"
             resizeMode="cover"
           />
@@ -104,6 +110,12 @@ const ProfileScreen = () => {
         <View>
           <Text className="text-lg font-domine mb-1">Email Address</Text>
           <Text className="text-gray-600">{loggedInUserData.user?.email}</Text>
+        </View>
+
+        <View className="mb-8">
+          <Text className="text-lg font-domine mb-1">Location</Text>
+          <Text className="text-gray-600">{location?.district} / {location?.city} / {location?.country}</Text>
+          <Text className="text-gray-600">{location?.timezone}</Text>
         </View>
       </View>
 
