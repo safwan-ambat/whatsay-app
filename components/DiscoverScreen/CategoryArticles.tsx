@@ -12,6 +12,7 @@ import {
     travel,
     world
 } from '@/assets';
+import { getLast24HoursRange } from '@/utils/DataAndTimeHelper';
 
 type CategoryIconKey = 'categoryKey' | string;
 
@@ -69,8 +70,9 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
 
     useEffect(() => {
         (async () => {
+            const { from, to } = getLast24HoursRange();
             try {
-                const response = await getAllArticlesByCategories(category.id as string);
+                const response = await getAllArticlesByCategories(category.id as string,from,to);
                 setArticles(response)
             } catch (error) {
                 console.log("error", error);

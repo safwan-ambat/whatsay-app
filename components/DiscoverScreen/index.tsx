@@ -8,14 +8,16 @@ import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import CategoryArticles from './CategoryArticles';
 import { getCategories } from '@/api/apiCategories';
+import { getLast24HoursRange } from '@/utils/DataAndTimeHelper';
 
 const DiscoverScreen = () => {
     const [categories, setCategories] = useState<CategoryType[]>([]);
     
     useEffect(() => {
         (async () => {
+            const { from, to } = getLast24HoursRange();
             try {
-                const response = await getCategories();
+                const response = await getCategories(from, to);
                 // Ensure index is number type
                 const categoriesWithIndex = response.map((category: Omit<CategoryType, 'index'>, idx: number) => ({
                     ...category,

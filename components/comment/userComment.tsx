@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { apiCommentLikesToogle } from '@/api/apiComments';
 import { updateLike } from '@/redux/slice/articlesComments';
 import { useRouter } from 'expo-router';
+import { AuthPayload } from '@/types/UserTypes';
 
 interface UserCommentProps {
   comment: ArticleComment;
@@ -20,7 +21,7 @@ interface UserCommentProps {
 
 const UserComment: React.FC<UserCommentProps> = ({ comment, navigation, onReply, replies, postId }) => {
 
-  const loggedInUserData = useSelector(loggedInUserDataSelector);
+  const loggedInUserData: AuthPayload | null = useSelector(loggedInUserDataSelector);
 
   const dispatch = useDispatch();
   const router = useRouter()
@@ -31,7 +32,7 @@ const UserComment: React.FC<UserCommentProps> = ({ comment, navigation, onReply,
     try {
       if (!loggedInUserData) {
         return router.push('/login/loginScreen');
-      }else{
+      } else {
         await apiCommentLikesToogle(comment.id, loggedInUserData.user.id)
           .then((response) => {
             dispatch(updateLike({ commentId: comment.id, response }));
@@ -60,8 +61,12 @@ const UserComment: React.FC<UserCommentProps> = ({ comment, navigation, onReply,
               <TouchableOpacity onPress={handleLike} className="flex-row items-center mr-4">
                 <AntDesign
                   size={16}
-                  name={comment.likes?.includes(loggedInUserData?.user?.id) ? "heart" : "hearto"}
-                  color={comment.likes?.includes(loggedInUserData?.user?.id) ? "red" : "black"}
+                  name={
+                    comment.likes?.includes(loggedInUserData?.user?.id ?? '') ? "heart" : "hearto"
+                  }
+                  color={
+                    comment.likes?.includes(loggedInUserData?.user?.id ?? '') ? "red" : "black"
+                  }
                 />
                 <Text className="ml-1 font-geist  text-[#000000]/60 text-[12px]">{comment.likes?.length}</Text>
               </TouchableOpacity>
@@ -78,7 +83,7 @@ const UserComment: React.FC<UserCommentProps> = ({ comment, navigation, onReply,
             </View>
           </View>
         </View>
-        {showReplies && comment.replies.length > 0 && (
+        {showReplies && comment.replies && comment.replies.length > 0 && (
           <View className="mt-2">
             {comment.replies.map((reply: any) => (
               <UserReply key={reply.id} reply={reply} navigation={navigation} postId={postId} />
