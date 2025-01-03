@@ -127,6 +127,11 @@ export const CATEGORY_STYLES: { [key: string]: CategoryStyleConfig } = {
     backgroundColor: '#EEEEFA',
     textColor: '#5557CB',
     borderColor: '#CFD0F1'
+  },
+  'Finance': {
+    backgroundColor: '#FAF4EE',
+    textColor: '#CBA455',
+    borderColor: '#F1E6CF'
   }
 };
 

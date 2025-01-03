@@ -16,3 +16,4 @@ export const startup = require('./categoryIcons/startup.webp');
 export const travel = require('./categoryIcons/travel.webp');
 export const world = require('./categoryIcons/world.webp');
 export const technology = require('./categoryIcons/technology.webp');
+export const finance = require('./categoryIcons/finance.webp');

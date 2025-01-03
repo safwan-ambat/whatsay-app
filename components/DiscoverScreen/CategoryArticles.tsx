@@ -9,7 +9,7 @@ import { getAllArticlesByCategories } from '@/api/apiArticles';
 import {
     automobile, breakingNews, business, curatedForYou, entertainment, health,
     internationalNews, lifestyle, opinions, politics, science, sports, startup, technology,
-    travel, world
+    travel, world,finance
 } from '@/assets';
 import { getLast24HoursRange } from '@/utils/DataAndTimeHelper';
 
@@ -32,6 +32,7 @@ const categoryIcons: Record<CategoryIconKey, any> = {
     'World': world,
     'Travel': travel,
     'Startup': startup,
+    'Finance': finance,
 };
 
 const CategoryArticles = ({ category }: { category: CategoryType }) => {
