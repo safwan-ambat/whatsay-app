@@ -1561,7 +1561,7 @@ PODS:
     - React-Core
   - RNCMaskedView (0.3.1):
     - React-Core
-  - RNFBApp (21.6.1):
+  - RNFBApp (21.6.0):
     - Firebase/CoreOnly (= 11.5.0)
     - React-Core
   - RNFBAuth (21.6.0):
@@ -2052,7 +2052,7 @@ SPEC CHECKSUMS:
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
   RNCMaskedView: 090213d32d8b3bb83a4dcb7d12c18f0152591906
-  RNFBApp: a3c9c3b23aa2d77001ce62b5a997325927593c12
+  RNFBApp: f54f97b84af43a870372c6d9915ebe6a61a35bed
   RNFBAuth: cbec8a05154bbe0947c9cae65e57ab36eb6ed6ce
   RNGestureHandler: 20a4307fd21cbff339abfcfa68192f3f0a6a518b
   RNGoogleSignin: 9e68b9bcc3888219357924e32ee563624745647d
@@ -2065,4 +2065,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: d015dac3aab7f8e30a90b5c3ecc67d2c0d399d4e
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.15.2
