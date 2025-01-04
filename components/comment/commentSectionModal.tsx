@@ -235,7 +235,7 @@ const CommentSectionModal: React.FC<CommentSectionModalProps> = ({ postId, isVis
                     inputRef={inputRef}
                     value={newComment}
                     onChangeText={setNewComment}
-                    placeholder={replyingTo ? "Write a reply..." : "Add a comment..."}
+                    placeholder={replyingTo ? "Write a reply..." : "Whatsay?"}
                     placeholderTextColor="#C4C4C4"
                     replyingTo={replyingTo}
                     onCancelReply={() => {
