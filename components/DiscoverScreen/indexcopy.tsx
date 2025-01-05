@@ -9,14 +9,12 @@ import CategoryArticles from './CategoryArticles';
 import { getCategories } from '@/api/apiCategories';
 import useLocation from '@/hooks/useLocation';
 import { getLast24HoursRange } from '@/utils/DataAndTimeHelper';
-import Animated, {
-    useAnimatedScrollHandler,
-    useAnimatedStyle,
+import Animated, { 
+    useAnimatedScrollHandler, 
+    useAnimatedStyle, 
     useSharedValue,
     interpolate,
-    Extrapolate,
-    withTiming,
-    runOnJS,
+    Extrapolate
 } from 'react-native-reanimated';
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
@@ -25,31 +23,10 @@ const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 const INITIAL_GRADIENT_HEIGHT = 150;
 const MAX_PULL_DISTANCE = 220;
 
-const GRADIENT_COLORS = [
-    ['rgba(5,225,215,0.6)', 'rgba(5,235,215,0)'],           // Turquoise
-    ['rgba(255,105,180,0.6)', 'rgba(255,105,180,0)'],       // Hot Pink
-    ['rgba(147,112,219,0.6)', 'rgba(147,112,219,0)'],       // Purple
-    ['rgba(255,165,0,0.6)', 'rgba(255,165,0,0)'],           // Orange
-    ['rgba(50,205,50,0.6)', 'rgba(50,205,50,0)']            // Lime Green
-] as const;
-
-const DEFAULT_GRADIENT = ['rgba(5,225,215,0.6)', 'rgba(5,235,215,0)'];
-
 const DiscoverScreen = () => {
     const [categories, setCategories] = useState<CategoryType[]>([]);
-    const [currentGradientIndex, setCurrentGradientIndex] = useState(0);
     const { location, errorMsg } = useLocation();
     const scrollY = useSharedValue(0);
-    const isRefreshing = useSharedValue(false);
-
-    const getCurrentGradientColors = () => {
-        try {
-            return GRADIENT_COLORS[currentGradientIndex] || DEFAULT_GRADIENT;
-        } catch (error) {
-            console.error('Error getting gradient colors:', error);
-            return DEFAULT_GRADIENT;
-        }
-    };
 
     useEffect(() => {
         (async () => {
@@ -67,23 +44,9 @@ const DiscoverScreen = () => {
         })();
     }, [location]);
 
-    const handleGradientChange = () => {
-        setCurrentGradientIndex((prevIndex) => (prevIndex + 1) % GRADIENT_COLORS.length);
-    };
-
     const scrollHandler = useAnimatedScrollHandler({
         onScroll: (event) => {
-            const offsetY = event.contentOffset.y;
-            scrollY.value = offsetY;
-
-            if (offsetY < -MAX_PULL_DISTANCE * 0.5) {
-                if (!isRefreshing.value) {
-                    isRefreshing.value = true;
-                    runOnJS(handleGradientChange)();
-                }
-            } else if (offsetY >= 0) {
-                isRefreshing.value = false;
-            }
+            scrollY.value = event.contentOffset.y;
         },
     });
 
@@ -98,22 +61,20 @@ const DiscoverScreen = () => {
         const opacity = interpolate(
             scrollY.value,
             [-MAX_PULL_DISTANCE, 0],
-            [0.8, 0.3],
+            [0.5, 0.3],
             Extrapolate.CLAMP
         );
 
         return {
             height,
-            opacity: withTiming(opacity, { duration: 150 }),
+            opacity,
         };
     });
-
-    const currentGradientColors = getCurrentGradientColors();
 
     return (
         <View style={styles.container}>
             <AnimatedLinearGradient
-                colors={currentGradientColors}
+                colors={['rgba(5,225,215,0.7)', 'rgba(5,235,215,0)']}
                 style={[styles.gradient, gradientStyle]}
             />
             <AnimatedScrollView
@@ -139,7 +100,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
-        marginTop: 20,
     },
     gradient: {
         width: '100%',
