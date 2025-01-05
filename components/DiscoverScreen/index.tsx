@@ -105,6 +105,16 @@ const DiscoverScreen = () => {
         return {
             height,
             opacity: withTiming(opacity, { duration: 150 }),
+            transform: [
+                {
+                    translateY: interpolate(
+                        scrollY.value,
+                        [-MAX_PULL_DISTANCE, 0, INITIAL_GRADIENT_HEIGHT],
+                        [0, 0, -INITIAL_GRADIENT_HEIGHT],
+                        Extrapolate.CLAMP
+                    )
+                }
+            ],
         };
     });
 
@@ -112,10 +122,12 @@ const DiscoverScreen = () => {
 
     return (
         <View style={styles.container}>
-            <AnimatedLinearGradient
-                colors={currentGradientColors}
-                style={[styles.gradient, gradientStyle]}
-            />
+            <View style={styles.gradientContainer}>
+                <AnimatedLinearGradient
+                    colors={currentGradientColors}
+                    style={[styles.gradient, gradientStyle]}
+                />
+            </View>
             <AnimatedScrollView
                 onScroll={scrollHandler}
                 scrollEventThrottle={16}
@@ -141,14 +153,21 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         marginTop: 20,
     },
-    gradient: {
-        width: '100%',
+    gradientContainer: {
         position: 'absolute',
         top: 0,
+        left: 0,
+        right: 0,
         zIndex: 10,
+        height: INITIAL_GRADIENT_HEIGHT,
+        overflow: 'visible',
+    },
+    gradient: {
+        width: '100%',
     },
     scrollViewContent: {
         flexGrow: 1,
         paddingTop: 88,
+        zIndex:50,
     }
 });
