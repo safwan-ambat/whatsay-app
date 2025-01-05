@@ -9,7 +9,7 @@ import { getAllArticlesByCategories } from '@/api/apiArticles';
 import {
     automobile, breakingNews, business, curatedForYou, entertainment, health,
     internationalNews, lifestyle, opinions, politics, science, sports, startup, technology,
-    travel, world,finance
+    travel, world, finance
 } from '@/assets';
 import { getLast24HoursRange } from '@/utils/DataAndTimeHelper';
 
@@ -78,8 +78,29 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
         })()
     }, []);
 
+    // Calculate stack dimensions based on device type
+    const getStackDimensions = () => {
+        if (isTablet) {
+            return {
+                containerHeight: 820,
+                stackPadding: 560,
+                containerPadding: 300
+            };
+        }
+        return {
+            containerHeight: Platform.OS === 'ios' ? 388: 260,
+            stackPadding: Platform.OS === 'ios' ? 10 : 10,
+            containerPadding: 0
+        };
+    };
+
+    const { containerHeight, stackPadding, containerPadding } = getStackDimensions();
+    const visibleArticles = articles.slice(0, isTablet ? 4 : 3);
+    const cardContainerPaddingTop = visibleArticles.length === 1 ? 20 : 42;
+    const cardContainerMarginBottom = visibleArticles.length === 1 ? 20 : 40;
+
     return (
-        <View className='border-b-2 border-[#F3F4F6] pb-[300px] pt-5'>
+        <View className={`pb-[${containerPadding}px] pt-5 border-b-2 border-[#F3F4F6]`}>
             <View className={`flex-row items-center ${isTablet ? 'pl-[32px]' : 'pl-[16px]'}`}>
                 <Image
                     source={categoryIcons[category.name as CategoryIconKey]}
@@ -90,14 +111,16 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
                 </Text>
             </View>
             <View style={[
-                styles.cardContainer, 
-                { 
+                styles.cardContainer,
+                {
                     width: SCREEN_WIDTH,
-                    height: isTablet ? 820 : Platform.OS === 'ios' ? 180 : 260,
-                    paddingBottom: isTablet ? 560 : Platform.OS === 'ios' ? 20 : 60,
+                    height: containerHeight,
+                    // paddingBottom: stackPadding,
+                    paddingTop: cardContainerPaddingTop,
+                    marginBottom: cardContainerMarginBottom,
                 }
             ]}>
-                {articles.slice(0, isTablet ? 4 : 3).map((item, itemIndex) => {
+                {visibleArticles.map((item, itemIndex) => {
                     return (
                         <Card
                             key={item.id}
@@ -107,7 +130,7 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
                                 image: item.image_url,
                             }}
                             index={itemIndex}
-                            totalCards={Math.min(articles.length, isTablet ? 4 : 3)}
+                            totalCards={visibleArticles.length}
                             activeIndex={activeIndex}
                             translateX={translateX}
                             categoryIndex={category.index}
@@ -129,7 +152,7 @@ export default CategoryArticles;
 
 const styles = StyleSheet.create({
     cardContainer: {
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
         backgroundColor: 'white',
         overflow: 'visible',

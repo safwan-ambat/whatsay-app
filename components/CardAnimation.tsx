@@ -45,19 +45,19 @@ export const Card: React.FC<CardProps> = ({
   const getRotationValues = (categoryIdx: number) => {
     switch (categoryIdx) {
       case 0:
-        return { first: [-10, 0, 10], rest: [5, 0, 0] };
+        return { first: [-10, 0, 10], rest: [3, 0, 0] };
       case 1:
-        return { first: [-10, 0, 10], rest: [-5, 0, 0] };
+        return { first: [-10, 0, 10], rest: [-3, 0, 0] };
       case 2:
         return { first: [-10, 0, 10], rest: [0, 0, 0] };
       case 3:
-        return { first: [-10, 0, 10], rest: [5, 0, 0] };
+        return { first: [-10, 0, 10], rest: [3, 0, 0] };
       case 4:
-        return { first: [-10, 0, 10], rest: [-5, 0, 0] };
+        return { first: [-10, 0, 10], rest: [-3, 0, 0] };
       case 5:
         return { first: [-10, 0, 10], rest: [0, 0, 0] };
       default:
-        return { first: [-10, 0, 10], rest: [5, 0, -5] };
+        return { first: [-10, 0, 10], rest: [3, 0, -3] };
     }
   };
 
@@ -97,7 +97,7 @@ export const Card: React.FC<CardProps> = ({
     const translateY = interpolate(
       activeIndex.value,
       [index - 1, index, index + 1],
-      [-30, 0, 30]
+      [-18, 0, 0]
     );
 
     const rotate = interpolate(
