@@ -1,53 +1,55 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { router, Href } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import GlossyButton from '@/components/glossyButton';
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { loggedInUserDataSelector, clearUser } from '@/redux/slice/userSlice';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { clearUser, loggedInUserDataSelector, setUser } from '@/redux/slice/userSlice';
-import useLocation from '@/hooks/useLocation';
 import { AuthPayload } from '@/types/UserTypes';
-import { deletUser } from '@/api/apiUser';
 import LottieView from 'lottie-react-native';
+import { useRef, useState } from 'react';
+import { deletUser } from '@/api/apiUser';
+import GlossyButton from '@/components/glossyButton';
+
+type Route = Href<string>;
 
 const ProfileScreen = () => {
-  const router = useRouter();
-
   const loggedInUserData: AuthPayload | null = useSelector(loggedInUserDataSelector);
-  const { latitude, longitude, errorMsg, location } = useLocation();
-
-  const [isDeleting, setIsDeleteing] = useState<boolean>(false);
-
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const dispatch = useDispatch();
-
   const animation = useRef<LottieView>(null);
+
+  const menuItems: Array<{ title: string; icon: string; route: Route }> = [
+    { title: 'Profile', icon: '👤', route: '/(tabs)/profile/profile' as Route },
+    { title: 'Preferences', icon: '⚙️', route: '/(tabs)/profile/preferences' as Route },
+    { title: 'Activity', icon: '🕒', route: '/(tabs)/profile/activity' as Route },
+    { title: 'Privacy Settings', icon: '🔒', route: '/(tabs)/profile/privacy' as Route },
+  ];
 
   const handleLogout = async () => {
     await GoogleSignin.signOut();
     await AsyncStorage.removeItem("user");
     dispatch(clearUser());
-    router.replace('/login/loginScreen');
+    router.replace('/(auth)/login' as Route);
   };
 
   const handleDeleteAccount = async () => {
-    setIsDeleteing(true)
+    setIsDeleting(true);
     const userId = loggedInUserData?.user.id;
 
     if (!userId) {
       console.log("User id not found");
-      setIsDeleteing(false);
+      setIsDeleting(false);
       return;
     }
 
     try {
       const res = await deletUser(userId);
-
       if (res.deleted) {
         await AsyncStorage.removeItem("user");
         dispatch(clearUser());
-        router.replace('/login/loginScreen');
+        router.replace('/(auth)/login' as Route);
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -56,16 +58,12 @@ const ProfileScreen = () => {
         console.log("Unknown error occurred:", error);
       }
     } finally {
-      setIsDeleteing(false)
+      setIsDeleting(false);
     }
-
   };
 
-  // console.log("loggedInUserData",loggedInUserData);
-
-
-  if (!loggedInUserData) {
-    router.replace('/login/loginScreen');
+  if (!loggedInUserData?.user) {
+    router.replace('/(auth)/login' as Route);
     return null;
   }
 
@@ -78,45 +76,46 @@ const ProfileScreen = () => {
       />
       <View className="flex-row items-center mt-4 relative">
         <TouchableOpacity
-          onPress={() => router.back()}
-          className="absolute left-0 z-10"
+          onPress={router.back}
+          className="absolute left-0 top-0 z-10"
         >
           <Text className="text-2xl">←</Text>
         </TouchableOpacity>
+
+        
         <View className="flex-1">
-          <Text className="text-[24px] font-domine text-center">Your Profile</Text>
+        <View className="items-center mt-[0px] pb-[28px] flex-row justify-center">
+        <View className="flex-1 items-center">
+      <Image
+         source={{ uri: loggedInUserData.user?.pic }}
+          className="w-[120px] h-[120px] rounded-full border-white border-[3px]"
+          resizeMode="cover"
+          />
+           <View className="bg-[#868686] px-[1px] py-[1px] rounded-full absolute -bottom-2">
+            <GlossyButton />
+        </View>
+       </View>
+        
+      </View>
+          <Text className="text-[24px] font-domine text-center">{loggedInUserData.user?.name}</Text>
+          
         </View>
       </View>
 
-      <View className="items-center mt-[44px] flex-row justify-center">
-        <View className="flex-1 items-center">
-          <Image
-            source={{ uri: loggedInUserData.user?.pic }}
-            className="w-[120px] h-[120px] rounded-full border-white border-[3px]"
-            resizeMode="cover"
-          />
-          <View className="bg-[#868686] px-[1px] py-[1px] rounded-full absolute -bottom-2">
-            <GlossyButton />
-          </View>
-        </View>
-      </View>
+     
 
       <View className="mt-16">
-        <View className="mb-8">
-          <Text className="text-lg font-domine mb-1">Name</Text>
-          <Text className="text-gray-600">{loggedInUserData.user?.name}</Text>
-        </View>
-
-        <View>
-          <Text className="text-lg font-domine mb-1">Email Address</Text>
-          <Text className="text-gray-600">{loggedInUserData.user?.email}</Text>
-        </View>
-
-        <View className="mb-8">
-          <Text className="text-lg font-domine mb-1">Location</Text>
-          <Text className="text-gray-600">{location?.district} / {location?.city} / {location?.country}</Text>
-          <Text className="text-gray-600">{location?.timezone}</Text>
-        </View>
+        {menuItems.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            className="flex-row items-center py-4 border-b border-gray-100"
+            onPress={() => router.push(item.route)}
+          >
+            <Text className="text-2xl mr-4">{item.icon}</Text>
+            <Text className="flex-1 text-lg">{item.title}</Text>
+            <Text className="text-gray-400">→</Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       <View className="mt-auto mb-8">
