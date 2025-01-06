@@ -28,8 +28,8 @@ const NavBar = () => {
   const userProfilePic = loggedInUserData?.user?.pic;  // Safely access nested properties
 
   return (
-    <View className="absolute top-0 left-0 right-0 z-10">
-      <View className="flex-row justify-between items-center pt-4 px-[18px] pb-5 rounded-b-[60px] bg-white">
+    <View className="absolute top-0 left-0 right-0 z-50 ">
+      <View className="flex-row justify-between items-center pt-20 px-[18px] pb-5 rounded-b-[40px] bg-white ">
         <TouchableOpacity onPress={handleProfilePress}>
           {userProfilePic ? (  // Check if profile pic exists
             <Image

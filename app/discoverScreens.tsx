@@ -8,16 +8,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DiscoverScreens = () => {
     return (
-        <View style={styles.wrapper}>
+        <>
             <View style={styles.statusBarBackground} />
-            <SafeAreaView style={styles.container}>
-                <ExpoStatusBar style='dark' backgroundColor='white' />
-                <GestureHandlerRootView style={styles.container}>
-                    <NavBar />
-                    <DiscoverScreen />
-                </GestureHandlerRootView>
-            </SafeAreaView>
-        </View>
+            <View style={styles.wrapper}>
+                <NavBar />
+                <SafeAreaView style={styles.container}>
+                    <ExpoStatusBar style='dark' backgroundColor='transparent' translucent={true} />
+                    <GestureHandlerRootView style={styles.contentContainer}>
+                        
+                        <DiscoverScreen />
+                    </GestureHandlerRootView>
+                </SafeAreaView>
+            </View>
+        </>
     )
 }
 
@@ -26,20 +29,21 @@ export default DiscoverScreens
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
     },
     container: {
         flex: 1,
         backgroundColor: 'white',
-        zIndex:1
+    },
+    contentContainer: {
+        flex: 1,
     },
     statusBarBackground: {
-        backgroundColor: 'white',
-        height: Platform.OS === 'android' ? StatusBar.currentHeight : 60,
+        // height: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
-        zIndex: 50,
+        zIndex: 10, // Put it behind everything
     }
-})
+});

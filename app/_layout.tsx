@@ -88,7 +88,8 @@ export default function RootLayout() {
                   name="discoverScreens"
                   options={{
                     gestureEnabled: true,
-                    animation: 'fade'
+                    animation: 'fade',
+                    
                   }}
                 />
                 <Stack.Screen
