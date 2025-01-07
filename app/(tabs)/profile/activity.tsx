@@ -34,7 +34,7 @@ const ActivityScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-2 border-b border-gray-100">
+      <View className="flex-row items-center justify-between px-4 pt-[18px] pb-[32px] ">
         <TouchableOpacity onPress={() => router.back()}>
           <Feather name="arrow-left" size={24} color="black" />
         </TouchableOpacity>
@@ -43,7 +43,7 @@ const ActivityScreen = () => {
       </View>
 
       {/* Section Title */}
-      <Text className="text-2xl font-domine px-4 py-4">
+      <Text className="text-[16px] font-domine px-4 pb-4">
         News you've commented on
       </Text>
 
@@ -52,23 +52,23 @@ const ActivityScreen = () => {
         {comments.map((comment) => (
           <View key={comment.id} className="px-4 mb-6">
             <TouchableOpacity 
-              className="flex-row space-x-3 mb-2"
+              className="flex-row space-x-3 mb-3"
               onPress={() => {/* Navigate to news article */}}
             >
               <Image 
                 source={comment.newsImage}
-                className="w-16 h-16 rounded-lg"
+                className="w-10 h-10 rounded-lg"
                 resizeMode="cover"
               />
-              <Text className="flex-1 text-base font-medium">
+              <Text className="flex-1  font-geist">
                 {comment.newsTitle}
               </Text>
             </TouchableOpacity>
 
             {/* Comment Section */}
-            <View className="flex-row items-start ml-[76px]">
+            <View className="flex-row items-start ml-[48px]">
               {/* User Avatar */}
-              <View className="w-8 h-8 rounded-full bg-purple-200 items-center justify-center mr-2">
+              <View className="w-8 h-8 rounded-full bg-purple-200 items-center justify-center mr-[6px]">
                 <Text className="text-purple-600 font-medium">
                   {comment.userInitial}
                 </Text>
@@ -76,8 +76,8 @@ const ActivityScreen = () => {
 
               {/* Comment Content */}
               <View className="flex-1">
-                <Text className="text-base mb-1">{comment.comment}</Text>
-                <Text className="text-gray-500 text-sm">{comment.timestamp}</Text>
+                <Text className=" font-geist text-[14px] mb-1">{comment.comment}</Text>
+                <Text className="text-gray-500 text-[12px]">{comment.timestamp}</Text>
               </View>
             </View>
           </View>
