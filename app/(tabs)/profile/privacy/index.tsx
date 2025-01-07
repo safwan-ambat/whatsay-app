@@ -1,23 +1,47 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 import { router, Href } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { useDispatch } from 'react-redux';
-import { clearUser } from '@/redux/slice/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearUser, loggedInUserDataSelector } from '@/redux/slice/userSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { deletUser } from '@/api/apiUser';
+import LottieView from 'lottie-react-native';
+import { AuthPayload } from '@/types/UserTypes';
 
 type Route = Href<string>;
 
 const PrivacySettingsScreen = () => {
   const dispatch = useDispatch();
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const animation = useRef<LottieView>(null);
+  const loggedInUserData: AuthPayload | null = useSelector(loggedInUserDataSelector);
 
   const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    const userId = loggedInUserData?.user.id;
+
+    if (!userId) {
+      console.log("User id not found");
+      setIsDeleting(false);
+      return;
+    }
+
     try {
-      await AsyncStorage.removeItem('user');
-      dispatch(clearUser());
-      router.replace('/(auth)/login' as Route);
-    } catch (error) {
-      console.error('Error deleting account:', error);
+      const res = await deletUser(userId);
+      if (res.deleted) {
+        await AsyncStorage.removeItem("user");
+        dispatch(clearUser());
+        router.replace("/discoverScreen" as Route);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log("Error is:", error.message);
+      } else {
+        console.log("Unknown error occurred:", error);
+      }
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -43,7 +67,7 @@ const PrivacySettingsScreen = () => {
             <View className="w-8 h-8 items-center justify-center mr-3">
               <Image
                 source={require('@/assets/images/profileIcons/private.webp')}
-                style={{ width: 20, height: 20,  }}
+                style={{ width: 20, height: 20 }}
                 resizeMode="contain"
               />
             </View>
@@ -59,9 +83,9 @@ const PrivacySettingsScreen = () => {
         >
           <View className="flex-row items-center">
             <View className="w-8 h-8 items-center justify-center mr-3">
-            <Image
+              <Image
                 source={require('@/assets/images/profileIcons/terms.webp')}
-                style={{ width: 20, height: 20,  }}
+                style={{ width: 20, height: 20 }}
                 resizeMode="contain"
               />
             </View>
@@ -74,12 +98,25 @@ const PrivacySettingsScreen = () => {
       {/* Delete Account Button */}
       <View className="px-4 mt-auto mb-8">
         <TouchableOpacity
-          className="bg-[#FFE9E9] rounded-xl py-4"
+          className="bg-[#FFE9E9] rounded-xl py-4 flex justify-center items-center"
           onPress={handleDeleteAccount}
         >
-          <Text className="text-[#B01212] text-center text-base">
-            Delete your account
-          </Text>
+          {!isDeleting && (
+            <Text className="text-[#B01212] text-center text-base">
+              Delete your account
+            </Text>
+          )}
+          {isDeleting && (
+            <LottieView
+              autoPlay
+              ref={animation}
+              style={{
+                width: 20,
+                height: 20,
+              }}
+              source={require("@/assets/animations/loading.json")}
+            />
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -60,33 +60,33 @@ const ProfileScreen = () => {
     router.replace("/(auth)/login" as Route);
   };
 
-  const handleDeleteAccount = async () => {
-    setIsDeleting(true);
-    const userId = loggedInUserData?.user.id;
+  // const handleDeleteAccount = async () => {
+  //   setIsDeleting(true);
+  //   const userId = loggedInUserData?.user.id;
 
-    if (!userId) {
-      console.log("User id not found");
-      setIsDeleting(false);
-      return;
-    }
+  //   if (!userId) {
+  //     console.log("User id not found");
+  //     setIsDeleting(false);
+  //     return;
+  //   }
 
-    try {
-      const res = await deletUser(userId);
-      if (res.deleted) {
-        await AsyncStorage.removeItem("user");
-        dispatch(clearUser());
-        router.replace("/(auth)/login" as Route);
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.log("Error is:", error.message);
-      } else {
-        console.log("Unknown error occurred:", error);
-      }
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+  //   try {
+  //     const res = await deletUser(userId);
+  //     if (res.deleted) {
+  //       await AsyncStorage.removeItem("user");
+  //       dispatch(clearUser());
+  //       router.replace("/(auth)/login" as Route);
+  //     }
+  //   } catch (error: unknown) {
+  //     if (error instanceof Error) {
+  //       console.log("Error is:", error.message);
+  //     } else {
+  //       console.log("Unknown error occurred:", error);
+  //     }
+  //   } finally {
+  //     setIsDeleting(false);
+  //   }
+  // };
 
   if (!loggedInUserData?.user) {
     router.replace("/(auth)/login" as Route);
@@ -162,7 +162,7 @@ const ProfileScreen = () => {
           <Text className="text-white text-center font-medium">Log Out</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           className="mt-4 bg-[#FFE9E9] rounded-xl py-4 flex justify-center items-center"
           onPress={handleDeleteAccount}
         >
@@ -182,7 +182,7 @@ const ProfileScreen = () => {
               source={require("@/assets/animations/loading.json")}
             />
           )}
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </SafeAreaView>
   );

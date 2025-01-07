@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, ScrollView, Switch, Image } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView, Switch, Image,ScrollView } from 'react-native';
 import { router, Href } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
+import DraggableFlatList, { 
+  ScaleDecorator,
+  RenderItemParams,
+} from 'react-native-draggable-flatlist';
 import {
   automobile,
   breakingNews,
@@ -61,6 +65,42 @@ const PreferencesScreen = () => {
     console.log('Saving preferences:', categories);
   };
 
+  const renderItem = ({ item, drag, isActive }: RenderItemParams<Category>) => {
+    return (
+      <ScaleDecorator>
+        <TouchableOpacity
+          activeOpacity={1}
+          onLongPress={drag}
+          disabled={isActive}
+          className={`bg-white py-3 border-b border-gray-100 ${isActive ? 'shadow-md' : ''}`}
+        >
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center space-x-3">
+              <Switch
+                trackColor={{ false: '#E5E7EB', true: '#34D399' }}
+                thumbColor={'#FFFFFF'}
+                ios_backgroundColor="#E5E7EB"
+                onValueChange={() => toggleSwitch(item.id)}
+                value={item.enabled}
+              />
+              <Image 
+                source={item.icon}
+                className="w-6 h-6"
+                resizeMode="contain"
+              />
+              <Text className="text-base">{item.name}</Text>
+            </View>
+            <View className="flex-row items-center space-x-2">
+              <TouchableOpacity onLongPress={drag}>
+                <Feather name="menu" size={20} color="#9CA3AF" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </ScaleDecorator>
+    );
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
@@ -74,39 +114,18 @@ const PreferencesScreen = () => {
 
       {/* Description */}
       <Text className="text-gray-500 text-sm px-4 py-3">
-        You'll see more news from your selected categories and less from others. Drag preferences to prioritize news and update them anytime to refresh your feed.
+        You'll see more news from your selected categories and less from others. Long press and drag to prioritize news and update them anytime to refresh your feed.
       </Text>
 
       {/* Categories List */}
-      <ScrollView className="flex-1 px-4">
-        {categories.map((category) => (
-          <View 
-            key={category.id}
-            className="flex-row items-center justify-between py-3 border-b border-gray-100"
-          >
-            <View className="flex-row items-center space-x-3">
-              <Image 
-                source={category.icon}
-                className="w-6 h-6"
-                resizeMode="contain"
-              />
-              <Text className="text-base">{category.name}</Text>
-            </View>
-            <View className="flex-row items-center space-x-3">
-              <Switch
-                trackColor={{ false: '#E5E7EB', true: '#34D399' }}
-                thumbColor={'#FFFFFF'}
-                ios_backgroundColor="#E5E7EB"
-                onValueChange={() => toggleSwitch(category.id)}
-                value={category.enabled}
-              />
-              <TouchableOpacity>
-                <Feather name="chevron-right" size={20} color="#9CA3AF" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+      <DraggableFlatList
+        data={categories}
+        onDragEnd={({ data }) => setCategories(data)}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        containerStyle={{ flex: 1 }}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
+      />
 
       {/* Save Button */}
       <View className="px-4 py-4">
