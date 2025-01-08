@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView, Image, Linking, Alert } from 'react-native';
 import { router, Href } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,11 +11,36 @@ import { AuthPayload } from '@/types/UserTypes';
 
 type Route = Href<string>;
 
+const PRIVACY_URL = 'https://whatsay-privacy-and-policy.vercel.app/';
+const TERMS_URL = 'https://whatsay-web.vercel.app/terms';
+
 const PrivacySettingsScreen = () => {
   const dispatch = useDispatch();
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const animation = useRef<LottieView>(null);
   const loggedInUserData: AuthPayload | null = useSelector(loggedInUserDataSelector);
+
+  const openURL = async (url: string) => {
+    try {
+      const supported = await Linking.canOpenURL(url);
+      
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert(
+          'Error',
+          'Cannot open this URL',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        'Something went wrong while opening the link',
+        [{ text: 'OK' }]
+      );
+    }
+  };
 
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
@@ -32,7 +57,7 @@ const PrivacySettingsScreen = () => {
       if (res.deleted) {
         await AsyncStorage.removeItem("user");
         dispatch(clearUser());
-        router.replace("/discoverScreen" as Route);
+        router.replace("/login/loginScreen" as Route);
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -61,7 +86,7 @@ const PrivacySettingsScreen = () => {
         {/* Privacy */}
         <TouchableOpacity 
           className="flex-row items-center justify-between py-4 border-b border-gray-100"
-          onPress={() => router.push('/(tabs)/profile/privacy/details' as Route)}
+          onPress={() => openURL(PRIVACY_URL)}
         >
           <View className="flex-row items-center">
             <View className="w-8 h-8 items-center justify-center mr-3">
@@ -78,8 +103,8 @@ const PrivacySettingsScreen = () => {
 
         {/* Terms & Conditions */}
         <TouchableOpacity 
-          className="flex-row items-center justify-between py-4 "
-          onPress={() => router.push('/(tabs)/profile/privacy/terms' as Route)}
+          className="flex-row items-center justify-between py-4"
+          onPress={() => openURL(TERMS_URL)}
         >
           <View className="flex-row items-center">
             <View className="w-8 h-8 items-center justify-center mr-3">

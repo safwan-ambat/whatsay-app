@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, Switch, Image,ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView, Image, ScrollView } from 'react-native';
 import { router, Href } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import DraggableFlatList, { 
@@ -54,7 +54,7 @@ const PreferencesScreen = () => {
     { id: '16', name: 'Finance', icon: finance, enabled: true },
   ]);
 
-  const toggleSwitch = (id: string) => {
+  const toggleCategory = (id: string) => {
     setCategories(categories.map(category => 
       category.id === id ? { ...category, enabled: !category.enabled } : category
     ));
@@ -72,27 +72,27 @@ const PreferencesScreen = () => {
           activeOpacity={1}
           onLongPress={drag}
           disabled={isActive}
-          className={`bg-white py-3 border-b border-gray-100 ${isActive ? 'shadow-md' : ''}`}
+          className={` py-4 px-3 mb-1 bg-[#F6F7F9] rounded-[8px] ${isActive ? 'shadow-md' : ''}`}
         >
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center space-x-3">
-              <Switch
-                trackColor={{ false: '#E5E7EB', true: '#34D399' }}
-                thumbColor={'#FFFFFF'}
-                ios_backgroundColor="#E5E7EB"
-                onValueChange={() => toggleSwitch(item.id)}
-                value={item.enabled}
-              />
+              <TouchableOpacity 
+                onPress={() => toggleCategory(item.id)}
+                className="w-4 h-4 rounded-full items-center justify-center"
+                style={item.enabled ? { backgroundColor: '#35B267', borderWidth: 1, borderColor: '#35B267' } : { borderWidth: 1, borderColor: '#000000', opacity: 0.5 }}
+              >
+                {item.enabled && <Feather name="check" size={12} color="white" />}
+              </TouchableOpacity>
               <Image 
                 source={item.icon}
                 className="w-6 h-6"
                 resizeMode="contain"
               />
-              <Text className="text-base">{item.name}</Text>
+              <Text className="text-4 font-domine">{item.name}</Text>
             </View>
             <View className="flex-row items-center space-x-2">
-              <TouchableOpacity onLongPress={drag}>
-                <Feather name="menu" size={20} color="#9CA3AF" />
+              <TouchableOpacity onLongPress={drag} className='opacity-50'>
+                <Feather name="menu" size={20} color="#000000" />
               </TouchableOpacity>
             </View>
           </View>
@@ -104,7 +104,7 @@ const PreferencesScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-2 border-b border-gray-100">
+      <View className="flex-row items-center justify-between px-4 pt-5 pb-[24px]">
         <TouchableOpacity onPress={() => router.back()}>
           <Feather name="arrow-left" size={24} color="black" />
         </TouchableOpacity>
@@ -113,7 +113,7 @@ const PreferencesScreen = () => {
       </View>
 
       {/* Description */}
-      <Text className="text-gray-500 text-sm px-4 py-3">
+      <Text className="text-gray-500 text-[14p] font-geist px-4 pb-7">
         You'll see more news from your selected categories and less from others. Long press and drag to prioritize news and update them anytime to refresh your feed.
       </Text>
 
