@@ -82,9 +82,9 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
     const getStackDimensions = () => {
         if (isTablet) {
             return {
-                containerHeight: 820,
+                containerHeight: 1020,
                 stackPadding: 560,
-                containerPadding: 300
+                containerPadding: 500
             };
         }
         return {
