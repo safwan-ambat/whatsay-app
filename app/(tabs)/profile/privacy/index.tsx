@@ -73,7 +73,7 @@ const PrivacySettingsScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-2 ">
+      <View className="flex-row items-center justify-between px-4 pt-4 ">
         <TouchableOpacity onPress={() => router.back()}>
           <Feather name="arrow-left" size={24} color="black" />
         </TouchableOpacity>
@@ -82,7 +82,7 @@ const PrivacySettingsScreen = () => {
       </View>
 
       {/* Settings List */}
-      <View className="px-4 mt-4">
+      <View className="px-4 mt-[18px]">
         {/* Privacy */}
         <TouchableOpacity 
           className="flex-row items-center justify-between py-4 border-b border-gray-100"
@@ -96,7 +96,7 @@ const PrivacySettingsScreen = () => {
                 resizeMode="contain"
               />
             </View>
-            <Text className="text-lg">Privacy</Text>
+            <Text className="text-[16px] font-domine">Privacy</Text>
           </View>
           <Feather name="chevron-right" size={24} color="#9CA3AF" />
         </TouchableOpacity>
@@ -114,7 +114,7 @@ const PrivacySettingsScreen = () => {
                 resizeMode="contain"
               />
             </View>
-            <Text className="text-lg">Terms & Conditions</Text>
+            <Text className="text-[16px] font-domine">Terms & Conditions</Text>
           </View>
           <Feather name="chevron-right" size={24} color="#9CA3AF" />
         </TouchableOpacity>

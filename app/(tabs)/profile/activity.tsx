@@ -34,7 +34,7 @@ const ActivityScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 pt-[18px] pb-[32px] ">
+      <View className="flex-row items-center justify-between px-4 pt-4 pb-[32px] ">
         <TouchableOpacity onPress={() => router.back()}>
           <Feather name="arrow-left" size={24} color="black" />
         </TouchableOpacity>

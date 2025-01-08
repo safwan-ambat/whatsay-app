@@ -104,7 +104,7 @@ const PreferencesScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 pt-5 pb-[24px]">
+      <View className="flex-row items-center justify-between px-4 pt-4 pb-[24px]">
         <TouchableOpacity onPress={() => router.back()}>
           <Feather name="arrow-left" size={24} color="black" />
         </TouchableOpacity>

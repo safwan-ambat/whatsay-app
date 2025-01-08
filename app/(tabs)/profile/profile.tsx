@@ -154,7 +154,7 @@ const ProfileDetailsScreen = () => {
       />
       
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-2">
+      <View className="flex-row items-center justify-between px-4 pt-4">
         <TouchableOpacity onPress={() => router.back()}>
           <Feather name="arrow-left" size={24} color="black" />
         </TouchableOpacity>
