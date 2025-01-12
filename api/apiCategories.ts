@@ -24,7 +24,7 @@ export const getAllCategories = async () => {
 // API function to fetch all categories that have associated articles
 export const getCategories = async (from: string, to: string) => {
     try {
-        const res = await APICaller(APIService.get(`/categoryWithArticles?from=${from}&&to=${to}`,))
+        const res = await APICaller(APIService.get(`/categoryWithArticles?from=${from}&&to=${to}`))
         return res.data;
 
         // const { data: todos, error } = await supabase
@@ -37,6 +37,28 @@ export const getCategories = async (from: string, to: string) => {
         //     return todos;
 
     } catch (error: any) {
+        console.log("Fetching Error: ", error.message || error); // Log the error message
+        throw new Error(error.message || error); // Re-throw with message for clarity
+    }
+}
+
+export const apiGetCategoriesWithPreferences = async (userId:string)=>{
+    try {
+        const res = await APICaller(APIService.get(`/categoriesWithPreferences/${userId}`))
+        return res.data;
+    } catch (error:any) {
+        console.log("Fetching Error: ", error.message || error); // Log the error message
+        throw new Error(error.message || error); // Re-throw with message for clarity
+    }
+}
+
+export const apiUpdateUserPreference = async(categoryIDs:string[], userId:string)=>{
+    try {
+        const res = await APICaller(APIService.put(`/updateUserCategoriesPreferences/${userId}`,{
+            categoryIDs
+        }))
+        return res;
+    } catch (error:any) {
         console.log("Fetching Error: ", error.message || error); // Log the error message
         throw new Error(error.message || error); // Re-throw with message for clarity
     }
