@@ -1,71 +1,49 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, Image, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, SafeAreaView, Image, ActivityIndicator, Alert } from 'react-native';
 import { router, Href } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import DraggableFlatList, { 
+import DraggableFlatList, {
   ScaleDecorator,
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
-import {
-  automobile,
-  breakingNews,
-  business,
-  entertainment,
-  health,
-  internationalNews,
-  lifestyle,
-  opinions,
-  politics,
-  science,
-  sports,
-  startup,
-  technology,
-  travel,
-  world,
-  finance
-} from '@/assets';
-
-type Route = Href<string>;
-
-interface Category {
-  id: string;
-  name: string;
-  icon: any;
-  enabled: boolean;
-}
+import { apiGetCategoriesWithPreferences, apiUpdateUserPreference } from '@/api/apiCategories';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserPreferredCategories, userPreferredCategoriesDataSelector } from '@/redux/slice/categorySlice';
+import { CategoryType } from '@/types/CategoryTypes';
+import { AuthPayload } from '@/types/UserTypes';
+import { loggedInUserDataSelector } from '@/redux/slice/userSlice';
 
 const PreferencesScreen = () => {
-  const [categories, setCategories] = useState<Category[]>([
-    { id: '1', name: 'Automobile', icon: automobile, enabled: true },
-    { id: '2', name: 'International News', icon: internationalNews, enabled: true },
-    { id: '3', name: 'Business', icon: business, enabled: true },
-    { id: '4', name: 'Breaking news', icon: breakingNews, enabled: true },
-    { id: '5', name: 'Entertainment', icon: entertainment, enabled: true },
-    { id: '6', name: 'Health', icon: health, enabled: true },
-    { id: '7', name: 'Lifestyle', icon: lifestyle, enabled: true },
-    { id: '8', name: 'Opinions', icon: opinions, enabled: true },
-    { id: '9', name: 'Politics', icon: politics, enabled: true },
-    { id: '10', name: 'Science', icon: science, enabled: true },
-    { id: '11', name: 'Sports', icon: sports, enabled: true },
-    { id: '12', name: 'Technology', icon: technology, enabled: true },
-    { id: '13', name: 'Startup', icon: startup, enabled: true },
-    { id: '14', name: 'Travel', icon: travel, enabled: true },
-    { id: '15', name: 'World', icon: world, enabled: true },
-    { id: '16', name: 'Finance', icon: finance, enabled: true },
-  ]);
 
-  const toggleCategory = (id: string) => {
-    setCategories(categories.map(category => 
-      category.id === id ? { ...category, enabled: !category.enabled } : category
-    ));
+  const dispatch = useDispatch();
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const categoriesData = useSelector(userPreferredCategoriesDataSelector);
+
+  const loggedInUserData: AuthPayload | null = useSelector(loggedInUserDataSelector);
+
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
+  const toggleCategory = (id: any) => {
+    // Update the `isPreferred` flag in categoriesData (Note: this won't trigger re-render since we're not updating the Redux store here)
+    const updatedCategories = categoriesData.map((category: CategoryType) =>
+      category.id === id
+        ? { ...category, isPreferred: !category.isPreferred }
+        : category
+    );
+
+    // Optionally, you can dispatch the updated categories to Redux if you want to store this updated state globally
+    dispatch(setUserPreferredCategories(updatedCategories));
+
+    setSelectedCategories((prevSelected: any) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((item: string) => item !== id) // Remove if already selected
+        : [...prevSelected, id] // Add if not selected
+    );
   };
 
-  const handleSaveChanges = () => {
-    // Implement save functionality
-    console.log('Saving preferences:', categories);
-  };
-
-  const renderItem = ({ item, drag, isActive }: RenderItemParams<Category>) => {
+  const renderItem = ({ item, drag, isActive }: RenderItemParams<CategoryType>) => {
     return (
       <ScaleDecorator>
         <TouchableOpacity
@@ -76,15 +54,15 @@ const PreferencesScreen = () => {
         >
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center space-x-3">
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => toggleCategory(item.id)}
                 className="w-4 h-4 rounded-full items-center justify-center"
-                style={item.enabled ? { backgroundColor: '#35B267', borderWidth: 1, borderColor: '#35B267' } : { borderWidth: 1, borderColor: '#000000', opacity: 0.5 }}
+                style={item.isPreferred ? { backgroundColor: '#35B267', borderWidth: 1, borderColor: '#35B267' } : { borderWidth: 1, borderColor: '#000000', opacity: 0.5 }}
               >
-                {item.enabled && <Feather name="check" size={12} color="white" />}
+                {item.isPreferred && <Feather name="check" size={12} color="white" />}
               </TouchableOpacity>
-              <Image 
-                source={item.icon}
+              <Image
+                source={{ uri: item.icon_url }}
                 className="w-6 h-6"
                 resizeMode="contain"
               />
@@ -100,6 +78,69 @@ const PreferencesScreen = () => {
       </ScaleDecorator>
     );
   };
+
+  const handleSaveChanges = async () => {
+    try {
+      const userId: any = loggedInUserData?.user.id; // Ensure this exists
+      await apiUpdateUserPreference(selectedCategories, userId).then(async (res: any) => {
+        if (res.status == 200) {
+          const apiRes = await apiGetCategoriesWithPreferences(userId);
+          if (apiRes) {
+            // Dispatch categories to Redux store
+            dispatch(setUserPreferredCategories(apiRes));
+
+            // Set the selected categories based on `isPreferred` flag
+            setSelectedCategories(
+              apiRes
+                .filter((category: CategoryType) => category.isPreferred)
+                .map((category: CategoryType) => category.id)
+            );
+          }
+        }
+        // Customizing Alert Message
+        Alert.alert(
+          'Success!',
+          'Your preferences for Category have been successfully updated.',
+          [
+            {
+              text: 'OK',
+              onPress: () => console.log('User clicked OK'),
+              style: 'default', // Default button style
+            },
+          ],
+          { cancelable: false }
+        );
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const userId = loggedInUserData?.user.id; // Ensure this exists
+        if (userId) {
+          const apiRes = await apiGetCategoriesWithPreferences(userId);
+          if (apiRes) {
+            // Dispatch categories to Redux store
+            dispatch(setUserPreferredCategories(apiRes));
+
+            // Set the selected categories based on `isPreferred` flag
+            setSelectedCategories(
+              apiRes
+                .filter((category: CategoryType) => category.isPreferred)
+                .map((category: CategoryType) => category.id)
+            );
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [loggedInUserData?.user.id, dispatch]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -117,19 +158,23 @@ const PreferencesScreen = () => {
         You'll see more news from your selected categories and less from others. Long press and drag to prioritize news and update them anytime to refresh your feed.
       </Text>
 
-      {/* Categories List */}
-      <DraggableFlatList
-        data={categories}
-        onDragEnd={({ data }) => setCategories(data)}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        containerStyle={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 16 }}
-      />
+      {!categoriesData || isLoading ?
+        <ActivityIndicator size="large" color="black" />
+        :
+        <DraggableFlatList
+          data={categoriesData}
+          // onDragEnd={({ data }) => setCategories(data)}
+          keyExtractor={(item: any) => item.id}
+          renderItem={renderItem}
+          containerStyle={{ flex: 1 }}
+          contentContainerStyle={{ paddingHorizontal: 16 }}
+        />
+
+      }
 
       {/* Save Button */}
       <View className="px-4 py-4">
-        <TouchableOpacity 
+        <TouchableOpacity
           className="bg-black rounded-lg py-4"
           onPress={handleSaveChanges}
         >
