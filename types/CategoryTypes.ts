@@ -5,5 +5,7 @@ export type CategoryType = {
     created_at: Date | string;
     updated_at: Date | string;
     index: number;
+    order: number | string;
+    icon_url: string;
     
 }
