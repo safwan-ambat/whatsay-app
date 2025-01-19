@@ -57,7 +57,7 @@ const ProfileScreen = () => {
     await GoogleSignin.signOut();
     await AsyncStorage.removeItem("user");
     dispatch(clearUser());
-    router.replace("/(auth)/login" as Route);
+    router.replace("/" as Route);
   };
 
   // const handleDeleteAccount = async () => {

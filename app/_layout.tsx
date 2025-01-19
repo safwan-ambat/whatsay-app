@@ -12,6 +12,8 @@ import { persistStore } from "redux-persist";
 import { store } from "@/redux/store";
 import FONTS from "@/assets/fonts";
 import useLocation from "@/hooks/useLocation";
+import { configureMoment } from "@/config/momentConfig";
+import * as RNLocalize from 'react-native-localize';
 
 let persistor = persistStore(store);
 
@@ -23,7 +25,16 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 export default function RootLayout() {
   const [fontsLoaded, error] = useFonts(FONTS);
 
-  const {latitude, longitude, errorMsg} = useLocation();
+  const { latitude, longitude, errorMsg } = useLocation();
+
+  useEffect(() => {
+    // Get device locale and timezone
+    const deviceLocale = RNLocalize.getLocales()[0].languageTag; // e.g., 'en-US'
+    const deviceTimezone = RNLocalize.getTimeZone(); // e.g., 'America/New_York'
+
+    // Configure Moment.js
+    configureMoment(deviceLocale, deviceTimezone);
+  }, []);
 
   useEffect(() => {
     const hideSplash = async () => {
@@ -89,7 +100,7 @@ export default function RootLayout() {
                   options={{
                     gestureEnabled: true,
                     animation: 'fade',
-                    
+
                   }}
                 />
                 <Stack.Screen
@@ -100,7 +111,7 @@ export default function RootLayout() {
                   }}
                 />
 
-                <Stack.Screen name="login/mobile"/>
+                <Stack.Screen name="login/mobile" />
               </Stack>
             </GestureHandlerRootView>
           </SafeAreaProvider>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, Image, ActivityIndicator, Alert } from 'react-native';
-import { router, Href } from 'expo-router';
+import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import DraggableFlatList, {
   ScaleDecorator,
@@ -19,7 +19,7 @@ const PreferencesScreen = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const categoriesData:any = useSelector(userPreferredCategoriesDataSelector);
+  const categoriesData: any = useSelector(userPreferredCategoriesDataSelector);
 
   const loggedInUserData: AuthPayload | null = useSelector(loggedInUserDataSelector);
 
@@ -158,7 +158,7 @@ const PreferencesScreen = () => {
         You'll see more news from your selected categories and less from others. Long press and drag to prioritize news and update them anytime to refresh your feed.
       </Text>
 
-      {(!categoriesData && isLoading || categoriesData.length === 0 )?
+      {(!categoriesData && isLoading || categoriesData.length === 0) ?
         <ActivityIndicator size="large" color="black" />
         :
         <DraggableFlatList

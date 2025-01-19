@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"; // Use Asy
 import { usersSlice } from "./slice/userSlice";
 import { commentSlice } from "./slice/articlesComments";
 import { categorySlice } from "./slice/categorySlice";
+import { activitySlice } from "./slice/UserActivityLogsSlice";
 
 // Configuring the persistence
 const persistConfig = {
@@ -24,7 +25,8 @@ const persistConfig = {
 export const reducer = combineReducers({
   users: usersSlice.reducer,
   comments: commentSlice.reducer,
-  category: categorySlice.reducer
+  category: categorySlice.reducer,
+  userActivity: activitySlice.reducer
 });
 
 // Persist the reducer

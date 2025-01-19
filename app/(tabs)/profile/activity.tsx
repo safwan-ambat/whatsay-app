@@ -1,35 +1,40 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, ScrollView, Image } from 'react-native';
-import { router, Href } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, SafeAreaView, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { loggedInUserDataSelector } from '@/redux/slice/userSlice';
-import { AuthPayload } from '@/types/UserTypes';
-
-type Route = Href<string>;
-
-interface Comment {
-  id: string;
-  newsTitle: string;
-  newsImage: any;
-  comment: string;
-  timestamp: string;
-  userInitial: string;
-}
+import { getUserActivities } from '@/api/apiActivity';
+import { ActivityTypes } from '@/types/Activity';
+import { setUserActivityLogs, UserActivityLogsSelector } from '@/redux/slice/UserActivityLogsSlice';
+import { getTimeDifference } from '@/config/momentConfig';
 
 const ActivityScreen = () => {
-  // Mock comments data - replace with actual data from your backend
-  const comments: Comment[] = [
-    {
-      id: '1',
-      newsTitle: 'LSG hand RCB their 2nd straight defeat at home, might win the IPL cup',
-      newsImage: require('@/assets/images/icon.png'),
-      comment: 'Kya team hai bhai! LSG undefeatable hai 🔥',
-      timestamp: '1 day ago',
-      userInitial: 'R'
-    },
-    // Add more comment objects as needed
-  ];
+
+  const loggedInUserData = useSelector(loggedInUserDataSelector);
+  const userActivityLogs = useSelector(UserActivityLogsSelector);
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const userId = loggedInUserData?.user.id;
+    (async () => {
+      try {
+        await getUserActivities(userId)
+          .then((res: ActivityTypes[]) => {
+            dispatch(setUserActivityLogs(res))
+          }).catch((error) => {
+            throw error
+          })
+      } catch (error) {
+        console.error("Error fetching activities:", error);
+      } finally {
+        setIsLoading(false)
+      }
+    })()
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -47,42 +52,66 @@ const ActivityScreen = () => {
         News you've commented on
       </Text>
 
-      {/* Comments List */}
-      <ScrollView className="flex-1">
-        {comments.map((comment) => (
-          <View key={comment.id} className="px-4 mb-6">
-            <TouchableOpacity 
-              className="flex-row space-x-3 mb-3"
-              onPress={() => {/* Navigate to news article */}}
-            >
-              <Image 
-                source={comment.newsImage}
-                className="w-10 h-10 rounded-lg"
-                resizeMode="cover"
-              />
-              <Text className="flex-1  font-geist">
-                {comment.newsTitle}
-              </Text>
-            </TouchableOpacity>
+      {/* Loading or Empty Data Check */}
+      {isLoading || userActivityLogs.length === 0 ? (
+        <View className="flex-1 justify-center items-center">
+          {isLoading ? (
+            <ActivityIndicator size="large" color="black" />
+          ) : (
+            <Text className="text-lg text-gray-600">No activity logs available</Text>
+          )}
+        </View>
+      ) : (
+        <>
+          {/* Activity List */}
+          <ScrollView className="flex-1">
+            {userActivityLogs.map((activity: ActivityTypes) => {
+              const user = activity.user;
+              return (
+                <View key={activity.id} className="px-4 mb-6">
+                  <TouchableOpacity
+                    className="flex-row space-x-3 mb-3"
+                    onPress={() => {/* Navigate to news article */ }}
+                  >
+                    <Image
+                      source={{ uri: activity.article.image_url }}
+                      className="w-10 h-10 rounded-lg"
+                      resizeMode="cover"
+                    />
+                    <Text className="flex-1  font-geist">
+                      {activity.article.title}
+                    </Text>
+                  </TouchableOpacity>
 
-            {/* Comment Section */}
-            <View className="flex-row items-start ml-[48px]">
-              {/* User Avatar */}
-              <View className="w-8 h-8 rounded-full bg-purple-200 items-center justify-center mr-[6px]">
-                <Text className="text-purple-600 font-medium">
-                  {comment.userInitial}
-                </Text>
-              </View>
+                  {/* Comment Section */}
+                  <View className="flex-row items-start ml-[48px]">
+                    {/* User Avatar */}
+                    {activity.user ? (  // Check if profile pic exists
+                      <Image
+                        source={{ uri: user.pic }}
+                        className="w-8 h-8 rounded-full"
+                        resizeMode="cover"
+                      />
+                    ) : (
+                      <View className="w-8 h-8 rounded-full bg-purple-200 items-center justify-center mr-[6px]">
+                        <Text className="text-purple-600 font-medium">
+                          {user.name.charAt(0).toUpperCase()}
+                        </Text>
+                      </View>
+                    )}
 
-              {/* Comment Content */}
-              <View className="flex-1">
-                <Text className=" font-geist text-[14px] mb-1">{comment.comment}</Text>
-                <Text className="text-gray-500 text-[12px]">{comment.timestamp}</Text>
-              </View>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+                    {/* Comment Content */}
+                    <View className="flex-1 ml-2">
+                      <Text className=" font-geist text-[14px] mb-1">{activity.comment}</Text>
+                      <Text className="text-gray-500 text-[12px]">{getTimeDifference(activity.updated_at)}</Text>
+                    </View>
+                  </View>
+                </View>
+              )
+            })}
+          </ScrollView>
+        </>
+      )}
     </SafeAreaView>
   );
 };

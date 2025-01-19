@@ -1597,6 +1597,8 @@ PODS:
   - RNGoogleSignin (13.1.0):
     - GoogleSignIn (~> 7.1)
     - React-Core
+  - RNLocalize (3.4.1):
+    - React-Core
   - RNReanimated (3.10.1):
     - DoubleConversion
     - glog
@@ -1756,6 +1758,7 @@ DEPENDENCIES:
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
+  - RNLocalize (from `../node_modules/react-native-localize`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -1956,6 +1959,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-google-signin/google-signin"
+  RNLocalize:
+    :path: "../node_modules/react-native-localize"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -2069,6 +2074,7 @@ SPEC CHECKSUMS:
   RNFBAuth: cbec8a05154bbe0947c9cae65e57ab36eb6ed6ce
   RNGestureHandler: 20a4307fd21cbff339abfcfa68192f3f0a6a518b
   RNGoogleSignin: 9e68b9bcc3888219357924e32ee563624745647d
+  RNLocalize: 06991b9c31e7a898a9fa6ddb204ce0f53a967248
   RNReanimated: d51431fd3597a8f8320319dce8e42cee82a5445f
   RNScreens: 30249f9331c3b00ae7cb7922e11f58b3ed369c07
   RNSVG: 3d2bdcaef51c8071880a9c0072fe324f4423a3ba
@@ -2078,4 +2084,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: d015dac3aab7f8e30a90b5c3ecc67d2c0d399d4e
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

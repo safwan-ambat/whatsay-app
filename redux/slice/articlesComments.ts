@@ -19,7 +19,7 @@ export const commentSlice = createSlice({
     reducers: {
         // Properly type the `state` and `action` parameters
         setComment: (state, action: PayloadAction<ArticleComment[]>) => {
-            state.comments = action.payload; // Replace the comments array
+            state.comments = action.payload;
         },
         updateLike: (state, action) => {
             state.comments.map((comment: ArticleComment) => {
