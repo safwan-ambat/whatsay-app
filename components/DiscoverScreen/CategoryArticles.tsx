@@ -123,8 +123,6 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
                 }
             ]}>
                 {visibleArticles.map((item, itemIndex) => {
-                    console.log("category.index",category);
-                    
                     return (
                         <Card
                             key={item.id}

@@ -62,8 +62,6 @@ const DiscoverScreen = () => {
                 }));
                 setCategories(categoriesWithIndex);
             } catch (error) {
-                console.log("error",error);
-                
                 console.error("Error fetching categories:", error);
             }
         })();
