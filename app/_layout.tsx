@@ -15,6 +15,7 @@ import useLocation from "@/hooks/useLocation";
 import { configureMoment } from "@/config/momentConfig";
 import * as RNLocalize from 'react-native-localize';
 
+
 let persistor = persistStore(store);
 
 // Prevent splash screen from auto-hiding
