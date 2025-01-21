@@ -24,7 +24,7 @@ interface CardProps {
   translateX: SharedValue<number>;
   onSwipe: (direction: 'left' | 'right') => void;
   onPress: () => void;
-  categoryIndex: number;
+  categoryIndex?: number;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -61,7 +61,7 @@ export const Card: React.FC<CardProps> = ({
     }
   };
 
-  const rotationValues = getRotationValues(categoryIndex);
+  const rotationValues = getRotationValues(categoryIndex ? categoryIndex : 0);
 
   const removeCard = useCallback((direction: 'left' | 'right') => {
     'worklet';

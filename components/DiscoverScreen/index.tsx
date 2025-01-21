@@ -8,7 +8,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import CategoryArticles from './CategoryArticles';
 import { getCategories } from '@/api/apiCategories';
 import useLocation from '@/hooks/useLocation';
-import { getLast24HoursRange } from '@/utils/DataAndTimeHelper';
 import Animated, {
     useAnimatedScrollHandler,
     useAnimatedStyle,
@@ -18,6 +17,7 @@ import Animated, {
     withTiming,
     runOnJS,
 } from 'react-native-reanimated';
+import { getLast48HoursRange } from '@/utils/DataAndTimeHelper';
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
@@ -53,7 +53,7 @@ const DiscoverScreen = () => {
 
     useEffect(() => {
         (async () => {
-            const { from, to } = getLast24HoursRange();
+            const { from, to } = getLast48HoursRange();
             try {
                 const response = await getCategories(from, to);
                 const categoriesWithIndex = response.map((category: Omit<CategoryType, 'index'>, idx: number) => ({
@@ -62,6 +62,8 @@ const DiscoverScreen = () => {
                 }));
                 setCategories(categoriesWithIndex);
             } catch (error) {
+                console.log("error",error);
+                
                 console.error("Error fetching categories:", error);
             }
         })();
@@ -134,7 +136,7 @@ const DiscoverScreen = () => {
                 contentContainerStyle={styles.scrollViewContent}
                 bounces={true}
             >
-                {categories.map((category: CategoryType) => (
+                {categories.map((category: CategoryType,index:number) => (
                     <CategoryArticles
                         category={category}
                         key={category.id}

@@ -11,7 +11,7 @@ import { getAllArticlesByCategories } from '@/api/apiArticles';
 //     internationalNews, lifestyle, opinions, politics, science, sports, startup, technology,
 //     travel, world, finance
 // } from '@/assets';
-import { getLast24HoursRange } from '@/utils/DataAndTimeHelper';
+import {getLast48HoursRange } from '@/utils/DataAndTimeHelper';
 
 type CategoryIconKey = 'categoryKey' | string;
 
@@ -68,9 +68,10 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
 
     useEffect(() => {
         (async () => {
-            const { from, to } = getLast24HoursRange();
+            const { from, to } = getLast48HoursRange();
+            const categoryId = category.id as string;
             try {
-                const response = await getAllArticlesByCategories(category.id as string, from, to);
+                const response = await getAllArticlesByCategories(categoryId, from, to);
                 setArticles(response)
             } catch (error) {
                 console.log("error", error);
@@ -122,6 +123,8 @@ const CategoryArticles = ({ category }: { category: CategoryType }) => {
                 }
             ]}>
                 {visibleArticles.map((item, itemIndex) => {
+                    console.log("category.index",category);
+                    
                     return (
                         <Card
                             key={item.id}

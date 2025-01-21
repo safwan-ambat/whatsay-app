@@ -1,5 +1,5 @@
 export type CategoryType = {
-    id: number;
+    id: number | string;
     name: string;
     description: string;
     created_at: Date | string;
@@ -8,4 +8,5 @@ export type CategoryType = {
     icon_url: string;
     active: boolean;
     isPreferred?: boolean; // Optional field for user preference
+    index?: number;
 }
