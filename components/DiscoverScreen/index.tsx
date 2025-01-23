@@ -18,6 +18,8 @@ import Animated, {
     runOnJS,
 } from 'react-native-reanimated';
 import { getLast48HoursRange } from '@/utils/DataAndTimeHelper';
+import { useSelector } from 'react-redux';
+import { loggedInUserDataSelector } from '@/redux/slice/userSlice';
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
@@ -42,6 +44,8 @@ const DiscoverScreen = () => {
     const scrollY = useSharedValue(0);
     const isRefreshing = useSharedValue(false);
 
+    const loggedInUserData = useSelector(loggedInUserDataSelector);
+
     const getCurrentGradientColors = () => {
         try {
             return GRADIENT_COLORS[currentGradientIndex] || DEFAULT_GRADIENT;
@@ -54,8 +58,9 @@ const DiscoverScreen = () => {
     useEffect(() => {
         (async () => {
             const { from, to } = getLast48HoursRange();
+            const userId: string = loggedInUserData?.user.id as string;
             try {
-                const response = await getCategories(from, to);
+                const response = await getCategories(from, to, userId);
                 const categoriesWithIndex = response.map((category: Omit<CategoryType, 'index'>, idx: number) => ({
                     ...category,
                     index: Number(idx)
@@ -134,7 +139,7 @@ const DiscoverScreen = () => {
                 contentContainerStyle={styles.scrollViewContent}
                 bounces={true}
             >
-                {categories.map((category: CategoryType,index:number) => (
+                {categories.map((category: CategoryType, index: number) => (
                     <CategoryArticles
                         category={category}
                         key={category.id}
@@ -168,6 +173,6 @@ const styles = StyleSheet.create({
     scrollViewContent: {
         flexGrow: 1,
         paddingTop: 88,
-        zIndex:50,
+        zIndex: 50,
     }
 });

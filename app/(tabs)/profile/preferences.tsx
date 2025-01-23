@@ -104,7 +104,7 @@ const PreferencesScreen = () => {
           [
             {
               text: 'OK',
-              onPress: () => console.log('User clicked OK'),
+              onPress: () => router.push('/discoverScreens'),
               style: 'default', // Default button style
             },
           ],
