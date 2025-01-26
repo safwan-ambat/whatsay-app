@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, Image, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView, Image, ActivityIndicator, Alert ,Animated} from 'react-native';
 import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import DraggableFlatList, {
@@ -43,78 +43,128 @@ const PreferencesScreen = () => {
     );
   };
 
-  const renderItem = ({ item, drag, isActive }: RenderItemParams<CategoryType>) => {
-    return (
-      <ScaleDecorator>
-        <TouchableOpacity
-          activeOpacity={1}
-          onLongPress={drag}
-          disabled={isActive}
-          className={` py-4 px-3 mb-1 bg-[#F6F7F9] rounded-[8px] ${isActive ? 'shadow-md' : ''}`}
-        >
-          <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center space-x-3">
-              <TouchableOpacity
-                onPress={() => toggleCategory(item.id)}
-                className="w-4 h-4 rounded-full items-center justify-center"
+ const renderItem = ({ item, drag, isActive }: RenderItemParams<CategoryType>) => {
+  return (
+    <ScaleDecorator>
+      <TouchableOpacity
+        activeOpacity={1}
+        onLongPress={drag}
+        disabled={isActive}
+        className={`py-4 px-0 mb-1 bg-[#F6F7F9] rounded-[8px] ${isActive ? 'shadow-md' : ''}`}
+      >
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row items-center w-full ">
+            {/* Checkbox area (20%) */}
+            <TouchableOpacity 
+              onPress={() => toggleCategory(item.id)}
+              className="absolute z-10 w-12 h-14 flex items-center justify-center  "
+            >
+              <View
+                className="w-5 h-5 rounded-full items-center justify-center ml-1"
                 style={item.isPreferred ? { backgroundColor: '#35B267', borderWidth: 1, borderColor: '#35B267' } : { borderWidth: 1, borderColor: '#000000', opacity: 0.5 }}
               >
                 {item.isPreferred && <Feather name="check" size={12} color="white" />}
-              </TouchableOpacity>
-              <Image
-                source={{ uri: item.icon_url }}
-                className="w-6 h-6"
-                resizeMode="contain"
-              />
-              <Text className="text-4 font-domine">{item.name}</Text>
-            </View>
-            <View className="flex-row items-center space-x-2">
-              <TouchableOpacity onLongPress={drag} className='opacity-50'>
-                <Feather name="menu" size={20} color="#000000" />
-              </TouchableOpacity>
-            </View>
+              </View>
+            </TouchableOpacity>
+
+            {/* Draggable area (80%) */}
+            <TouchableOpacity 
+              onLongPress={drag}
+              className="flex-row items-center space-x-3 w-full pr-4 justify-between"
+            >
+              <View className="flex-row items-center space-x-3 ml-12">
+                <Image
+                  source={{ uri: item.icon_url }}
+                  className="w-7 h-7"
+                  resizeMode="contain"
+                />
+                <Text className="text-[16px] font-domine">{item.name}</Text>
+              </View>
+              <Feather name="menu" size={20} color="#000000" className="opacity-50" />
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
-      </ScaleDecorator>
+        </View>
+      </TouchableOpacity>
+    </ScaleDecorator>
+  );
+};
+  
+
+const ThreeDotsLoadingIndicator = () => {
+  // Create animated values for each dot
+  const animations = [1, 2, 3].map(() => new Animated.Value(1));
+
+  useEffect(() => {
+    const sequence = animations.map((value, index) =>
+      Animated.sequence([
+        Animated.delay(index * 160),
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(value, {
+              toValue: 0.3,
+              duration: 700,
+              useNativeDriver: true,
+            }),
+            Animated.timing(value, {
+              toValue: 1,
+              duration: 700,
+              useNativeDriver: true,
+            }),
+          ])
+        ),
+      ])
     );
-  };
 
-  const handleSaveChanges = async () => {
-    try {
-      const userId: any = loggedInUserData?.user.id; // Ensure this exists
-      await apiUpdateUserPreference(selectedCategories, userId).then(async (res: any) => {
-        if (res.status == 200) {
-          const apiRes = await apiGetCategoriesWithPreferences(userId);
-          if (apiRes) {
-            // Dispatch categories to Redux store
-            dispatch(setUserPreferredCategories(apiRes));
+    Animated.parallel(sequence).start();
+  }, []);
 
-            // Set the selected categories based on `isPreferred` flag
-            setSelectedCategories(
-              apiRes
-                .filter((category: CategoryType) => category.isPreferred)
-                .map((category: CategoryType) => category.id)
-            );
-          }
-        }
-        // Customizing Alert Message
-        Alert.alert(
-          'Success!',
-          'Your preferences for Category have been successfully updated.',
-          [
-            {
-              text: 'OK',
-              onPress: () => router.push('/discoverScreens'),
-              style: 'default', // Default button style
-            },
-          ],
-          { cancelable: false }
-        );
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  return (
+    <View className="flex-row items-center justify-center space-x-1">
+      {animations.map((animation, index) => (
+        <Animated.View 
+          key={index} 
+          className="w-1.5 h-1.5 rounded-full bg-white"
+          style={{
+            opacity: animation
+          }}
+        />
+      ))}
+    </View>
+  );
+};
+const [isSaving, setIsSaving] = useState(false);
+
+const handleSaveChanges = async () => {
+ setIsSaving(true);
+ try {
+   const userId = loggedInUserData?.user.id;
+   if (!userId) {
+     throw new Error('User ID is required');
+   }
+   const res = await apiUpdateUserPreference(selectedCategories, userId);
+   if (res.status === 200) {
+     const apiRes = await apiGetCategoriesWithPreferences(userId);
+     if (apiRes) {
+       dispatch(setUserPreferredCategories(apiRes));
+       setSelectedCategories(
+         apiRes
+           .filter((category: CategoryType) => category.isPreferred)
+           .map((category: CategoryType) => category.id)
+       );
+     }
+     Alert.alert(
+       'Success!',
+       'Your preferences for Category have been successfully updated.',
+       [{ text: 'OK', onPress: () => router.push('/discoverScreens') }],
+       { cancelable: false }
+     );
+   }
+ } catch (error) {
+   console.log(error);
+ } finally {
+   setIsSaving(false);
+ }
+}
 
   useEffect(() => {
     (async () => {
@@ -154,7 +204,7 @@ const PreferencesScreen = () => {
       </View>
 
       {/* Description */}
-      <Text className="text-gray-500 text-[14p] font-geist px-4 pb-7">
+      <Text className="text-gray-500 text-[14px] font-geist px-4 pb-7">
         You'll see more news from your selected categories and less from others. Long press and drag to prioritize news and update them anytime to refresh your feed.
       </Text>
 
@@ -174,14 +224,19 @@ const PreferencesScreen = () => {
 
       {/* Save Button */}
       <View className="px-4 py-4">
-        <TouchableOpacity
-          className="bg-black rounded-lg py-4"
-          onPress={handleSaveChanges}
-        >
-          <Text className="text-white text-center font-medium">
-            Save Changes
-          </Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+ className="bg-black rounded-lg py-4"
+ onPress={handleSaveChanges}
+ disabled={isSaving}
+>
+ {isSaving ? (
+   <ActivityIndicator color="white" />
+ ) : (
+   <Text className="text-white text-center font-medium">
+     Save Changes
+   </Text>
+ )}
+</TouchableOpacity>
       </View>
     </SafeAreaView>
   );

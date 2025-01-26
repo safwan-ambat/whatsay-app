@@ -92,7 +92,7 @@ const PrivacySettingsScreen = () => {
             <View className="w-8 h-8 items-center justify-center mr-3">
               <Image
                 source={require('@/assets/images/profileIcons/private.webp')}
-                style={{ width: 20, height: 20 }}
+                style={{ width: 24, height: 24 }}
                 resizeMode="contain"
               />
             </View>
@@ -110,7 +110,7 @@ const PrivacySettingsScreen = () => {
             <View className="w-8 h-8 items-center justify-center mr-3">
               <Image
                 source={require('@/assets/images/profileIcons/terms.webp')}
-                style={{ width: 20, height: 20 }}
+                style={{ width: 24, height: 24 }}
                 resizeMode="contain"
               />
             </View>

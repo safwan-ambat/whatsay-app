@@ -143,7 +143,7 @@ const ProfileScreen = () => {
       ) : (
         <Image 
           source={item.icon} 
-          className="w-[20px] h-[20px] mr-4"
+          className="w-[24px] h-[24px] mr-4"
           resizeMode="contain"
         />
       )}
