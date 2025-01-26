@@ -3,9 +3,7 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import { router, Href } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector, useDispatch } from "react-redux";
-import { loggedInUserDataSelector, clearUser } from "@/redux/slice/userSlice";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { loggedInUserDataSelector } from "@/redux/slice/userSlice";
 import { AuthPayload } from "@/types/UserTypes";
 import LottieView from "lottie-react-native";
 import { useRef, useState } from "react";
@@ -53,40 +51,6 @@ const ProfileScreen = () => {
       style: "font-domine text-[16px]",
     },
   ];
-  const handleLogout = async () => {
-    await GoogleSignin.signOut();
-    await AsyncStorage.removeItem("user");
-    dispatch(clearUser());
-    router.replace("/" as Route);
-  };
-
-  // const handleDeleteAccount = async () => {
-  //   setIsDeleting(true);
-  //   const userId = loggedInUserData?.user.id;
-
-  //   if (!userId) {
-  //     console.log("User id not found");
-  //     setIsDeleting(false);
-  //     return;
-  //   }
-
-  //   try {
-  //     const res = await deletUser(userId);
-  //     if (res.deleted) {
-  //       await AsyncStorage.removeItem("user");
-  //       dispatch(clearUser());
-  //       router.replace("/(auth)/login" as Route);
-  //     }
-  //   } catch (error: unknown) {
-  //     if (error instanceof Error) {
-  //       console.log("Error is:", error.message);
-  //     } else {
-  //       console.log("Unknown error occurred:", error);
-  //     }
-  //   } finally {
-  //     setIsDeleting(false);
-  //   }
-  // };
 
   if (!loggedInUserData?.user) {
     router.replace("/(auth)/login" as Route);
@@ -94,7 +58,7 @@ const ProfileScreen = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
+    <SafeAreaView className="flex-1 bg-white px-[16px]">
       <Image
         source={require("@/assets/profileBg.webp")}
         className="absolute w-screen h-[406px]"
@@ -153,37 +117,6 @@ const ProfileScreen = () => {
         ))}
       </View>
 
- {/* logout btn */}
-      <View className="mt-auto mb-8">
-        <TouchableOpacity
-          className="bg-black rounded-xl py-4"
-          onPress={handleLogout}
-        >
-          <Text className="text-white text-center font-medium">Log Out</Text>
-        </TouchableOpacity>
-
-        {/* <TouchableOpacity
-          className="mt-4 bg-[#FFE9E9] rounded-xl py-4 flex justify-center items-center"
-          onPress={handleDeleteAccount}
-        >
-          {!isDeleting && (
-            <Text className="text-[#B01212] text-center">
-              Delete your account
-            </Text>
-          )}
-          {isDeleting && (
-            <LottieView
-              autoPlay
-              ref={animation}
-              style={{
-                width: 20,
-                height: 20,
-              }}
-              source={require("@/assets/animations/loading.json")}
-            />
-          )}
-        </TouchableOpacity> */}
-      </View>
     </SafeAreaView>
   );
 };

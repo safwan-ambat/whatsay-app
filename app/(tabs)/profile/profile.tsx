@@ -6,11 +6,14 @@ import {
 import { router, Href } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
-import { loggedInUserDataSelector, setUser } from '@/redux/slice/userSlice';
+import { loggedInUserDataSelector, setUser ,clearUser} from '@/redux/slice/userSlice';
 import { AuthPayload } from '@/types/UserTypes';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
 import APIService, { APICaller } from '@/api/APIKit';
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const ProfileDetailsScreen = () => {
   const dispatch = useDispatch();
@@ -145,6 +148,15 @@ const ProfileDetailsScreen = () => {
     }
   };
 
+
+  const handleLogout = async () => {
+    await GoogleSignin.signOut();
+    await AsyncStorage.removeItem("user");
+    dispatch(clearUser());
+    router.replace("/" as Route);
+  };
+
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Image
@@ -154,7 +166,7 @@ const ProfileDetailsScreen = () => {
       />
       
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-2">
+      <View className="flex-row items-center justify-between px-4 pb-2 mt-4">
         <TouchableOpacity onPress={() => router.back()}>
           <Feather name="arrow-left" size={24} color="black" />
         </TouchableOpacity>
@@ -247,6 +259,7 @@ const ProfileDetailsScreen = () => {
                 )}
               </TouchableOpacity>
             </View>
+               
           </View>
         </View>
       </Modal>
@@ -289,8 +302,42 @@ const ProfileDetailsScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
+          
         </View>
+        
       </Modal>
+               {/* logout btn */}
+               <View className="mt-auto mb-8 px-4">
+                    <TouchableOpacity
+                      className="bg-black rounded-xl py-4"
+                      onPress={handleLogout}
+                    >
+                      <Text className="text-white text-center font-medium">Log Out</Text>
+                    </TouchableOpacity>
+
+                    {/* <TouchableOpacity
+                      className="mt-4 bg-[#FFE9E9] rounded-xl py-4 flex justify-center items-center"
+                      onPress={handleDeleteAccount}
+                    >
+                      {!isDeleting && (
+                        <Text className="text-[#B01212] text-center">
+                          Delete your account
+                        </Text>
+                      )}
+                      {isDeleting && (
+                        <LottieView
+                          autoPlay
+                          ref={animation}
+                          style={{
+                            width: 20,
+                            height: 20,
+                          }}
+                          source={require("@/assets/animations/loading.json")}
+                        />
+                      )}
+                    </TouchableOpacity> */}
+                  </View>
+      
 
       {/* Loading Overlay */}
       {loading && (
